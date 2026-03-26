@@ -52,6 +52,7 @@
     --water-foreground: 200 80% 98%;
     --growth: 120 50% 50%;
     --harvest: 38 85% 55%;
+    --money: 210 60% 45%;
     --earth: 25 30% 40%;
     --earth-light: 30 25% 75%;
     --sky: 200 60% 85%;
@@ -112,6 +113,12 @@
   }
   .bg-water {
     background-color: hsl(var(--water));
+  }
+  .text-money {
+    color: hsl(var(--money));
+  }
+  .bg-money {
+    background-color: hsl(var(--money));
   }
   .bg-growth {
     background-color: hsl(var(--growth));
