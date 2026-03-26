@@ -20,7 +20,7 @@ const categories = [
 export default function InventoryPage() {
   const navigate = useNavigate();
   const { inventory, addCoins, removeFromInventory } = useGameStore();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['seeds', 'fruits', 'vegetables', 'fertilizers']);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'quantity' | 'az'>('quantity');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
