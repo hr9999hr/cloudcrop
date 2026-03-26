@@ -1,6 +1,9 @@
-import { Home, Backpack, Beaker, ShoppingCart, Wallet, Settings } from "lucide-react";
+import { Home, Backpack, Beaker, ShoppingCart, Wallet, Settings, LogOut } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.png";
 import {
   Sidebar,
@@ -10,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -25,7 +29,29 @@ const items = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<{ username: string; full_name: string | null } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("profiles")
+      .select("username, full_name")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data) setProfile(data);
+      });
+  }, [user]);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
+  };
+
+  const displayName = profile?.full_name || profile?.username || user?.email || "Farmer";
+  const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
     <Sidebar collapsible="icon">
@@ -66,6 +92,35 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter>
+        {/* User profile */}
+        <div className={`px-3 py-2 ${collapsed ? 'flex justify-center' : ''}`}>
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-sidebar-accent flex items-center justify-center text-xs font-bold text-sidebar-primary flex-shrink-0">
+              {initials}
+            </div>
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-sidebar-foreground truncate">{displayName}</p>
+                <p className="text-xs text-sidebar-foreground/60 truncate">{user?.email}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Logout */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleLogout}>
+              <span className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground/70 hover:text-destructive transition-colors">
+                <LogOut className="h-4 w-4 flex-shrink-0" />
+                {!collapsed && <span className="text-sm font-semibold">Log out</span>}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
