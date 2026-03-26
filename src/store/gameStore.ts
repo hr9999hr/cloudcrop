@@ -48,7 +48,7 @@ interface GameState {
   plantSeed: (slotId: number, seedName: string, emoji: string, durationMs: number, yieldCoins: number) => void;
   waterPlant: (slotId: number) => void;
   fertilizePlant: (slotId: number) => void;
-  harvestPlant: (slotId: number) => { coins: number; plantName: string; emoji: string };
+  harvestPlant: (slotId: number, action: 'sell' | 'bag') => { coins: number; plantName: string; emoji: string; quantity: number };
   updateProgress: () => void;
   addToInventory: (item: Omit<InventoryItem, 'id'>) => void;
   removeFromInventory: (id: string, qty: number) => void;
@@ -134,24 +134,40 @@ export const useGameStore = create<GameState>((set, get) => ({
     };
   }),
 
-  harvestPlant: (slotId) => {
+  harvestPlant: (slotId, action) => {
     const s = get();
     const plant = s.plants.find((p) => p.id === slotId);
-    if (!plant || plant.status !== 'ready') return { coins: 0, plantName: '', emoji: '' };
+    if (!plant || plant.status !== 'ready') return { coins: 0, plantName: '', emoji: '', quantity: 0 };
     const earned = plant.yieldCoins;
-    set({
-      coins: s.coins + earned,
-      plants: s.plants.map((p) =>
-        p.id === slotId
-          ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0 }
-          : p
-      ),
-      transactions: [
-        { id: Date.now().toString(), type: 'earn', amount: earned, description: `Harvested ${plant.plantName}`, timestamp: Date.now() },
-        ...s.transactions,
-      ],
-    });
-    return { coins: earned, plantName: plant.plantName || '', emoji: plant.plantEmoji || '' };
+    const harvestQty = Math.max(1, Math.floor(plant.progress / 20)); // quantity based on health
+
+    const resetPlant = s.plants.map((p) =>
+      p.id === slotId
+        ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0 }
+        : p
+    );
+
+    if (action === 'sell') {
+      set({
+        coins: s.coins + earned,
+        plants: resetPlant,
+        transactions: [
+          { id: Date.now().toString(), type: 'earn', amount: earned, description: `Sold ${harvestQty}x ${plant.plantName}`, timestamp: Date.now() },
+          ...s.transactions,
+        ],
+      });
+    } else {
+      // Put in bag - add to inventory as fruits/vegetables
+      const existingItem = s.inventory.find((i) => i.name === plant.plantName && i.category === 'fruits');
+      const newInventory = existingItem
+        ? s.inventory.map((i) => i.name === plant.plantName && i.category === 'fruits' ? { ...i, quantity: i.quantity + harvestQty } : i)
+        : [...s.inventory, { id: `harvest-${Date.now()}`, name: plant.plantName!, emoji: plant.plantEmoji!, category: 'fruits' as const, quantity: harvestQty, description: `Freshly harvested ${plant.plantName}` }];
+      set({
+        plants: resetPlant,
+        inventory: newInventory,
+      });
+    }
+    return { coins: action === 'sell' ? earned : 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: harvestQty };
   },
 
   updateProgress: () => set((s) => ({

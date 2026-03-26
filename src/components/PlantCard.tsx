@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Droplets, Beaker, Scissors } from "lucide-react";
+import { Scissors } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlantSlot, useGameStore } from "@/store/gameStore";
 
@@ -7,11 +7,11 @@ interface PlantCardProps {
   plant: PlantSlot;
   onPlant: (slotId: number) => void;
   onHarvest: (slotId: number) => void;
+  onPlantClick?: (plant: PlantSlot) => void;
 }
 
-export function PlantCard({ plant, onPlant, onHarvest }: PlantCardProps) {
-  const { waterPlant, fertilizePlant, waterDrops, inventory } = useGameStore();
-  const hasFertilizer = inventory.some((i) => i.category === 'fertilizers' && i.quantity > 0);
+export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCardProps) {
+  const { waterDrops, inventory } = useGameStore();
 
   if (plant.status === 'empty') {
     return (
@@ -34,7 +34,8 @@ export function PlantCard({ plant, onPlant, onHarvest }: PlantCardProps) {
   return (
     <motion.div
       layout
-      className={`bg-card border rounded-2xl p-5 min-h-[220px] flex flex-col items-center relative overflow-hidden ${isReady ? 'border-harvest ring-2 ring-harvest/20' : 'border-border'}`}
+      className={`bg-card border rounded-2xl p-5 min-h-[220px] flex flex-col items-center relative overflow-hidden cursor-pointer ${isReady ? 'border-harvest ring-2 ring-harvest/20' : 'border-border'}`}
+      onClick={() => onPlantClick?.(plant)}
     >
       {isReady && (
         <motion.div
@@ -56,7 +57,6 @@ export function PlantCard({ plant, onPlant, onHarvest }: PlantCardProps) {
 
       <p className="text-sm font-bold text-foreground">{plant.plantName}</p>
 
-      {/* Progress bar */}
       <div className="w-full bg-muted rounded-full h-2.5 mt-3 mb-2 overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${progressColor}`}
@@ -69,37 +69,24 @@ export function PlantCard({ plant, onPlant, onHarvest }: PlantCardProps) {
         {isReady ? '🎉 Ready to harvest!' : `${Math.round(plant.progress)}% grown`}
       </p>
 
-      {/* Actions */}
       <div className="flex gap-2 mt-auto pt-3 w-full">
         {isReady ? (
           <Button
             size="sm"
-            onClick={() => onHarvest(plant.id)}
+            onClick={(e) => { e.stopPropagation(); onHarvest(plant.id); }}
             className="w-full gradient-coin font-bold rounded-xl"
           >
             <Scissors className="w-4 h-4 mr-1" /> Harvest
           </Button>
         ) : (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => waterPlant(plant.id)}
-              disabled={waterDrops <= 0}
-              className="flex-1 rounded-xl text-xs"
-            >
-              💧 Water
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => fertilizePlant(plant.id)}
-              disabled={!hasFertilizer}
-              className="flex-1 rounded-xl text-xs"
-            >
-              💊 Fertilize
-            </Button>
-          </>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => { e.stopPropagation(); onPlantClick?.(plant); }}
+            className="w-full rounded-xl text-xs"
+          >
+            View Details 🔍
+          </Button>
         )}
       </div>
     </motion.div>
