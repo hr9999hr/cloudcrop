@@ -29,9 +29,7 @@ export default function InventoryPage() {
   const [seedDetailName, setSeedDetailName] = useState<string | null>(null);
 
   const toggleCategory = (key: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]
-    );
+    setActiveCategory(key);
     setSelectedItem(null);
   };
 
