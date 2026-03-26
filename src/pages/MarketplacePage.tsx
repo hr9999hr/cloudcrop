@@ -122,7 +122,7 @@ export default function MarketplacePage() {
             <div className="mt-auto pt-3 flex items-end justify-between">
               <div>
                 <p className="font-extrabold text-foreground">RM {product.priceRM.toFixed(2)}</p>
-                <p className="text-xs text-coin font-semibold">-{product.ccDiscount} 🪙 CC</p>
+                <p className="text-xs text-coin font-semibold">-{product.ccDiscount} CC discount</p>
               </div>
               <Button
                 size="sm"
