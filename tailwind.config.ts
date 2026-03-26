@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Nunito', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,6 +60,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        coin: "hsl(var(--coin))",
+        water: "hsl(var(--water))",
+        growth: "hsl(var(--growth))",
+        harvest: "hsl(var(--harvest))",
+        earth: "hsl(var(--earth))",
       },
       borderRadius: {
         lg: "var(--radius)",
