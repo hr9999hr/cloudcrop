@@ -83,51 +83,58 @@ export default function InventoryPage() {
     <div className="max-w-5xl mx-auto">
       <h1 className="text-2xl font-extrabold text-foreground mb-6">Inventory 🎒</h1>
 
-      <div className={`grid grid-cols-1 ${selectedItem ? 'lg:grid-cols-[220px_1fr_280px]' : 'lg:grid-cols-[220px_1fr]'} gap-6`}>
-        {/* Left: Filters */}
-        <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 rounded-xl bg-card"
-            />
-          </div>
+      {/* Category Tabs */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <button
+          onClick={() => toggleCategory('all')}
+          className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+            activeCategory === 'all'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-card border border-border text-foreground hover:bg-muted'
+          }`}
+        >
+          All
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat.key}
+            onClick={() => toggleCategory(cat.key)}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+              activeCategory === cat.key
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-card border border-border text-foreground hover:bg-muted'
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
 
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Filter className="w-4 h-4 text-foreground" />
-              <h3 className="font-extrabold text-foreground">Filter</h3>
-            </div>
-            <div className="space-y-2">
-              {categories.map((cat) => (
-                <label key={cat.key} className="flex items-center gap-2 cursor-pointer text-sm text-foreground">
-                  <Checkbox
-                    checked={selectedCategories.includes(cat.key)}
-                    onCheckedChange={() => toggleCategory(cat.key)}
-                  />
-                  {cat.label}
-                </label>
-              ))}
-            </div>
-          </div>
+      {/* Search + Sort row */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 rounded-xl bg-card"
+          />
         </div>
+        <Select value={sortBy} onValueChange={(v) => setSortBy(v as 'quantity' | 'az')}>
+          <SelectTrigger className="w-[140px] rounded-xl bg-card text-sm">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="quantity">Quantity</SelectItem>
+            <SelectItem value="az">A - Z</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Middle: Item grid grouped by category */}
+      <div className={`grid grid-cols-1 ${selectedItem ? 'lg:grid-cols-[1fr_280px]' : ''} gap-6`}>
+
         <div className="space-y-5">
-          <div className="flex justify-end">
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as 'quantity' | 'az')}>
-              <SelectTrigger className="w-[140px] rounded-xl bg-card text-sm">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="quantity">Quantity</SelectItem>
-                <SelectItem value="az">A - Z</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           {grouped.map((group) => (
             <div key={group.key}>
@@ -171,9 +178,15 @@ export default function InventoryPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="bg-card border border-border rounded-2xl p-5 h-fit"
+              className="bg-card border border-border rounded-2xl p-5 h-fit relative"
             >
-              <h3 className="font-extrabold text-lg text-foreground mb-4">
+              <button
+                onClick={() => setSelectedItem(null)}
+                className="absolute top-3 right-3 p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <h3 className="font-extrabold text-lg text-foreground mb-4 pr-6">
                 {selectedItem.name}
               </h3>
 
