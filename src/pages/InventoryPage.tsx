@@ -33,13 +33,14 @@ export default function InventoryPage() {
     setSelectedItem(null);
   };
 
+  const activeCats = activeCategory === 'all' ? categories.map(c => c.key) : [activeCategory];
+
   const filtered = inventory
-    .filter((i) => selectedCategories.includes(i.category))
+    .filter((i) => activeCats.includes(i.category))
     .filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => sortBy === 'quantity' ? b.quantity - a.quantity : a.name.localeCompare(b.name));
 
-  // Group by category
-  const grouped = selectedCategories
+  const grouped = activeCats
     .map((catKey) => {
       const cat = categories.find((c) => c.key === catKey);
       const items = filtered.filter((i) => i.category === catKey);
