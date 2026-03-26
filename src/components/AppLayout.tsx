@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useGameStore } from "@/store/gameStore";
+import logo from "@/assets/logo.png";
 
 interface AppLayoutProps {
   children: React.ReactNode;
