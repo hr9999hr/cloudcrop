@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useGameStore, InventoryItem, SEED_OPTIONS } from "@/store/gameStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, ArrowRight, Minus, Plus } from "lucide-react";
+import { Search, ArrowRight, Minus, Plus, X } from "lucide-react";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import ccCoin from "@/assets/cc-coin.png";
 import { toast } from "sonner";
@@ -21,7 +20,7 @@ const categories = [
 export default function InventoryPage() {
   const navigate = useNavigate();
   const { inventory, addCoins, removeFromInventory } = useGameStore();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['seeds', 'fruits', 'vegetables', 'fertilizers']);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'quantity' | 'az'>('quantity');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
@@ -30,19 +29,18 @@ export default function InventoryPage() {
   const [seedDetailName, setSeedDetailName] = useState<string | null>(null);
 
   const toggleCategory = (key: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]
-    );
+    setActiveCategory(key);
     setSelectedItem(null);
   };
 
+  const activeCats = activeCategory === 'all' ? categories.map(c => c.key) : [activeCategory];
+
   const filtered = inventory
-    .filter((i) => selectedCategories.includes(i.category))
+    .filter((i) => activeCats.includes(i.category))
     .filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => sortBy === 'quantity' ? b.quantity - a.quantity : a.name.localeCompare(b.name));
 
-  // Group by category
-  const grouped = selectedCategories
+  const grouped = activeCats
     .map((catKey) => {
       const cat = categories.find((c) => c.key === catKey);
       const items = filtered.filter((i) => i.category === catKey);
@@ -85,51 +83,58 @@ export default function InventoryPage() {
     <div className="max-w-5xl mx-auto">
       <h1 className="text-2xl font-extrabold text-foreground mb-6">Inventory 🎒</h1>
 
-      <div className={`grid grid-cols-1 ${selectedItem ? 'lg:grid-cols-[220px_1fr_280px]' : 'lg:grid-cols-[220px_1fr]'} gap-6`}>
-        {/* Left: Filters */}
-        <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 rounded-xl bg-card"
-            />
-          </div>
+      {/* Category Tabs */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <button
+          onClick={() => toggleCategory('all')}
+          className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+            activeCategory === 'all'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-card border border-border text-foreground hover:bg-muted'
+          }`}
+        >
+          All
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat.key}
+            onClick={() => toggleCategory(cat.key)}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+              activeCategory === cat.key
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-card border border-border text-foreground hover:bg-muted'
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
 
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Filter className="w-4 h-4 text-foreground" />
-              <h3 className="font-extrabold text-foreground">Filter</h3>
-            </div>
-            <div className="space-y-2">
-              {categories.map((cat) => (
-                <label key={cat.key} className="flex items-center gap-2 cursor-pointer text-sm text-foreground">
-                  <Checkbox
-                    checked={selectedCategories.includes(cat.key)}
-                    onCheckedChange={() => toggleCategory(cat.key)}
-                  />
-                  {cat.label}
-                </label>
-              ))}
-            </div>
-          </div>
+      {/* Search + Sort row */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 rounded-xl bg-card"
+          />
         </div>
+        <Select value={sortBy} onValueChange={(v) => setSortBy(v as 'quantity' | 'az')}>
+          <SelectTrigger className="w-[140px] rounded-xl bg-card text-sm">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="quantity">Quantity</SelectItem>
+            <SelectItem value="az">A - Z</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Middle: Item grid grouped by category */}
+      <div className={`grid grid-cols-1 ${selectedItem ? 'lg:grid-cols-[1fr_280px]' : ''} gap-6`}>
+
         <div className="space-y-5">
-          <div className="flex justify-end">
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as 'quantity' | 'az')}>
-              <SelectTrigger className="w-[140px] rounded-xl bg-card text-sm">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="quantity">Quantity</SelectItem>
-                <SelectItem value="az">A - Z</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           {grouped.map((group) => (
             <div key={group.key}>
@@ -173,9 +178,15 @@ export default function InventoryPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="bg-card border border-border rounded-2xl p-5 h-fit"
+              className="bg-card border border-border rounded-2xl p-5 h-fit relative"
             >
-              <h3 className="font-extrabold text-lg text-foreground mb-4">
+              <button
+                onClick={() => setSelectedItem(null)}
+                className="absolute top-3 right-3 p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <h3 className="font-extrabold text-lg text-foreground mb-4 pr-6">
                 {selectedItem.name}
               </h3>
 
