@@ -192,4 +192,19 @@ export const useGameStore = create<GameState>((set, get) => ({
     });
     return true;
   },
+
+  addRealMoney: (amount, desc) => set((s) => ({
+    realMoney: s.realMoney + amount,
+    transactions: [{ id: Date.now().toString(), type: 'earn', amount, description: `[RM] ${desc}`, timestamp: Date.now() }, ...s.transactions],
+  })),
+
+  spendRealMoney: (amount, desc) => {
+    const s = get();
+    if (s.realMoney < amount) return false;
+    set({
+      realMoney: s.realMoney - amount,
+      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: `[RM] ${desc}`, timestamp: Date.now() }, ...s.transactions],
+    });
+    return true;
+  },
 }));
