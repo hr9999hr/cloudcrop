@@ -33,6 +33,7 @@ export interface Transaction {
 
 interface GameState {
   coins: number;
+  realMoney: number;
   waterDrops: number;
   weather: WeatherType;
   plants: PlantSlot[];
@@ -53,6 +54,8 @@ interface GameState {
   removeFromInventory: (id: string, qty: number) => void;
   addCoins: (amount: number, desc: string) => void;
   spendCoins: (amount: number, desc: string) => boolean;
+  addRealMoney: (amount: number, desc: string) => void;
+  spendRealMoney: (amount: number, desc: string) => boolean;
 }
 
 const SEED_OPTIONS = [
@@ -79,6 +82,7 @@ const initialInventory: InventoryItem[] = [
 
 export const useGameStore = create<GameState>((set, get) => ({
   coins: 0,
+  realMoney: 50.00,
   waterDrops: 3,
   weather: 'sunny',
   plants: initialPlants,
