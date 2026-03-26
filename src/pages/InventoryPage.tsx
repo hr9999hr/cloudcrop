@@ -85,7 +85,7 @@ export default function InventoryPage() {
     <div className="max-w-5xl mx-auto">
       <h1 className="text-2xl font-extrabold text-foreground mb-6">Inventory 🎒</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr_280px] gap-6">
+      <div className={`grid grid-cols-1 ${selectedItem ? 'lg:grid-cols-[220px_1fr_280px]' : 'lg:grid-cols-[220px_1fr]'} gap-6`}>
         {/* Left: Filters */}
         <div className="space-y-4">
           <div className="relative">
@@ -265,16 +265,7 @@ export default function InventoryPage() {
                 </>
               )}
             </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-card border border-border rounded-2xl p-6 h-fit text-center"
-            >
-              <span className="text-4xl block mb-2">👆</span>
-              <p className="text-sm text-muted-foreground">Select an item to view details</p>
-            </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
 
