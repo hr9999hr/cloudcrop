@@ -1,6 +1,7 @@
 import { Home, Backpack, Beaker, ShoppingCart, Wallet, Settings } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import logo from "@/assets/logo.png";
 import {
   Sidebar,
   SidebarContent,
@@ -29,9 +30,13 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
-        <div className={`p-4 ${collapsed ? 'px-2' : ''}`}>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🌿</span>
+        <div className={`p-3 ${collapsed ? 'px-2 flex justify-center' : 'px-4'}`}>
+          <div className="flex items-center gap-3 group">
+            <img
+              src={logo}
+              alt="CloudCrop"
+              className="h-9 w-9 rounded-xl shadow-md transition-transform duration-200 group-hover:scale-105 flex-shrink-0"
+            />
             {!collapsed && (
               <h1 className="text-lg font-extrabold tracking-tight text-sidebar-foreground">
                 CloudCrop
