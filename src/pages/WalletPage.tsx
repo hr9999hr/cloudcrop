@@ -36,7 +36,7 @@ export default function WalletPage() {
         <motion.div
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}
-          className="bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-2xl p-5 text-center shadow-lg"
+          className="bg-gradient-to-br from-[hsl(210,60%,45%)] to-[hsl(210,70%,35%)] text-white rounded-2xl p-5 text-center shadow-lg"
         >
           <p className="text-xs font-semibold opacity-80">RM Balance</p>
           <div className="flex items-center justify-center gap-2 my-1">
