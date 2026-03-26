@@ -1,96 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 40 33% 96%;
+    --foreground: 150 25% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 30% 98%;
+    --card-foreground: 150 25% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 30% 98%;
+    --popover-foreground: 150 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 142 45% 38%;
+    --primary-foreground: 40 33% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 30 40% 88%;
+    --secondary-foreground: 30 30% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 150 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 38 70% 55%;
+    --accent-foreground: 38 60% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 142 45% 38%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 142 30% 22%;
+    --sidebar-foreground: 40 33% 96%;
+    --sidebar-primary: 80 60% 60%;
+    --sidebar-primary-foreground: 142 30% 15%;
+    --sidebar-accent: 142 25% 28%;
+    --sidebar-accent-foreground: 40 33% 96%;
+    --sidebar-border: 142 20% 30%;
+    --sidebar-ring: 80 60% 60%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Custom tokens */
+    --coin: 45 90% 55%;
+    --coin-foreground: 45 80% 15%;
+    --water: 200 70% 55%;
+    --water-foreground: 200 80% 98%;
+    --growth: 120 50% 50%;
+    --harvest: 38 85% 55%;
+    --earth: 25 30% 40%;
+    --earth-light: 30 25% 75%;
+    --sky: 200 60% 85%;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    font-family: 'Nunito', sans-serif;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
+    --background: 150 20% 8%;
+    --foreground: 40 33% 96%;
+    --card: 150 20% 12%;
+    --card-foreground: 40 33% 96%;
+    --popover: 150 20% 12%;
+    --popover-foreground: 40 33% 96%;
+    --primary: 142 45% 45%;
+    --primary-foreground: 40 33% 98%;
+    --secondary: 30 20% 20%;
+    --secondary-foreground: 30 30% 85%;
+    --muted: 150 15% 18%;
+    --muted-foreground: 150 10% 55%;
+    --accent: 38 60% 50%;
+    --accent-foreground: 38 60% 95%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 142 45% 45%;
+    --sidebar-background: 150 20% 8%;
+    --sidebar-foreground: 40 33% 96%;
+    --sidebar-primary: 80 60% 55%;
+    --sidebar-primary-foreground: 150 20% 8%;
+    --sidebar-accent: 150 15% 15%;
+    --sidebar-accent-foreground: 40 33% 96%;
+    --sidebar-border: 150 15% 18%;
+    --sidebar-ring: 80 60% 55%;
   }
 }
 
@@ -98,8 +94,47 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
+    font-family: 'Nunito', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-coin {
+    color: hsl(var(--coin));
+  }
+  .bg-coin {
+    background-color: hsl(var(--coin));
+  }
+  .text-water {
+    color: hsl(var(--water));
+  }
+  .bg-water {
+    background-color: hsl(var(--water));
+  }
+  .bg-growth {
+    background-color: hsl(var(--growth));
+  }
+  .bg-harvest {
+    background-color: hsl(var(--harvest));
+  }
+  .bg-earth {
+    background-color: hsl(var(--earth));
+  }
+  .bg-earth-light {
+    background-color: hsl(var(--earth-light));
+  }
+  .bg-sky {
+    background-color: hsl(var(--sky));
+  }
+  .gradient-farm {
+    background: linear-gradient(135deg, hsl(142, 45%, 38%), hsl(80, 60%, 55%));
+  }
+  .gradient-coin {
+    background: linear-gradient(135deg, hsl(45, 90%, 55%), hsl(38, 85%, 55%));
+  }
+  .gradient-sky {
+    background: linear-gradient(180deg, hsl(200, 60%, 85%), hsl(200, 40%, 95%));
   }
 }
