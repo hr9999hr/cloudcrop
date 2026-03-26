@@ -1,14 +1,16 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useGameStore } from "@/store/gameStore";
+import { Banknote } from "lucide-react";
 import logo from "@/assets/logo.png";
+import ccCoin from "@/assets/cc-coin.png";
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { coins, waterDrops, weather } = useGameStore();
+  const { coins, realMoney, waterDrops, weather } = useGameStore();
 
   const weatherEmojis: Record<string, string> = {
     sunny: '☀️',
@@ -37,8 +39,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <span>💧</span>
                 <span>{waterDrops}</span>
               </div>
+              <div className="flex items-center gap-1 text-sm font-bold text-money">
+                <Banknote className="w-4 h-4" />
+                <span>RM {realMoney.toFixed(2)}</span>
+              </div>
               <div className="flex items-center gap-1 text-sm font-bold text-coin">
-                <span>🪙</span>
+                <img src={ccCoin} alt="CC" className="w-5 h-5" />
                 <span>{coins}</span>
               </div>
             </div>
