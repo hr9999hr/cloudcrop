@@ -28,6 +28,7 @@ export interface Transaction {
   type: 'earn' | 'spend';
   amount: number;
   description: string;
+  source?: string;
   timestamp: number;
   items?: { name: string; emoji: string; quantity: number; price: number; paymentType: 'coins' | 'money' }[];
 }
