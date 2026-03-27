@@ -10,6 +10,7 @@ import InventoryPage from "@/pages/InventoryPage";
 import FertilizerPage from "@/pages/FertilizerPage";
 import MarketplacePage from "@/pages/MarketplacePage";
 import WalletPage from "@/pages/WalletPage";
+import DeliveryPage from "@/pages/DeliveryPage";
 import SettingsPage from "@/pages/SettingsPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
@@ -52,6 +53,7 @@ const AppRoutes = () => (
     <Route path="/inventory" element={<ProtectedRoute><AppLayout><InventoryPage /></AppLayout></ProtectedRoute>} />
     <Route path="/fertilizer" element={<ProtectedRoute><AppLayout><FertilizerPage /></AppLayout></ProtectedRoute>} />
     <Route path="/marketplace" element={<ProtectedRoute><AppLayout><MarketplacePage /></AppLayout></ProtectedRoute>} />
+    <Route path="/delivery" element={<ProtectedRoute><AppLayout><DeliveryPage /></AppLayout></ProtectedRoute>} />
     <Route path="/wallet" element={<ProtectedRoute><AppLayout><WalletPage /></AppLayout></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><AppLayout><SettingsPage /></AppLayout></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />

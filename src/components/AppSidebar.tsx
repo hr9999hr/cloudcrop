@@ -1,4 +1,4 @@
-import { Home, Backpack, Beaker, ShoppingCart, Wallet, Settings, LogOut } from "lucide-react";
+import { Home, Backpack, Beaker, ShoppingCart, Wallet, Settings, LogOut, Truck } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +22,7 @@ const items = [
   { title: "Inventory", url: "/inventory", icon: Backpack, emoji: "🎒" },
   { title: "Fertilizer Shop", url: "/fertilizer", icon: Beaker, emoji: "💊" },
   { title: "Supermarket", url: "/marketplace", icon: ShoppingCart, emoji: "🛒" },
+  { title: "Delivery", url: "/delivery", icon: Truck, emoji: "📦" },
   { title: "Wallet", url: "/wallet", icon: Wallet, emoji: "💰" },
   { title: "Settings", url: "/settings", icon: Settings, emoji: "⚙️" },
 ];

@@ -29,6 +29,19 @@ export interface Transaction {
   amount: number;
   description: string;
   timestamp: number;
+  items?: { name: string; emoji: string; quantity: number; price: number; paymentType: 'coins' | 'money' }[];
+}
+
+export type DeliveryStatus = 'processing' | 'in_progress' | 'on_the_road' | 'completed';
+
+export interface DeliveryOrder {
+  id: string;
+  items: { name: string; emoji: string; quantity: number }[];
+  address: string;
+  status: DeliveryStatus;
+  createdAt: number;
+  estimatedMinutes: number;
+  completedAt?: number;
 }
 
 interface GameState {
@@ -39,6 +52,8 @@ interface GameState {
   plants: PlantSlot[];
   inventory: InventoryItem[];
   transactions: Transaction[];
+  deliveries: DeliveryOrder[];
+  deliveryAddress: string;
   hasSeenWelcome: boolean;
   dailyLoginClaimed: boolean;
 
@@ -53,9 +68,13 @@ interface GameState {
   addToInventory: (item: Omit<InventoryItem, 'id'>) => void;
   removeFromInventory: (id: string, qty: number) => void;
   addCoins: (amount: number, desc: string) => void;
-  spendCoins: (amount: number, desc: string) => boolean;
+  spendCoins: (amount: number, desc: string, items?: Transaction['items']) => boolean;
   addRealMoney: (amount: number, desc: string) => void;
-  spendRealMoney: (amount: number, desc: string) => boolean;
+  spendRealMoney: (amount: number, desc: string, items?: Transaction['items']) => boolean;
+  setDeliveryAddress: (address: string) => void;
+  createDelivery: (items: DeliveryOrder['items']) => void;
+  updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
+  topUpRealMoney: (amount: number) => void;
 }
 
 const SEED_OPTIONS = [
@@ -88,6 +107,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   plants: initialPlants,
   inventory: initialInventory,
   transactions: [],
+  deliveries: [],
+  deliveryAddress: '',
   hasSeenWelcome: false,
   dailyLoginClaimed: false,
 
@@ -199,12 +220,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     transactions: [{ id: Date.now().toString(), type: 'earn', amount, description: desc, timestamp: Date.now() }, ...s.transactions],
   })),
 
-  spendCoins: (amount, desc) => {
+  spendCoins: (amount, desc, items) => {
     const s = get();
     if (s.coins < amount) return false;
     set({
       coins: s.coins - amount,
-      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: desc, timestamp: Date.now() }, ...s.transactions],
+      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: desc, timestamp: Date.now(), items }, ...s.transactions],
     });
     return true;
   },
@@ -214,13 +235,43 @@ export const useGameStore = create<GameState>((set, get) => ({
     transactions: [{ id: Date.now().toString(), type: 'earn', amount, description: `[RM] ${desc}`, timestamp: Date.now() }, ...s.transactions],
   })),
 
-  spendRealMoney: (amount, desc) => {
+  spendRealMoney: (amount, desc, items) => {
     const s = get();
     if (s.realMoney < amount) return false;
     set({
       realMoney: s.realMoney - amount,
-      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: `[RM] ${desc}`, timestamp: Date.now() }, ...s.transactions],
+      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: `[RM] ${desc}`, timestamp: Date.now(), items }, ...s.transactions],
     });
     return true;
   },
+
+  setDeliveryAddress: (address) => set({ deliveryAddress: address }),
+
+  createDelivery: (items) => set((s) => ({
+    deliveries: [
+      {
+        id: Date.now().toString(),
+        items,
+        address: s.deliveryAddress,
+        status: 'processing',
+        createdAt: Date.now(),
+        estimatedMinutes: Math.floor(Math.random() * 30) + 15,
+      },
+      ...s.deliveries,
+    ],
+  })),
+
+  updateDeliveryStatus: (id, status) => set((s) => ({
+    deliveries: s.deliveries.map((d) =>
+      d.id === id ? { ...d, status, ...(status === 'completed' ? { completedAt: Date.now() } : {}) } : d
+    ),
+  })),
+
+  topUpRealMoney: (amount) => set((s) => ({
+    realMoney: s.realMoney + amount,
+    transactions: [
+      { id: Date.now().toString(), type: 'earn', amount, description: `[RM] Top up RM ${amount.toFixed(2)}`, timestamp: Date.now() },
+      ...s.transactions,
+    ],
+  })),
 }));

@@ -61,7 +61,7 @@ const categoryTabs = [
 ] as const;
 
 export default function MarketplacePage() {
-  const { coins, realMoney, spendCoins, spendRealMoney, addToInventory } = useGameStore();
+  const { coins, realMoney, spendCoins, spendRealMoney, addToInventory, createDelivery, deliveryAddress } = useGameStore();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -103,7 +103,6 @@ export default function MarketplacePage() {
   const handleCheckout = () => {
     if (cart.length === 0) return;
 
-    // Check if user has enough currency
     if (totalCoins > coins) {
       toast.error(`Not enough CC coins! You need ${totalCoins} CC but have ${coins} CC.`);
       return;
@@ -113,42 +112,33 @@ export default function MarketplacePage() {
       return;
     }
 
-    // Deduct currencies
+    // Build items list for transaction details
+    const coinItemDetails = coinItems.map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity, price: i.price, paymentType: 'coins' as const }));
+    const moneyItemDetails = moneyItems.map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity, price: i.price, paymentType: 'money' as const }));
+
     if (totalCoins > 0) {
-      const success = spendCoins(totalCoins, `Supermarket purchase (${coinItems.length} items)`);
-      if (!success) {
-        toast.error("Failed to deduct CC coins.");
-        return;
-      }
+      const success = spendCoins(totalCoins, `Supermarket purchase (${coinItems.length} items)`, coinItemDetails);
+      if (!success) { toast.error("Failed to deduct CC coins."); return; }
     }
     if (totalRM > 0) {
-      const success = spendRealMoney(totalRM, `Supermarket purchase (${moneyItems.length} items)`);
-      if (!success) {
-        toast.error("Failed to deduct RM.");
-        return;
-      }
+      const success = spendRealMoney(totalRM, `Supermarket purchase (${moneyItems.length} items)`, moneyItemDetails);
+      if (!success) { toast.error("Failed to deduct RM."); return; }
     }
 
-    // Add purchased items to inventory
+    // Add to inventory
     cart.forEach((item) => {
       if (item.category === 'seeds') {
-        addToInventory({
-          name: item.name.replace(' Pack', ''),
-          emoji: item.emoji,
-          category: 'seeds',
-          quantity: item.quantity,
-          description: `Purchased from Supermarket`,
-        });
+        addToInventory({ name: item.name.replace(' Pack', ''), emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
       } else {
-        addToInventory({
-          name: item.name,
-          emoji: item.emoji,
-          category: item.category,
-          quantity: item.quantity,
-          description: `${item.condition} condition - from ${item.vendor}`,
-        });
+        addToInventory({ name: item.name, emoji: item.emoji, category: item.category, quantity: item.quantity, description: `${item.condition} condition - from ${item.vendor}` });
       }
     });
+
+    // Create delivery order for non-seed items
+    const deliveryItems = cart.filter((i) => i.category !== 'seeds').map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity }));
+    if (deliveryItems.length > 0 && deliveryAddress) {
+      createDelivery(deliveryItems);
+    }
 
     toast.success("🎉 Purchase successful! Items added to inventory.");
     setCart([]);
