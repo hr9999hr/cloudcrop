@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import ccCoin from "@/assets/cc-coin.png";
 
 type PaymentType = 'coins' | 'money';
 type ProductCategory = 'fruits' | 'vegetables' | 'seeds';
+type ConditionType = 'Ugly' | 'Good' | 'Perfect';
 
 interface Product {
   id: string;
@@ -16,37 +18,47 @@ interface Product {
   emoji: string;
   category: ProductCategory;
   vendor: string;
-  condition?: string;
+  condition?: ConditionType;
   price: number;
   paymentType: PaymentType;
 }
 
 const products: Product[] = [
-  // Fruits - Ugly (buy with CC coins)
+  // Fruits - Ugly (CC or RM)
   { id: 'f1', name: 'Ugly Apples (1kg)', emoji: '🍎', category: 'fruits', vendor: 'Pak Ali Farm', condition: 'Ugly', price: 8, paymentType: 'coins' },
   { id: 'f2', name: 'Ugly Bananas (1kg)', emoji: '🍌', category: 'fruits', vendor: 'Green Valley', condition: 'Ugly', price: 5, paymentType: 'coins' },
   { id: 'f3', name: 'Ugly Mangoes (500g)', emoji: '🥭', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Ugly', price: 12, paymentType: 'coins' },
-  // Fruits - Good (buy with RM)
-  { id: 'f4', name: 'Premium Apples (1kg)', emoji: '🍎', category: 'fruits', vendor: 'Pak Ali Farm', condition: 'Good', price: 12.90, paymentType: 'money' },
-  { id: 'f5', name: 'Premium Bananas (1kg)', emoji: '🍌', category: 'fruits', vendor: 'Green Valley', condition: 'Perfect', price: 8.50, paymentType: 'money' },
+  { id: 'f3b', name: 'Ugly Watermelon (1pc)', emoji: '🍉', category: 'fruits', vendor: 'Uncle Tan Farm', condition: 'Ugly', price: 10, paymentType: 'coins' },
+  // Fruits - Good
+  { id: 'f4', name: 'Good Apples (1kg)', emoji: '🍎', category: 'fruits', vendor: 'Pak Ali Farm', condition: 'Good', price: 12.90, paymentType: 'money' },
+  { id: 'f5', name: 'Good Bananas (1kg)', emoji: '🍌', category: 'fruits', vendor: 'Green Valley', condition: 'Good', price: 8.50, paymentType: 'money' },
+  { id: 'f5b', name: 'Good Oranges (1kg)', emoji: '🍊', category: 'fruits', vendor: 'Citrus Valley', condition: 'Good', price: 11.00, paymentType: 'money' },
+  // Fruits - Perfect
+  { id: 'f6', name: 'Premium Strawberries (250g)', emoji: '🍓', category: 'fruits', vendor: 'BioFarm MY', condition: 'Perfect', price: 18.90, paymentType: 'money' },
+  { id: 'f7', name: 'Premium Grapes (500g)', emoji: '🍇', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Perfect', price: 22.00, paymentType: 'money' },
 
-  // Vegetables - Ugly (buy with CC coins)
+  // Vegetables - Ugly (CC)
   { id: 'v1', name: 'Wonky Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Ugly', price: 6, paymentType: 'coins' },
   { id: 'v2', name: 'Wonky Carrots (500g)', emoji: '🥕', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Ugly', price: 4, paymentType: 'coins' },
   { id: 'v3', name: 'Small Lettuce Bundle', emoji: '🥬', category: 'vegetables', vendor: 'Green Valley', condition: 'Ugly', price: 5, paymentType: 'coins' },
   { id: 'v4', name: 'Mixed Chili Pack', emoji: '🌶️', category: 'vegetables', vendor: 'Spice Garden', condition: 'Ugly', price: 7, paymentType: 'coins' },
-  // Vegetables - Good (buy with RM)
-  { id: 'v5', name: 'Premium Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Good', price: 9.90, paymentType: 'money' },
-  { id: 'v6', name: 'Organic Spinach', emoji: '🥗', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Perfect', price: 7.50, paymentType: 'money' },
-  { id: 'v7', name: 'Sweet Corn (3pcs)', emoji: '🌽', category: 'vegetables', vendor: 'Uncle Tan Farm', condition: 'Good', price: 6.00, paymentType: 'money' },
+  // Vegetables - Good (RM)
+  { id: 'v5', name: 'Good Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Good', price: 9.90, paymentType: 'money' },
+  { id: 'v6', name: 'Good Broccoli (500g)', emoji: '🥦', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Good', price: 7.50, paymentType: 'money' },
+  { id: 'v7', name: 'Good Sweet Corn (3pcs)', emoji: '🌽', category: 'vegetables', vendor: 'Uncle Tan Farm', condition: 'Good', price: 6.00, paymentType: 'money' },
+  // Vegetables - Perfect
+  { id: 'v8', name: 'Organic Spinach', emoji: '🥗', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Perfect', price: 12.50, paymentType: 'money' },
+  { id: 'v9', name: 'Premium Capsicum (3pcs)', emoji: '🫑', category: 'vegetables', vendor: 'Green Valley', condition: 'Perfect', price: 14.00, paymentType: 'money' },
 
-  // Seeds (buy with RM)
+  // Seeds (RM)
   { id: 's1', name: 'Tomato Seed Pack', emoji: '🍅', category: 'seeds', vendor: 'SeedMart', price: 2.50, paymentType: 'money' },
   { id: 's2', name: 'Carrot Seed Pack', emoji: '🥕', category: 'seeds', vendor: 'SeedMart', price: 2.00, paymentType: 'money' },
   { id: 's3', name: 'Lettuce Seed Pack', emoji: '🥬', category: 'seeds', vendor: 'SeedMart', price: 1.80, paymentType: 'money' },
   { id: 's4', name: 'Corn Seed Pack', emoji: '🌽', category: 'seeds', vendor: 'GreenGrow', price: 3.00, paymentType: 'money' },
   { id: 's5', name: 'Chili Seed Pack', emoji: '🌶️', category: 'seeds', vendor: 'GreenGrow', price: 2.50, paymentType: 'money' },
   { id: 's6', name: 'Spinach Seed Pack', emoji: '🥗', category: 'seeds', vendor: 'SeedMart', price: 1.50, paymentType: 'money' },
+  { id: 's7', name: 'Broccoli Seed Pack', emoji: '🥦', category: 'seeds', vendor: 'GreenGrow', price: 2.80, paymentType: 'money' },
+  { id: 's8', name: 'Watermelon Seed Pack', emoji: '🍉', category: 'seeds', vendor: 'SeedMart', price: 3.50, paymentType: 'money' },
 ];
 
 interface CartItem extends Product {
@@ -60,17 +72,27 @@ const categoryTabs = [
   { key: 'seeds', label: 'Seeds' },
 ] as const;
 
+const conditionTabs = [
+  { key: 'all', label: 'All Conditions' },
+  { key: 'Ugly', label: 'Ugly' },
+  { key: 'Good', label: 'Good' },
+  { key: 'Perfect', label: 'Perfect' },
+] as const;
+
 export default function MarketplacePage() {
+  const navigate = useNavigate();
   const { coins, realMoney, spendCoins, spendRealMoney, addToInventory, createDelivery, deliveryAddress } = useGameStore();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [paymentFilter, setPaymentFilter] = useState<'all' | PaymentType>('all');
+  const [conditionFilter, setConditionFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filtered = products
     .filter((p) => activeCategory === 'all' || p.category === activeCategory)
     .filter((p) => paymentFilter === 'all' || p.paymentType === paymentFilter)
+    .filter((p) => conditionFilter === 'all' || p.condition === conditionFilter || (!p.condition && conditionFilter === 'all'))
     .filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const addToCart = (product: Product) => {
@@ -103,6 +125,11 @@ export default function MarketplacePage() {
   const handleCheckout = () => {
     if (cart.length === 0) return;
 
+    if (!deliveryAddress) {
+      toast.error("Please set your delivery address on the Delivery page first!");
+      return;
+    }
+
     if (totalCoins > coins) {
       toast.error(`Not enough CC coins! You need ${totalCoins} CC but have ${coins} CC.`);
       return;
@@ -112,7 +139,6 @@ export default function MarketplacePage() {
       return;
     }
 
-    // Build items list for transaction details
     const coinItemDetails = coinItems.map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity, price: i.price, paymentType: 'coins' as const }));
     const moneyItemDetails = moneyItems.map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity, price: i.price, paymentType: 'money' as const }));
 
@@ -125,22 +151,22 @@ export default function MarketplacePage() {
       if (!success) { toast.error("Failed to deduct RM."); return; }
     }
 
-    // Add to inventory
-    cart.forEach((item) => {
-      if (item.category === 'seeds') {
-        addToInventory({ name: item.name.replace(' Pack', ''), emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
-      } else {
-        addToInventory({ name: item.name, emoji: item.emoji, category: item.category, quantity: item.quantity, description: `${item.condition} condition - from ${item.vendor}` });
-      }
+    // Seeds go to inventory, everything else goes directly to delivery
+    const seedItems = cart.filter((i) => i.category === 'seeds');
+    const deliveryCartItems = cart.filter((i) => i.category !== 'seeds');
+
+    seedItems.forEach((item) => {
+      addToInventory({ name: item.name.replace(' Pack', ''), emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
     });
 
-    // Create delivery order for non-seed items
-    const deliveryItems = cart.filter((i) => i.category !== 'seeds').map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity }));
-    if (deliveryItems.length > 0 && deliveryAddress) {
-      createDelivery(deliveryItems);
+    // Create delivery for produce (no inventory storage)
+    if (deliveryCartItems.length > 0) {
+      createDelivery(deliveryCartItems.map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity })));
     }
 
-    toast.success("🎉 Purchase successful! Items added to inventory.");
+    const seedMsg = seedItems.length > 0 ? ' Seeds added to inventory.' : '';
+    const deliveryMsg = deliveryCartItems.length > 0 ? ' Produce will be delivered to your address!' : '';
+    toast.success(`🎉 Purchase successful!${seedMsg}${deliveryMsg}`);
     setCart([]);
     setShowCart(false);
   };
@@ -165,7 +191,7 @@ export default function MarketplacePage() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Supermarket 🛒</h1>
-          <p className="text-sm text-muted-foreground">Buy real produce & seeds for your farm</p>
+          <p className="text-sm text-muted-foreground">Buy real produce & seeds — delivered to your door</p>
         </div>
         <Button
           variant="outline"
@@ -181,7 +207,7 @@ export default function MarketplacePage() {
         </Button>
       </div>
 
-      {/* Payment Filter Tabs */}
+      {/* Payment Filter */}
       <div className="flex gap-2 mb-3">
         {[
           { key: 'all', label: 'All' },
@@ -203,7 +229,7 @@ export default function MarketplacePage() {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-3">
         {categoryTabs.map((tab) => (
           <button
             key={tab.key}
@@ -218,6 +244,25 @@ export default function MarketplacePage() {
           </button>
         ))}
       </div>
+
+      {/* Condition Filter */}
+      {activeCategory !== 'seeds' && (
+        <div className="flex gap-2 mb-4">
+          {conditionTabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setConditionFilter(tab.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border ${
+                conditionFilter === tab.key
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-transparent text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Search */}
       <div className="relative mb-5">
@@ -297,7 +342,7 @@ export default function MarketplacePage() {
                 disabled={(totalCoins > coins) || (totalRM > realMoney)}
                 className="w-full mt-2 gradient-farm text-primary-foreground rounded-xl font-bold"
               >
-                Checkout 💳
+                Checkout & Deliver 📦
               </Button>
             </div>
           </motion.div>
