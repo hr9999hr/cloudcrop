@@ -28,6 +28,7 @@ export interface Transaction {
   type: 'earn' | 'spend';
   amount: number;
   description: string;
+  source?: string;
   timestamp: number;
   items?: { name: string; emoji: string; quantity: number; price: number; paymentType: 'coins' | 'money' }[];
 }
@@ -68,9 +69,9 @@ interface GameState {
   addToInventory: (item: Omit<InventoryItem, 'id'>) => void;
   removeFromInventory: (id: string, qty: number) => void;
   addCoins: (amount: number, desc: string) => void;
-  spendCoins: (amount: number, desc: string, items?: Transaction['items']) => boolean;
+  spendCoins: (amount: number, desc: string, items?: Transaction['items'], source?: string) => boolean;
   addRealMoney: (amount: number, desc: string) => void;
-  spendRealMoney: (amount: number, desc: string, items?: Transaction['items']) => boolean;
+  spendRealMoney: (amount: number, desc: string, items?: Transaction['items'], source?: string) => boolean;
   setDeliveryAddress: (address: string) => void;
   createDelivery: (items: DeliveryOrder['items']) => void;
   updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
@@ -173,7 +174,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         coins: s.coins + earned,
         plants: resetPlant,
         transactions: [
-          { id: Date.now().toString(), type: 'earn', amount: earned, description: `Sold ${harvestQty}x ${plant.plantName}`, timestamp: Date.now() },
+          { id: Date.now().toString(), type: 'earn', amount: earned, description: `Sold ${harvestQty}x ${plant.plantName}`, source: 'Garden', timestamp: Date.now() },
           ...s.transactions,
         ],
       });
@@ -220,12 +221,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     transactions: [{ id: Date.now().toString(), type: 'earn', amount, description: desc, timestamp: Date.now() }, ...s.transactions],
   })),
 
-  spendCoins: (amount, desc, items) => {
+  spendCoins: (amount, desc, items, source) => {
     const s = get();
     if (s.coins < amount) return false;
     set({
       coins: s.coins - amount,
-      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: desc, timestamp: Date.now(), items }, ...s.transactions],
+      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: desc, source, timestamp: Date.now(), items }, ...s.transactions],
     });
     return true;
   },
@@ -235,12 +236,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     transactions: [{ id: Date.now().toString(), type: 'earn', amount, description: `[RM] ${desc}`, timestamp: Date.now() }, ...s.transactions],
   })),
 
-  spendRealMoney: (amount, desc, items) => {
+  spendRealMoney: (amount, desc, items, source) => {
     const s = get();
     if (s.realMoney < amount) return false;
     set({
       realMoney: s.realMoney - amount,
-      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: `[RM] ${desc}`, timestamp: Date.now(), items }, ...s.transactions],
+      transactions: [{ id: Date.now().toString(), type: 'spend', amount, description: `[RM] ${desc}`, source, timestamp: Date.now(), items }, ...s.transactions],
     });
     return true;
   },
