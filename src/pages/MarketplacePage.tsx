@@ -143,11 +143,11 @@ export default function MarketplacePage() {
     const moneyItemDetails = moneyItems.map((i) => ({ name: i.name, emoji: i.emoji, quantity: i.quantity, price: i.price, paymentType: 'money' as const }));
 
     if (totalCoins > 0) {
-      const success = spendCoins(totalCoins, `Supermarket purchase (${coinItems.length} items)`, coinItemDetails);
+      const success = spendCoins(totalCoins, `Supermarket purchase (${coinItems.length} items)`, coinItemDetails, 'Supermarket');
       if (!success) { toast.error("Failed to deduct CC coins."); return; }
     }
     if (totalRM > 0) {
-      const success = spendRealMoney(totalRM, `Supermarket purchase (${moneyItems.length} items)`, moneyItemDetails);
+      const success = spendRealMoney(totalRM, `Supermarket purchase (${moneyItems.length} items)`, moneyItemDetails, 'Supermarket');
       if (!success) { toast.error("Failed to deduct RM."); return; }
     }
 

@@ -97,7 +97,10 @@ export function AppSidebar() {
       <SidebarFooter>
         {/* User profile */}
         <div className={`px-3 py-2 ${collapsed ? 'flex justify-center' : ''}`}>
-          <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/settings")}
+            className="flex items-center gap-3 w-full text-left rounded-lg hover:bg-sidebar-accent/50 transition-colors p-1"
+          >
             <div className="h-9 w-9 rounded-full bg-sidebar-accent flex items-center justify-center text-xs font-bold text-sidebar-primary flex-shrink-0">
               {initials}
             </div>
@@ -107,7 +110,7 @@ export function AppSidebar() {
                 <p className="text-xs text-sidebar-foreground/60 truncate">{user?.email}</p>
               </div>
             )}
-          </div>
+          </button>
         </div>
 
         {/* Logout */}
