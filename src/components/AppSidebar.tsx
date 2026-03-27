@@ -21,7 +21,7 @@ const items = [
   { title: "Garden", url: "/", icon: Home, emoji: "🌱" },
   { title: "Inventory", url: "/inventory", icon: Backpack, emoji: "🎒" },
   { title: "Fertilizer Shop", url: "/fertilizer", icon: Beaker, emoji: "💊" },
-  { title: "Marketplace", url: "/marketplace", icon: ShoppingCart, emoji: "🛒" },
+  { title: "Supermarket", url: "/marketplace", icon: ShoppingCart, emoji: "🛒" },
   { title: "Wallet", url: "/wallet", icon: Wallet, emoji: "💰" },
   { title: "Settings", url: "/settings", icon: Settings, emoji: "⚙️" },
 ];
