@@ -10,7 +10,7 @@ import ccCoin from "@/assets/cc-coin.png";
 
 type PaymentType = 'coins' | 'money';
 type ProductCategory = 'fruits' | 'vegetables' | 'seeds';
-type ConditionType = 'Ugly' | 'Good' | 'Perfect';
+type ConditionType = 'Basic' | 'Good' | 'Perfect';
 
 interface Product {
   id: string;
@@ -24,11 +24,11 @@ interface Product {
 }
 
 const products: Product[] = [
-  // Fruits - Ugly (CC or RM)
-  { id: 'f1', name: 'Ugly Apples (1kg)', emoji: '🍎', category: 'fruits', vendor: 'Pak Ali Farm', condition: 'Ugly', price: 8, paymentType: 'coins' },
-  { id: 'f2', name: 'Ugly Bananas (1kg)', emoji: '🍌', category: 'fruits', vendor: 'Green Valley', condition: 'Ugly', price: 5, paymentType: 'coins' },
-  { id: 'f3', name: 'Ugly Mangoes (500g)', emoji: '🥭', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Ugly', price: 12, paymentType: 'coins' },
-  { id: 'f3b', name: 'Ugly Watermelon (1pc)', emoji: '🍉', category: 'fruits', vendor: 'Uncle Tan Farm', condition: 'Ugly', price: 10, paymentType: 'coins' },
+  // Fruits - Basic (CC or RM)
+  { id: 'f1', name: 'Basic Apples (1kg)', emoji: '🍎', category: 'fruits', vendor: 'Pak Ali Farm', condition: 'Basic', price: 8, paymentType: 'coins' },
+  { id: 'f2', name: 'Basic Bananas (1kg)', emoji: '🍌', category: 'fruits', vendor: 'Green Valley', condition: 'Basic', price: 5, paymentType: 'coins' },
+  { id: 'f3', name: 'Basic Mangoes (500g)', emoji: '🥭', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Basic', price: 12, paymentType: 'coins' },
+  { id: 'f3b', name: 'Basic Watermelon (1pc)', emoji: '🍉', category: 'fruits', vendor: 'Uncle Tan Farm', condition: 'Basic', price: 10, paymentType: 'coins' },
   // Fruits - Good
   { id: 'f4', name: 'Good Apples (1kg)', emoji: '🍎', category: 'fruits', vendor: 'Pak Ali Farm', condition: 'Good', price: 12.90, paymentType: 'money' },
   { id: 'f5', name: 'Good Bananas (1kg)', emoji: '🍌', category: 'fruits', vendor: 'Green Valley', condition: 'Good', price: 8.50, paymentType: 'money' },
@@ -37,11 +37,11 @@ const products: Product[] = [
   { id: 'f6', name: 'Premium Strawberries (250g)', emoji: '🍓', category: 'fruits', vendor: 'BioFarm MY', condition: 'Perfect', price: 18.90, paymentType: 'money' },
   { id: 'f7', name: 'Premium Grapes (500g)', emoji: '🍇', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Perfect', price: 22.00, paymentType: 'money' },
 
-  // Vegetables - Ugly (CC)
-  { id: 'v1', name: 'Wonky Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Ugly', price: 6, paymentType: 'coins' },
-  { id: 'v2', name: 'Wonky Carrots (500g)', emoji: '🥕', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Ugly', price: 4, paymentType: 'coins' },
-  { id: 'v3', name: 'Small Lettuce Bundle', emoji: '🥬', category: 'vegetables', vendor: 'Green Valley', condition: 'Ugly', price: 5, paymentType: 'coins' },
-  { id: 'v4', name: 'Mixed Chili Pack', emoji: '🌶️', category: 'vegetables', vendor: 'Spice Garden', condition: 'Ugly', price: 7, paymentType: 'coins' },
+  // Vegetables - Basic (CC)
+  { id: 'v1', name: 'Wonky Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Basic', price: 6, paymentType: 'coins' },
+  { id: 'v2', name: 'Wonky Carrots (500g)', emoji: '🥕', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Basic', price: 4, paymentType: 'coins' },
+  { id: 'v3', name: 'Small Lettuce Bundle', emoji: '🥬', category: 'vegetables', vendor: 'Green Valley', condition: 'Basic', price: 5, paymentType: 'coins' },
+  { id: 'v4', name: 'Mixed Chili Pack', emoji: '🌶️', category: 'vegetables', vendor: 'Spice Garden', condition: 'Basic', price: 7, paymentType: 'coins' },
   // Vegetables - Good (RM)
   { id: 'v5', name: 'Good Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Good', price: 9.90, paymentType: 'money' },
   { id: 'v6', name: 'Good Broccoli (500g)', emoji: '🥦', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Good', price: 7.50, paymentType: 'money' },
@@ -72,7 +72,7 @@ const categoryTabs = [
 
 const conditionTabs = [
   { key: 'all', label: 'All Conditions' },
-  { key: 'Ugly', label: 'Ugly' },
+  { key: 'Basic', label: 'Basic' },
   { key: 'Good', label: 'Good' },
   { key: 'Perfect', label: 'Perfect' },
 ] as const;
@@ -163,7 +163,7 @@ export default function MarketplacePage() {
   const conditionBadge = (condition?: string) => {
     if (!condition) return null;
     const colors: Record<string, string> = {
-      Ugly: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+      Basic: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
       Good: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
       Perfect: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400',
     };
