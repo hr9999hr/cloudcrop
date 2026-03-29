@@ -220,6 +220,27 @@ export default function WalletPage() {
                                 ))}
                               </>
                             )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full rounded-xl text-xs mt-2 gap-1.5"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const invoiceNo = `CC-${new Date(tx.timestamp).getFullYear()}${String(new Date(tx.timestamp).getMonth() + 1).padStart(2, '0')}-${tx.id.slice(0, 4).toUpperCase()}`;
+                                generateTransactionInvoicePdf({
+                                  invoiceNo,
+                                  type: tx.type,
+                                  amount: tx.amount,
+                                  description: tx.description,
+                                  source: tx.source,
+                                  timestamp: tx.timestamp,
+                                  items: tx.items,
+                                });
+                              }}
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              Download Invoice (PDF)
+                            </Button>
                           </div>
                         </motion.div>
                       )}
