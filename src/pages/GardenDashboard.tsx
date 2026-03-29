@@ -8,8 +8,6 @@ import { PlantDetailPopup } from "@/components/PlantDetailPopup";
 import { motion } from "framer-motion";
 import { Star, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
-import barnImg from "@/assets/farm/barn.png";
-import treeImg from "@/assets/farm/tree.png";
 import soilPlot from "@/assets/farm/soil-plot.png";
 
 export default function GardenDashboard() {
@@ -107,29 +105,6 @@ export default function GardenDashboard() {
           style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '14px 14px' }}
         />
 
-        {/* Decorative elements - barn & trees */}
-        <div className="relative z-10 flex items-start justify-between mb-2">
-          <motion.img
-            src={treeImg}
-            alt="Tree"
-            className="w-16 h-16 object-contain -mt-2 -ml-1"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            loading="lazy"
-            width={64}
-            height={64}
-          />
-          <motion.img
-            src={barnImg}
-            alt="Barn"
-            className="w-20 h-20 object-contain -mt-3 -mr-1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            loading="lazy"
-            width={80}
-            height={80}
-          />
-        </div>
 
         {/* Farm label */}
         <div className="relative z-10 flex justify-center mb-3">
@@ -181,16 +156,6 @@ export default function GardenDashboard() {
           </div>
         </div>
 
-        {/* Bottom decorative trees */}
-        <div className="relative z-10 flex justify-between items-end mt-2 px-2">
-          <motion.img src={treeImg} alt="Tree" className="w-12 h-12 object-contain" loading="lazy" width={48} height={48} />
-          <div className="flex gap-2 items-end">
-            <span className="text-base">🐔</span>
-            <span className="text-lg">🐄</span>
-            <span className="text-base">🐔</span>
-          </div>
-          <motion.img src={treeImg} alt="Tree" className="w-14 h-14 object-contain -scale-x-100" loading="lazy" width={56} height={56} />
-        </div>
       </div>
 
       <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
