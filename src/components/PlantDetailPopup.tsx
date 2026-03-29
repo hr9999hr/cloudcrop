@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Droplets, Beaker, Bug, Shield } from "lucide-react";
 import { PlantSlot, useGameStore } from "@/store/gameStore";
+import { useNavigate } from "react-router-dom";
 
 interface PlantDetailPopupProps {
   open: boolean;
@@ -11,7 +12,9 @@ interface PlantDetailPopupProps {
 
 export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps) {
   const { waterPlant, fertilizePlant, waterDrops, inventory } = useGameStore();
-  const hasFertilizer = inventory.some((i) => i.category === 'fertilizers' && i.quantity > 0);
+  const navigate = useNavigate();
+  const fertilizerCount = inventory.filter(i => i.category === 'fertilizers').reduce((a, i) => a + i.quantity, 0);
+  const hasFertilizer = fertilizerCount > 0;
 
   if (!open || !plant || plant.status === 'empty') return null;
 
@@ -33,9 +36,16 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
       icon: <Beaker className="w-5 h-5" />,
       color: 'text-primary',
       bg: 'bg-primary/10',
-      disabled: !hasFertilizer || isReady,
-      onClick: () => fertilizePlant(plant.id),
-      subtitle: `${inventory.filter(i => i.category === 'fertilizers').reduce((a, i) => a + i.quantity, 0)} bags`,
+      disabled: isReady,
+      onClick: () => {
+        if (!hasFertilizer) {
+          onClose();
+          navigate('/fertilizer');
+        } else {
+          fertilizePlant(plant.id);
+        }
+      },
+      subtitle: hasFertilizer ? `${fertilizerCount} bags` : 'Buy fertilizer →',
     },
     {
       label: 'Pest & Disease Control',
