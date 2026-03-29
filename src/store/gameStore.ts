@@ -114,6 +114,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   deliveryAddress: '',
   hasSeenWelcome: false,
   dailyLoginClaimed: false,
+  farmerLevel: 1,
+  totalHarvests: 0,
 
   setHasSeenWelcome: (v) => set({ hasSeenWelcome: v }),
 
