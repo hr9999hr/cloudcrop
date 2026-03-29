@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_states: {
+        Row: {
+          coins: number
+          created_at: string
+          daily_login_claimed: boolean
+          deliveries: Json
+          delivery_address: string
+          farmer_level: number
+          has_seen_welcome: boolean
+          id: string
+          inventory: Json
+          plants: Json
+          real_money: number
+          total_harvests: number
+          transactions: Json
+          updated_at: string
+          user_id: string
+          water_drops: number
+        }
+        Insert: {
+          coins?: number
+          created_at?: string
+          daily_login_claimed?: boolean
+          deliveries?: Json
+          delivery_address?: string
+          farmer_level?: number
+          has_seen_welcome?: boolean
+          id?: string
+          inventory?: Json
+          plants?: Json
+          real_money?: number
+          total_harvests?: number
+          transactions?: Json
+          updated_at?: string
+          user_id: string
+          water_drops?: number
+        }
+        Update: {
+          coins?: number
+          created_at?: string
+          daily_login_claimed?: boolean
+          deliveries?: Json
+          delivery_address?: string
+          farmer_level?: number
+          has_seen_welcome?: boolean
+          id?: string
+          inventory?: Json
+          plants?: Json
+          real_money?: number
+          total_harvests?: number
+          transactions?: Json
+          updated_at?: string
+          user_id?: string
+          water_drops?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
