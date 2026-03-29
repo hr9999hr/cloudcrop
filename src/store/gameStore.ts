@@ -178,7 +178,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const plant = s.plants.find((p) => p.id === slotId);
     if (!plant || plant.status !== 'ready') return { coins: 0, plantName: '', emoji: '', quantity: 0 };
     const earned = plant.yieldCoins;
-    const harvestQty = Math.max(1, Math.floor(plant.progress / 20)); // quantity based on health
+    const harvestQty = Math.max(1, Math.floor(plant.progress / 20));
 
     const resetPlant = s.plants.map((p) =>
       p.id === slotId
@@ -186,24 +186,42 @@ export const useGameStore = create<GameState>((set, get) => ({
         : p
     );
 
+    // Level up logic
+    const newTotalHarvests = s.totalHarvests + 1;
+    let newLevel = s.farmerLevel;
+    for (const cfg of LEVEL_CONFIG) {
+      if (newTotalHarvests >= cfg.harvestsNeeded) newLevel = cfg.level;
+    }
+    // Expand slots if leveled up
+    let newPlants = resetPlant;
+    const targetSlots = getSlotsForLevel(newLevel);
+    if (targetSlots > newPlants.length) {
+      for (let i = newPlants.length + 1; i <= targetSlots; i++) {
+        newPlants = [...newPlants, makeEmptySlot(i)];
+      }
+    }
+
     if (action === 'sell') {
       set({
         coins: s.coins + earned,
-        plants: resetPlant,
+        plants: newPlants,
+        totalHarvests: newTotalHarvests,
+        farmerLevel: newLevel,
         transactions: [
           { id: Date.now().toString(), type: 'earn', amount: earned, description: `Sold ${harvestQty}x ${plant.plantName}`, source: 'Garden', timestamp: Date.now() },
           ...s.transactions,
         ],
       });
     } else {
-      // Put in bag - add to inventory as fruits/vegetables
       const existingItem = s.inventory.find((i) => i.name === plant.plantName && i.category === 'fruits');
       const newInventory = existingItem
         ? s.inventory.map((i) => i.name === plant.plantName && i.category === 'fruits' ? { ...i, quantity: i.quantity + harvestQty } : i)
         : [...s.inventory, { id: `harvest-${Date.now()}`, name: plant.plantName!, emoji: plant.plantEmoji!, category: 'fruits' as const, quantity: harvestQty, description: `Freshly harvested ${plant.plantName}` }];
       set({
-        plants: resetPlant,
+        plants: newPlants,
         inventory: newInventory,
+        totalHarvests: newTotalHarvests,
+        farmerLevel: newLevel,
       });
     }
     return { coins: action === 'sell' ? earned : 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: harvestQty };
