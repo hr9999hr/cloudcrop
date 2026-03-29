@@ -36,7 +36,6 @@ export default function FertilizerPage() {
     toast.success(`Added ${qty} fertilizer bag${qty > 1 ? 's' : ''} to inventory!`);
     setConfirmQty(null);
   };
-  };
 
   return (
     <div className="max-w-lg mx-auto">
