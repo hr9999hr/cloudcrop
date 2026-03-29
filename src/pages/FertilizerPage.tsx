@@ -1,8 +1,19 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useGameStore } from "@/store/gameStore";
 import { toast } from "sonner";
 import fertilizerBag from "@/assets/fertilizer-bag.png";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const packages = [
   { qty: 1, price: 'RM 2.00', label: '1 Bag', icons: 1 },

@@ -6,6 +6,16 @@ import { Input } from "@/components/ui/input";
 import { ShoppingCart, Plus, Minus, X, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useGameStore } from "@/store/gameStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ccCoin from "@/assets/cc-coin.png";
 
 type PaymentType = 'coins' | 'money';
