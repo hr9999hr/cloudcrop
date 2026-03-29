@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ChevronDown, ChevronUp, X, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ccCoin from "@/assets/cc-coin.png";
+import { generateInvoicePdf, generateSummaryReportPdf } from "@/lib/generateInvoicePdf";
 
 interface MonthlyReportProps {
   transactions: Transaction[];
@@ -49,20 +50,41 @@ function groupByMonth(transactions: Transaction[]): MonthData[] {
       const rmSpent = rmTxs.filter(t => t.type === 'spend').reduce((s, t) => s + t.amount, 0);
 
       return {
-        key,
-        label,
-        year,
-        month,
-        txs,
-        ccEarned,
-        ccSpent,
-        rmEarned,
-        rmSpent,
+        key, label, year, month, txs,
+        ccEarned, ccSpent, rmEarned, rmSpent,
         netCC: ccEarned - ccSpent,
         netRM: rmEarned - rmSpent,
         totalTxs: txs.length,
       };
     });
+}
+
+function getInvoiceItems(txs: Transaction[]) {
+  const spendTxs = txs.filter(t => t.type === 'spend');
+  const allItems: { name: string; emoji: string; qty: number; price: number; paymentType: string }[] = [];
+
+  spendTxs.forEach(tx => {
+    if (tx.items) {
+      tx.items.forEach(item => {
+        allItems.push({ name: item.name, emoji: item.emoji, qty: item.quantity, price: item.price * item.quantity, paymentType: item.paymentType });
+      });
+    } else {
+      const isRM = tx.description.startsWith('[RM]');
+      allItems.push({
+        name: isRM ? tx.description.replace('[RM] ', '') : tx.description,
+        emoji: '📦', qty: 1, price: tx.amount,
+        paymentType: isRM ? 'money' : 'coins',
+      });
+    }
+  });
+
+  const ccItems = allItems.filter(i => i.paymentType === 'coins');
+  const rmItems = allItems.filter(i => i.paymentType === 'money');
+  return { ccItems, rmItems, totalCCSpent: ccItems.reduce((s, i) => s + i.price, 0), totalRMSpent: rmItems.reduce((s, i) => s + i.price, 0) };
+}
+
+function generateInvoiceNo(month: MonthData) {
+  return `CC-${month.year}${String(month.month).padStart(2, '0')}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 }
 
 export function MonthlyReport({ transactions }: MonthlyReportProps) {
@@ -79,8 +101,20 @@ export function MonthlyReport({ transactions }: MonthlyReportProps) {
     );
   }
 
+  const handleDownloadReport = () => {
+    generateSummaryReportPdf(months);
+  };
+
   return (
     <>
+      {/* Download full report button */}
+      <div className="mb-3">
+        <Button variant="outline" size="sm" className="w-full rounded-xl text-xs" onClick={handleDownloadReport}>
+          <Download className="w-3.5 h-3.5 mr-1.5" />
+          Download Full Summary Report (PDF)
+        </Button>
+      </div>
+
       <div className="space-y-2">
         {months.map((m) => {
           const isExpanded = selectedMonth === m.key;
@@ -117,7 +151,6 @@ export function MonthlyReport({ transactions }: MonthlyReportProps) {
                     className="border-t border-border overflow-hidden"
                   >
                     <div className="p-4 space-y-3">
-                      {/* Summary Grid */}
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-muted rounded-lg p-2.5">
                           <p className="text-[10px] text-muted-foreground font-semibold">CC Earned</p>
@@ -137,7 +170,6 @@ export function MonthlyReport({ transactions }: MonthlyReportProps) {
                         </div>
                       </div>
 
-                      {/* Recent txs preview */}
                       <div>
                         <p className="text-xs font-bold text-muted-foreground mb-1.5">Transactions ({m.totalTxs})</p>
                         <div className="space-y-1 max-h-40 overflow-y-auto">
@@ -162,15 +194,32 @@ export function MonthlyReport({ transactions }: MonthlyReportProps) {
                         </div>
                       </div>
 
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full rounded-xl text-xs"
-                        onClick={() => setInvoiceMonth(m)}
-                      >
-                        <FileText className="w-3.5 h-3.5 mr-1.5" />
-                        View Invoice
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 rounded-xl text-xs"
+                          onClick={() => setInvoiceMonth(m)}
+                        >
+                          <FileText className="w-3.5 h-3.5 mr-1.5" />
+                          View Invoice
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-xl text-xs"
+                          onClick={() => {
+                            const { ccItems, rmItems, totalCCSpent, totalRMSpent } = getInvoiceItems(m.txs);
+                            generateInvoicePdf({
+                              ...m,
+                              invoiceNo: generateInvoiceNo(m),
+                              ccItems, rmItems, totalCCSpent, totalRMSpent,
+                            });
+                          }}
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -191,33 +240,16 @@ export function MonthlyReport({ transactions }: MonthlyReportProps) {
 }
 
 function InvoiceModal({ month, onClose }: { month: MonthData; onClose: () => void }) {
-  const invoiceNo = `CC-${month.year}${String(month.month).padStart(2, '0')}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+  const [invoiceNo] = useState(() => generateInvoiceNo(month));
+  const { ccItems, rmItems, totalCCSpent, totalRMSpent } = useMemo(() => getInvoiceItems(month.txs), [month.txs]);
 
-  // Group spending transactions by source
-  const spendTxs = month.txs.filter(t => t.type === 'spend');
-  const allItems: { name: string; emoji: string; qty: number; price: number; paymentType: string }[] = [];
-
-  spendTxs.forEach(tx => {
-    if (tx.items) {
-      tx.items.forEach(item => {
-        allItems.push({ name: item.name, emoji: item.emoji, qty: item.quantity, price: item.price * item.quantity, paymentType: item.paymentType });
-      });
-    } else {
-      const isRM = tx.description.startsWith('[RM]');
-      allItems.push({
-        name: isRM ? tx.description.replace('[RM] ', '') : tx.description,
-        emoji: '📦',
-        qty: 1,
-        price: tx.amount,
-        paymentType: isRM ? 'money' : 'coins',
-      });
-    }
-  });
-
-  const ccItems = allItems.filter(i => i.paymentType === 'coins');
-  const rmItems = allItems.filter(i => i.paymentType === 'money');
-  const totalCCSpent = ccItems.reduce((s, i) => s + i.price, 0);
-  const totalRMSpent = rmItems.reduce((s, i) => s + i.price, 0);
+  const handleDownload = () => {
+    generateInvoicePdf({
+      ...month,
+      invoiceNo,
+      ccItems, rmItems, totalCCSpent, totalRMSpent,
+    });
+  };
 
   return (
     <motion.div
@@ -347,9 +379,15 @@ function InvoiceModal({ month, onClose }: { month: MonthData; onClose: () => voi
           <p className="text-[10px] text-muted-foreground mb-3">
             Exchange rate: 100 CC = RM 1.00 · Generated by CloudCrop
           </p>
-          <Button variant="outline" onClick={onClose} className="rounded-xl w-full">
-            Close Invoice
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose} className="rounded-xl flex-1">
+              Close
+            </Button>
+            <Button onClick={handleDownload} className="rounded-xl flex-1 gap-1.5">
+              <Download className="w-4 h-4" />
+              Download PDF
+            </Button>
+          </div>
         </div>
       </motion.div>
     </motion.div>
