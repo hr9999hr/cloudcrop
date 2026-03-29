@@ -44,6 +44,7 @@ export function useGameSync() {
             transactions: (data.transactions as any[]) || [],
             deliveries: (data.deliveries as any[]) || [],
             deliveryAddress: data.delivery_address || "",
+            cart: (data.cart as any[]) || [],
             hasSeenWelcome: data.has_seen_welcome ?? false,
             dailyLoginClaimed: data.daily_login_claimed ?? false,
           });
@@ -62,6 +63,7 @@ export function useGameSync() {
             transactions: state.transactions as any,
             deliveries: state.deliveries as any,
             delivery_address: state.deliveryAddress,
+            cart: state.cart as any,
             has_seen_welcome: state.hasSeenWelcome,
             daily_login_claimed: state.dailyLoginClaimed,
           });
@@ -99,6 +101,7 @@ export function useGameSync() {
               transactions: state.transactions as any,
               deliveries: state.deliveries as any,
               delivery_address: state.deliveryAddress,
+              cart: state.cart as any,
               has_seen_welcome: state.hasSeenWelcome,
               daily_login_claimed: state.dailyLoginClaimed,
             })

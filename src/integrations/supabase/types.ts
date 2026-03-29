@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       game_states: {
         Row: {
+          cart: Json
           coins: number
           created_at: string
           daily_login_claimed: boolean
@@ -34,6 +35,7 @@ export type Database = {
           water_drops: number
         }
         Insert: {
+          cart?: Json
           coins?: number
           created_at?: string
           daily_login_claimed?: boolean
@@ -52,6 +54,7 @@ export type Database = {
           water_drops?: number
         }
         Update: {
+          cart?: Json
           coins?: number
           created_at?: string
           daily_login_claimed?: boolean

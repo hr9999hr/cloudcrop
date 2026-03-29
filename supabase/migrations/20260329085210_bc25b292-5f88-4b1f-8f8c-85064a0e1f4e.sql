@@ -1,0 +1,1 @@
+ALTER TABLE public.game_states ADD COLUMN cart jsonb NOT NULL DEFAULT '[]'::jsonb;

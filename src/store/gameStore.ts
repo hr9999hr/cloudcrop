@@ -44,6 +44,17 @@ export interface DeliveryOrder {
   estimatedMinutes: number;
   completedAt?: number;
 }
+export interface CartItem {
+  id: string;
+  name: string;
+  emoji: string;
+  category: string;
+  vendor: string;
+  price: number;
+  paymentType: 'coins' | 'money';
+  condition?: string;
+  quantity: number;
+}
 
 interface GameState {
   coins: number;
@@ -55,6 +66,7 @@ interface GameState {
   transactions: Transaction[];
   deliveries: DeliveryOrder[];
   deliveryAddress: string;
+  cart: CartItem[];
   hasSeenWelcome: boolean;
   dailyLoginClaimed: boolean;
   farmerLevel: number;
@@ -78,6 +90,10 @@ interface GameState {
   createDelivery: (items: DeliveryOrder['items']) => void;
   updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
   topUpRealMoney: (amount: number) => void;
+  addToCart: (item: Omit<CartItem, 'quantity'>) => void;
+  updateCartQty: (id: string, delta: number) => void;
+  removeFromCart: (id: string) => void;
+  clearCart: () => void;
 }
 
 const SEED_OPTIONS = [
@@ -125,6 +141,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   transactions: [],
   deliveries: [],
   deliveryAddress: '',
+  cart: [],
   hasSeenWelcome: false,
   dailyLoginClaimed: false,
   farmerLevel: 1,
@@ -310,4 +327,22 @@ export const useGameStore = create<GameState>((set, get) => ({
       ...s.transactions,
     ],
   })),
+
+  addToCart: (item) => set((s) => {
+    const existing = s.cart.find((c) => c.id === item.id);
+    if (existing) {
+      return { cart: s.cart.map((c) => c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c) };
+    }
+    return { cart: [...s.cart, { ...item, quantity: 1 }] };
+  }),
+
+  updateCartQty: (id, delta) => set((s) => ({
+    cart: s.cart.map((c) => c.id === id ? { ...c, quantity: Math.max(0, c.quantity + delta) } : c).filter((c) => c.quantity > 0),
+  })),
+
+  removeFromCart: (id) => set((s) => ({
+    cart: s.cart.filter((c) => c.id !== id),
+  })),
+
+  clearCart: () => set({ cart: [] }),
 }));
