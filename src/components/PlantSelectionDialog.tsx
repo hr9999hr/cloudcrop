@@ -11,7 +11,7 @@ interface PlantSelectionDialogProps {
 }
 
 export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDialogProps) {
-  const { plantSeed, inventory, removeFromInventory } = useGameStore();
+  const { plantSeed, inventory } = useGameStore();
   const [selectedSeed, setSelectedSeed] = useState<string | null>(null);
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
@@ -19,11 +19,9 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
   const handleConfirmPlant = () => {
     if (!selectedSeed) return;
     const seedOption = SEED_OPTIONS.find((s) => selectedSeed.includes(s.name));
-    const invItem = availableSeeds.find((i) => i.name.includes(seedOption?.name || ''));
-    if (!seedOption || !invItem) return;
+    if (!seedOption) return;
 
     plantSeed(slotId, seedOption.name, seedOption.emoji, seedOption.durationMs, seedOption.yieldCoins);
-    removeFromInventory(invItem.id, 1);
     setSelectedSeed(null);
     onClose();
   };
