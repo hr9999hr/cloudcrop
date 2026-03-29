@@ -18,6 +18,7 @@ export default function GardenDashboard() {
   const [harvestSlot, setHarvestSlot] = useState<{ slotId: number; plantName: string; emoji: string; yieldCoins: number; quantity: number } | null>(null);
   const [levelUpLevel, setLevelUpLevel] = useState<number | null>(null);
   const prevLevel = useRef(farmerLevel);
+  const isInitialLoad = useRef(true);
 
   const harvestPlant = useGameStore((s) => s.harvestPlant);
 
@@ -27,6 +28,11 @@ export default function GardenDashboard() {
   }, [updateProgress]);
 
   useEffect(() => {
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      prevLevel.current = farmerLevel;
+      return;
+    }
     if (farmerLevel > prevLevel.current) {
       setLevelUpLevel(farmerLevel);
     }
