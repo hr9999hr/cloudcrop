@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useGameStore, Transaction } from "@/store/gameStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Banknote, Plus, X, ChevronDown, ChevronUp, ShoppingCart, Sprout, Store } from "lucide-react";
+import { Banknote, Plus, X, ChevronDown, ChevronUp, ShoppingCart, Sprout, Store, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ccCoin from "@/assets/cc-coin.png";
+import { MonthlyReport } from "@/components/MonthlyReport";
 
 function getTransactionTitle(tx: Transaction) {
   if (tx.items && tx.items.length > 0) {
@@ -32,6 +33,7 @@ export default function WalletPage() {
   const [showTopUp, setShowTopUp] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState('');
   const [expandedTx, setExpandedTx] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'transactions' | 'report'>('transactions');
 
   const ccTransactions = transactions.filter((t) => !t.description.startsWith('[RM]'));
   const rmTransactions = transactions.filter((t) => t.description.startsWith('[RM]'));
@@ -124,84 +126,109 @@ export default function WalletPage() {
         </div>
       </div>
 
-      <h2 className="font-bold text-foreground mb-3">Transaction History</h2>
-      {transactions.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <span className="text-3xl block mb-2">📋</span>
-          <p className="text-sm">No transactions yet. Start farming!</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {transactions.map((tx) => {
-            const isRM = tx.description.startsWith('[RM]');
-            const title = getTransactionTitle(tx);
-            const hasItems = tx.items && tx.items.length > 0;
-            const isExpanded = expandedTx === tx.id;
+      {/* Tab Switcher */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setActiveTab('transactions')}
+          className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors border ${
+            activeTab === 'transactions' ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:bg-accent'
+          }`}
+        >
+          Transaction History
+        </button>
+        <button
+          onClick={() => setActiveTab('report')}
+          className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors border flex items-center justify-center gap-1.5 ${
+            activeTab === 'report' ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:bg-accent'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" /> Monthly Report
+        </button>
+      </div>
 
-            return (
-              <div key={tx.id} className="bg-card border rounded-xl overflow-hidden">
-                <button
-                  onClick={() => (hasItems || tx.source) && setExpandedTx(isExpanded ? null : tx.id)}
-                  className={`w-full flex items-center gap-3 p-3 text-left ${(hasItems || tx.source) ? 'cursor-pointer hover:bg-accent/50' : 'cursor-default'}`}
-                >
-                  {isRM ? (
-                    <Banknote className="w-5 h-5 text-money flex-shrink-0" />
-                  ) : (
-                    <img src={ccCoin} alt="CC" className="w-5 h-5 flex-shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(tx.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                  <span className={`font-bold text-sm whitespace-nowrap ${tx.type === 'earn' ? 'text-growth' : 'text-destructive'}`}>
-                    {tx.type === 'earn' ? '+' : '-'}{isRM ? `RM ${tx.amount.toFixed(2)}` : tx.amount}
-                  </span>
-                  {(hasItems || tx.source) && (
-                    isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  )}
-                </button>
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-border overflow-hidden"
+      {activeTab === 'report' ? (
+        <MonthlyReport transactions={transactions} />
+      ) : (
+        <>
+          {transactions.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <span className="text-3xl block mb-2">📋</span>
+              <p className="text-sm">No transactions yet. Start farming!</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {transactions.map((tx) => {
+                const isRM = tx.description.startsWith('[RM]');
+                const title = getTransactionTitle(tx);
+                const hasItems = tx.items && tx.items.length > 0;
+                const isExpanded = expandedTx === tx.id;
+
+                return (
+                  <div key={tx.id} className="bg-card border rounded-xl overflow-hidden">
+                    <button
+                      onClick={() => (hasItems || tx.source) && setExpandedTx(isExpanded ? null : tx.id)}
+                      className={`w-full flex items-center gap-3 p-3 text-left ${(hasItems || tx.source) ? 'cursor-pointer hover:bg-accent/50' : 'cursor-default'}`}
                     >
-                      <div className="p-3 space-y-2">
-                        {tx.source && (
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            {getSourceIcon(tx.source)}
-                            <span>Purchased from <span className="font-bold text-foreground">{tx.source}</span></span>
-                          </div>
-                        )}
-                        {hasItems && (
-                          <>
-                            <p className="text-xs font-bold text-muted-foreground">Items:</p>
-                            {tx.items!.map((item, i) => (
-                              <div key={i} className="flex items-center justify-between text-sm">
-                                <div className="flex items-center gap-2">
-                                  <span>{item.emoji}</span>
-                                  <span className="text-foreground">{item.name}</span>
-                                  <span className="text-muted-foreground text-xs">x{item.quantity}</span>
-                                </div>
-                                <span className="text-xs font-semibold text-muted-foreground">
-                                  {item.paymentType === 'coins' ? `${item.price * item.quantity} CC` : `RM ${(item.price * item.quantity).toFixed(2)}`}
-                                </span>
-                              </div>
-                            ))}
-                          </>
-                        )}
+                      {isRM ? (
+                        <Banknote className="w-5 h-5 text-money flex-shrink-0" />
+                      ) : (
+                        <img src={ccCoin} alt="CC" className="w-5 h-5 flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(tx.timestamp).toLocaleString()}
+                        </p>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
+                      <span className={`font-bold text-sm whitespace-nowrap ${tx.type === 'earn' ? 'text-growth' : 'text-destructive'}`}>
+                        {tx.type === 'earn' ? '+' : '-'}{isRM ? `RM ${tx.amount.toFixed(2)}` : tx.amount}
+                      </span>
+                      {(hasItems || tx.source) && (
+                        isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      )}
+                    </button>
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="border-t border-border overflow-hidden"
+                        >
+                          <div className="p-3 space-y-2">
+                            {tx.source && (
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                {getSourceIcon(tx.source)}
+                                <span>Purchased from <span className="font-bold text-foreground">{tx.source}</span></span>
+                              </div>
+                            )}
+                            {hasItems && (
+                              <>
+                                <p className="text-xs font-bold text-muted-foreground">Items:</p>
+                                {tx.items!.map((item, i) => (
+                                  <div key={i} className="flex items-center justify-between text-sm">
+                                    <div className="flex items-center gap-2">
+                                      <span>{item.emoji}</span>
+                                      <span className="text-foreground">{item.name}</span>
+                                      <span className="text-muted-foreground text-xs">x{item.quantity}</span>
+                                    </div>
+                                    <span className="text-xs font-semibold text-muted-foreground">
+                                      {item.paymentType === 'coins' ? `${item.price * item.quantity} CC` : `RM ${(item.price * item.quantity).toFixed(2)}`}
+                                    </span>
+                                  </div>
+                                ))}
+                              </>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
