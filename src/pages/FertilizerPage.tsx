@@ -16,16 +16,25 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const packages = [
-  { qty: 1, price: 'RM 2.00', label: '1 Bag', icons: 1 },
-  { qty: 5, price: 'RM 8.00', label: '5 Bags', badge: 'Popular', icons: 2 },
-  { qty: 10, price: 'RM 14.00', label: '10 Bags', badge: 'Best Value', icons: 3 },
+  { qty: 1, priceRM: 2.00, label: '1 Bag', icons: 1 },
+  { qty: 5, priceRM: 8.00, label: '5 Bags', badge: 'Popular', icons: 2 },
+  { qty: 10, priceRM: 14.00, label: '10 Bags', badge: 'Best Value', icons: 3 },
 ];
 
 export default function FertilizerPage() {
-  const { addToInventory } = useGameStore();
+  const { addToInventory, spendRealMoney, realMoney } = useGameStore();
   const [confirmQty, setConfirmQty] = useState<number | null>(null);
 
+  const getPrice = (qty: number) => packages.find(p => p.qty === qty)?.priceRM || 0;
+
   const handleBuy = (qty: number) => {
+    const price = getPrice(qty);
+    if (!spendRealMoney(price, `Bought ${qty} Fertilizer bag${qty > 1 ? 's' : ''}`, [
+      { name: 'Fertilizer', emoji: '💊', quantity: qty, price, paymentType: 'money' }
+    ], 'Fertilizer Shop')) {
+      toast.error(`Not enough RM! Need RM ${price.toFixed(2)} but you have RM ${realMoney.toFixed(2)}.`);
+      return;
+    }
     addToInventory({
       name: 'Fertilizer',
       emoji: '💊',
@@ -68,7 +77,7 @@ export default function FertilizerPage() {
                   {pkg.badge}
                 </span>
               )}
-              <p className="font-extrabold text-foreground">{pkg.price}</p>
+              <p className="font-extrabold text-foreground">RM {pkg.priceRM.toFixed(2)}</p>
               <Button
                 size="sm"
                 onClick={() => setConfirmQty(pkg.qty)}
@@ -92,7 +101,7 @@ export default function FertilizerPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
             <AlertDialogDescription>
-              Buy {confirmQty} fertilizer bag{confirmQty && confirmQty > 1 ? 's' : ''} for {confirmQty === 1 ? 'RM 2.00' : confirmQty === 5 ? 'RM 8.00' : 'RM 14.00'}?
+              Buy {confirmQty} fertilizer bag{confirmQty && confirmQty > 1 ? 's' : ''} for RM {confirmQty ? getPrice(confirmQty).toFixed(2) : '0.00'}? This will be deducted from your RM balance.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
