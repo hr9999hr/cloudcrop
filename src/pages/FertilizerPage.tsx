@@ -77,7 +77,7 @@ export default function FertilizerPage() {
                   {pkg.badge}
                 </span>
               )}
-              <p className="font-extrabold text-foreground">{pkg.price}</p>
+              <p className="font-extrabold text-foreground">RM {pkg.priceRM.toFixed(2)}</p>
               <Button
                 size="sm"
                 onClick={() => setConfirmQty(pkg.qty)}
