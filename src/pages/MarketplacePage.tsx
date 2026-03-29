@@ -337,7 +337,7 @@ export default function MarketplacePage() {
                 </div>
               )}
               <Button
-                onClick={handleCheckout}
+                onClick={() => setShowCheckoutConfirm(true)}
                 disabled={(totalCoins > coins) || (totalRM > realMoney)}
                 className="w-full mt-2 gradient-farm text-primary-foreground rounded-xl font-bold"
               >
