@@ -198,9 +198,14 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9 }}
-          className="bg-card rounded-2xl p-6 max-w-md mx-4 w-full shadow-2xl"
+          className="bg-card rounded-2xl p-6 max-w-md mx-4 w-full shadow-2xl relative overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Action animations */}
+          <AnimatePresence>
+            {actionAnim === 'water' && <WaterAnimation />}
+            {actionAnim === 'fertilizer' && <FertilizerAnimation />}
+          </AnimatePresence>
           <div className="flex items-start gap-4 mb-4">
             {/* Plant display */}
             <div className="bg-muted rounded-xl p-6 flex flex-col items-center justify-center min-w-[140px]">
