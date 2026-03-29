@@ -101,7 +101,7 @@ export default function FertilizerPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
             <AlertDialogDescription>
-              Buy {confirmQty} fertilizer bag{confirmQty && confirmQty > 1 ? 's' : ''} for {confirmQty === 1 ? 'RM 2.00' : confirmQty === 5 ? 'RM 8.00' : 'RM 14.00'}?
+              Buy {confirmQty} fertilizer bag{confirmQty && confirmQty > 1 ? 's' : ''} for RM {confirmQty ? getPrice(confirmQty).toFixed(2) : '0.00'}? This will be deducted from your RM balance.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
