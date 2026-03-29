@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Droplets, Beaker, Bug, Shield } from "lucide-react";
-import { PlantSlot, useGameStore } from "@/store/gameStore";
+import { PlantSlot, useGameStore, getWeatherInfo } from "@/store/gameStore";
 import { useNavigate } from "react-router-dom";
+import ccCoin from "@/assets/cc-coin.png";
 
 interface PlantDetailPopupProps {
   open: boolean;
@@ -11,8 +12,9 @@ interface PlantDetailPopupProps {
 }
 
 export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps) {
-  const { waterPlant, fertilizePlant, waterDrops, inventory } = useGameStore();
+  const { waterPlant, fertilizePlant, waterDrops, inventory, weather } = useGameStore();
   const navigate = useNavigate();
+  const weatherInfo = getWeatherInfo(weather);
   const fertilizerCount = inventory.filter(i => i.category === 'fertilizers').reduce((a, i) => a + i.quantity, 0);
   const hasFertilizer = fertilizerCount > 0;
 
