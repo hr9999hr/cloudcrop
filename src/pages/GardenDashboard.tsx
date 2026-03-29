@@ -96,66 +96,73 @@ export default function GardenDashboard() {
         style={{
           background: 'linear-gradient(170deg, hsl(90 55% 62%) 0%, hsl(95 50% 48%) 40%, hsl(100 45% 38%) 100%)',
           boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
-          padding: '1rem',
-          minHeight: '380px',
+          padding: '1.5rem 0.5rem',
+          minHeight: '420px',
         }}
       >
         {/* Grass texture */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '14px 14px' }}
+        <div className="absolute inset-0 opacity-[0.06]"
+          style={{ backgroundImage: 'radial-gradient(hsl(80 60% 70%) 1px, transparent 1px)', backgroundSize: '12px 12px' }}
         />
 
-
         {/* Farm label */}
-        <div className="relative z-10 flex justify-center mb-3">
+        <div className="relative z-10 flex justify-center mb-4">
           <span className="text-[10px] font-extrabold text-white/80 bg-black/15 px-3 py-1 rounded-full backdrop-blur-sm">
             🌾 Farm Plots — Level {farmerLevel}
           </span>
         </div>
 
-        {/* Isometric plot grid */}
-        <div
-          className="relative z-10"
-          style={{ perspective: '800px', perspectiveOrigin: '50% 25%' }}
-        >
-          <div style={{ transform: 'rotateX(20deg) scale(0.95)', transformOrigin: 'center 55%' }}>
-            <div className="grid grid-cols-3 gap-3 px-2">
-              {plants.map((plant) => (
-                <motion.div
-                  key={plant.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: plant.id * 0.1 }}
-                >
-                  <PlantCard
-                    plant={plant}
-                    onPlant={(id) => setPlantDialogSlot(id)}
-                    onHarvest={handleHarvest}
-                    onPlantClick={handlePlantClick}
-                  />
-                </motion.div>
-              ))}
+        {/* Isometric diamond grid */}
+        <div className="relative z-10 flex items-center justify-center">
+          <div
+            style={{
+              transform: 'rotateX(55deg) rotateZ(45deg)',
+              transformStyle: 'preserve-3d',
+              display: 'grid',
+              gridTemplateColumns: `repeat(3, 90px)`,
+              gap: '4px',
+            }}
+          >
+            {plants.map((plant) => (
+              <motion.div
+                key={plant.id}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: plant.id * 0.08 }}
+                style={{
+                  width: '90px',
+                  height: '90px',
+                  transformStyle: 'preserve-3d',
+                }}
+              >
+                <PlantCard
+                  plant={plant}
+                  onPlant={(id) => setPlantDialogSlot(id)}
+                  onHarvest={handleHarvest}
+                  onPlantClick={handlePlantClick}
+                />
+              </motion.div>
+            ))}
 
-              {/* Locked plots */}
-              {Array.from({ length: maxSlots - plants.length }, (_, i) => (
-                <motion.div
-                  key={`locked-${i}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.6 }}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                  className="relative"
-                >
-                  <img src={soilPlot} alt="Locked plot" className="w-full h-auto opacity-40 grayscale" loading="lazy" width={512} height={512} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <Lock className="w-5 h-5 text-white/40" />
-                    <p className="text-[8px] font-bold text-white/40">Lv.{farmerLevel + 1}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            {/* Locked plots */}
+            {Array.from({ length: maxSlots - plants.length }, (_, i) => (
+              <motion.div
+                key={`locked-${i}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                transition={{ delay: 0.5 + i * 0.08 }}
+                className="relative"
+                style={{ width: '90px', height: '90px' }}
+              >
+                <img src={soilPlot} alt="Locked plot" className="w-full h-full object-cover opacity-40 grayscale" loading="lazy" width={512} height={512} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <Lock className="w-5 h-5 text-white/40" />
+                  <p className="text-[8px] font-bold text-white/40">Lv.{farmerLevel + 1}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
-
       </div>
 
       <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
