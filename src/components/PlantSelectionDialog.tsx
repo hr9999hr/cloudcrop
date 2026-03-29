@@ -85,7 +85,11 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                       <div className="flex-1">
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          {opt ? <><img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.costCC} CC cost ·</span> <span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></> : null}
+                          {opt ? (
+                            isFirstPlanting
+                              ? <><span className="text-primary font-bold">🎁 FREE</span> <span>· ⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
+                              : <><img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.costCC} CC cost ·</span> <span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
+                          ) : null}
                         </p>
                       </div>
                       <span className="text-xs font-bold text-muted-foreground">x{seed.quantity}</span>
