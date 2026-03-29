@@ -184,9 +184,7 @@ export default function WalletPage() {
                       <span className={`font-bold text-sm whitespace-nowrap ${tx.type === 'earn' ? 'text-growth' : 'text-destructive'}`}>
                         {tx.type === 'earn' ? '+' : '-'}{isRM ? `RM ${tx.amount.toFixed(2)}` : tx.amount}
                       </span>
-                      {(hasItems || tx.source) && (
-                        isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                      )}
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                     </button>
                     <AnimatePresence>
                       {isExpanded && (
