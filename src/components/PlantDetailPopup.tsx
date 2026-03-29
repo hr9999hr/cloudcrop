@@ -128,6 +128,18 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               {healthPercent < 50 && (
                 <p className="text-[10px] text-destructive font-bold mt-1">⚠️ Low health slows growth & reduces harvest!</p>
               )}
+              {(plant.neglectPenalty ?? 0) > 0 && (
+                <div className="flex items-center gap-1 mt-1">
+                  <img src={ccCoin} alt="CC" className="w-3 h-3" />
+                  <p className="text-[10px] text-destructive font-bold">-{plant.neglectPenalty} CC penalty from missed watering</p>
+                </div>
+              )}
+              <div className="mt-2 p-1.5 bg-muted/50 rounded-lg">
+                <p className="text-[10px] text-muted-foreground">
+                  {weatherInfo.label} · Needs {weatherInfo.waterNeeded} 💧 today
+                  {plant.wateredThisCycle && ' ✅ Watered'}
+                </p>
+              </div>
             </div>
           </div>
 
