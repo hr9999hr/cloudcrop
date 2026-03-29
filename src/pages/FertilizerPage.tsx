@@ -72,7 +72,7 @@ export default function FertilizerPage() {
               <p className="font-extrabold text-foreground">{pkg.price}</p>
               <Button
                 size="sm"
-                onClick={() => handleBuy(pkg.qty)}
+                onClick={() => setConfirmQty(pkg.qty)}
                 className="mt-1 gradient-farm text-primary-foreground rounded-xl text-xs"
               >
                 Buy Now
@@ -87,6 +87,23 @@ export default function FertilizerPage() {
           💡 <span className="font-semibold">Tip:</span> Fertilizer is stored in your inventory and can be used on any growing plant to skip 24 hours of growth!
         </p>
       </div>
+
+      <AlertDialog open={confirmQty !== null} onOpenChange={(open) => !open && setConfirmQty(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
+            <AlertDialogDescription>
+              Buy {confirmQty} fertilizer bag{confirmQty && confirmQty > 1 ? 's' : ''} for {confirmQty === 1 ? 'RM 2.00' : confirmQty === 5 ? 'RM 8.00' : 'RM 14.00'}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="gradient-farm text-primary-foreground rounded-xl" onClick={() => confirmQty && handleBuy(confirmQty)}>
+              Confirm Purchase
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
