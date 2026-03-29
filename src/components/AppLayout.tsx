@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { useGameSync } from "@/hooks/useGameSync";
 import { useGameStore } from "@/store/gameStore";
 import { Banknote } from "lucide-react";
 import logo from "@/assets/logo.png";
@@ -11,6 +12,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const { coins, realMoney, waterDrops, weather } = useGameStore();
+  useGameSync();
 
   const weatherEmojis: Record<string, string> = {
     sunny: '☀️',
