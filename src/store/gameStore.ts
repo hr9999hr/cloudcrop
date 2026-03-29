@@ -44,6 +44,17 @@ export interface DeliveryOrder {
   estimatedMinutes: number;
   completedAt?: number;
 }
+export interface CartItem {
+  id: string;
+  name: string;
+  emoji: string;
+  category: string;
+  vendor: string;
+  price: number;
+  paymentType: 'coins' | 'money';
+  condition?: string;
+  quantity: number;
+}
 
 interface GameState {
   coins: number;
