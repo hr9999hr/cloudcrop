@@ -101,6 +101,7 @@ export function useGameSync() {
               transactions: state.transactions as any,
               deliveries: state.deliveries as any,
               delivery_address: state.deliveryAddress,
+              cart: state.cart as any,
               has_seen_welcome: state.hasSeenWelcome,
               daily_login_claimed: state.dailyLoginClaimed,
             })
