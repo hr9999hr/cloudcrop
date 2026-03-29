@@ -186,18 +186,11 @@ export default function GardenDashboard() {
                           zIndex: row + col,
                         }}
                       >
-                        <div className="w-full h-full relative">
-                          <div
-                            style={{
-                              width: '100%',
-                              height: '70%',
-                              background: 'linear-gradient(135deg, hsla(30 25% 45% / 0.25), hsla(30 20% 35% / 0.15))',
-                              clipPath: 'polygon(50% 0%, 100% 40%, 50% 80%, 0% 40%)',
-                            }}
-                          />
-                          <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ paddingBottom: '15%' }}>
-                            <Lock className="w-5 h-5 text-white/30" />
-                            <p className="text-[8px] font-bold text-white/30 mt-0.5">Lv.{farmerLevel + 1}</p>
+                      <div className="w-full h-full relative">
+                          <img src={soilPlot} alt="" className="w-full h-full object-contain opacity-30" draggable={false} />
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <Lock className="w-5 h-5 text-white/40" />
+                            <p className="text-[8px] font-bold text-white/40 mt-0.5">Lv.{farmerLevel + 1}</p>
                           </div>
                         </div>
                       </motion.div>
