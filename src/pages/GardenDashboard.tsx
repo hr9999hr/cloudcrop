@@ -202,14 +202,6 @@ export default function GardenDashboard() {
           </div>
         </div>
 
-        {/* Decorative elements */}
-        <div className="relative z-10 flex justify-around mt-4 px-4">
-          <span className="text-2xl">🌳</span>
-          <span className="text-xl">🌻</span>
-          <span className="text-lg">🐔</span>
-          <span className="text-xl">🌻</span>
-          <span className="text-2xl">🌳</span>
-        </div>
       </div>
 
       <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
