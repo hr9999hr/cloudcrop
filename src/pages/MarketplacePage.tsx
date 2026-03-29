@@ -6,6 +6,16 @@ import { Input } from "@/components/ui/input";
 import { ShoppingCart, Plus, Minus, X, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useGameStore } from "@/store/gameStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ccCoin from "@/assets/cc-coin.png";
 
 type PaymentType = 'coins' | 'money';
@@ -85,6 +95,7 @@ export default function MarketplacePage() {
   const [paymentFilter, setPaymentFilter] = useState<'all' | PaymentType>('all');
   const [conditionFilter, setConditionFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false);
 
   const filtered = products
     .filter((p) => activeCategory === 'all' || p.category === activeCategory)
@@ -327,7 +338,7 @@ export default function MarketplacePage() {
                 </div>
               )}
               <Button
-                onClick={handleCheckout}
+                onClick={() => setShowCheckoutConfirm(true)}
                 disabled={(totalCoins > coins) || (totalRM > realMoney)}
                 className="w-full mt-2 gradient-farm text-primary-foreground rounded-xl font-bold"
               >
@@ -397,6 +408,25 @@ export default function MarketplacePage() {
           </Button>
         </motion.div>
       )}
+
+      <AlertDialog open={showCheckoutConfirm} onOpenChange={setShowCheckoutConfirm}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
+            <AlertDialogDescription>
+              {totalCoins > 0 && <span className="block">💰 {totalCoins} CC Coins</span>}
+              {totalRM > 0 && <span className="block">💵 RM {totalRM.toFixed(2)}</span>}
+              <span className="block mt-1">Are you sure you want to checkout {totalItems} item{totalItems > 1 ? 's' : ''}?</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="gradient-farm text-primary-foreground rounded-xl" onClick={() => { setShowCheckoutConfirm(false); handleCheckout(); }}>
+              Confirm Purchase
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

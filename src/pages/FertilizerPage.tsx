@@ -1,8 +1,19 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useGameStore } from "@/store/gameStore";
 import { toast } from "sonner";
 import fertilizerBag from "@/assets/fertilizer-bag.png";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const packages = [
   { qty: 1, price: 'RM 2.00', label: '1 Bag', icons: 1 },
@@ -12,6 +23,7 @@ const packages = [
 
 export default function FertilizerPage() {
   const { addToInventory } = useGameStore();
+  const [confirmQty, setConfirmQty] = useState<number | null>(null);
 
   const handleBuy = (qty: number) => {
     addToInventory({
@@ -22,6 +34,7 @@ export default function FertilizerPage() {
       description: 'Skip 24 hours of growth time',
     });
     toast.success(`Added ${qty} fertilizer bag${qty > 1 ? 's' : ''} to inventory!`);
+    setConfirmQty(null);
   };
 
   return (
@@ -58,7 +71,7 @@ export default function FertilizerPage() {
               <p className="font-extrabold text-foreground">{pkg.price}</p>
               <Button
                 size="sm"
-                onClick={() => handleBuy(pkg.qty)}
+                onClick={() => setConfirmQty(pkg.qty)}
                 className="mt-1 gradient-farm text-primary-foreground rounded-xl text-xs"
               >
                 Buy Now
@@ -73,6 +86,23 @@ export default function FertilizerPage() {
           💡 <span className="font-semibold">Tip:</span> Fertilizer is stored in your inventory and can be used on any growing plant to skip 24 hours of growth!
         </p>
       </div>
+
+      <AlertDialog open={confirmQty !== null} onOpenChange={(open) => !open && setConfirmQty(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
+            <AlertDialogDescription>
+              Buy {confirmQty} fertilizer bag{confirmQty && confirmQty > 1 ? 's' : ''} for {confirmQty === 1 ? 'RM 2.00' : confirmQty === 5 ? 'RM 8.00' : 'RM 14.00'}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="gradient-farm text-primary-foreground rounded-xl" onClick={() => confirmQty && handleBuy(confirmQty)}>
+              Confirm Purchase
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
