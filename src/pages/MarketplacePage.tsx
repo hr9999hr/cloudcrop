@@ -408,6 +408,25 @@ export default function MarketplacePage() {
           </Button>
         </motion.div>
       )}
+
+      <AlertDialog open={showCheckoutConfirm} onOpenChange={setShowCheckoutConfirm}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
+            <AlertDialogDescription>
+              {totalCoins > 0 && <span className="block">💰 {totalCoins} CC Coins</span>}
+              {totalRM > 0 && <span className="block">💵 RM {totalRM.toFixed(2)}</span>}
+              <span className="block mt-1">Are you sure you want to checkout {totalItems} item{totalItems > 1 ? 's' : ''}?</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="gradient-farm text-primary-foreground rounded-xl" onClick={() => { setShowCheckoutConfirm(false); handleCheckout(); }}>
+              Confirm Purchase
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

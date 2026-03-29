@@ -23,6 +23,7 @@ const packages = [
 
 export default function FertilizerPage() {
   const { addToInventory } = useGameStore();
+  const [confirmQty, setConfirmQty] = useState<number | null>(null);
 
   const handleBuy = (qty: number) => {
     addToInventory({
@@ -33,6 +34,8 @@ export default function FertilizerPage() {
       description: 'Skip 24 hours of growth time',
     });
     toast.success(`Added ${qty} fertilizer bag${qty > 1 ? 's' : ''} to inventory!`);
+    setConfirmQty(null);
+  };
   };
 
   return (
