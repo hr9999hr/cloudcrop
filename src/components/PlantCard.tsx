@@ -120,7 +120,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
 
       {/* Progress bar */}
       {!isReady && (
-        <div className="absolute bottom-[2%] left-[18%] right-[18%]">
+        <div className="absolute bottom-[2%] left-[18%] right-[18%]" style={{ zIndex: 50 }}>
           <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
             <motion.div
               className="h-full rounded-full"
@@ -156,7 +156,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
               ✨
             </motion.span>
           ))}
-          <div className="absolute bottom-[2%] left-[15%] right-[15%] z-10">
+          <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
             <motion.div
               className="rounded-md px-1 py-0.5 text-center"
               style={{ background: 'linear-gradient(135deg, hsla(45 90% 55% / 0.9), hsla(35 85% 45% / 0.9))' }}
@@ -170,7 +170,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       )}
 
       {/* Plant name below */}
-      <div className="absolute -bottom-[10%] left-0 right-0 text-center">
+      <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 50 }}>
         <p className="text-[8px] font-extrabold text-white drop-shadow-md">{plant.plantName}</p>
       </div>
     </motion.div>
