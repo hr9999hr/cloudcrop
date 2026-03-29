@@ -44,6 +44,7 @@ export function useGameSync() {
             transactions: (data.transactions as any[]) || [],
             deliveries: (data.deliveries as any[]) || [],
             deliveryAddress: data.delivery_address || "",
+            cart: (data.cart as any[]) || [],
             hasSeenWelcome: data.has_seen_welcome ?? false,
             dailyLoginClaimed: data.daily_login_claimed ?? false,
           });
