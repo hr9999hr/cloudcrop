@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import fertilizerBag from "@/assets/fertilizer-bag.png";
 
 const packages = [
-  { qty: 1, price: 'RM 2.00', label: '1 Bag' },
-  { qty: 5, price: 'RM 8.00', label: '5 Bags', badge: 'Popular' },
-  { qty: 10, price: 'RM 14.00', label: '10 Bags', badge: 'Best Value' },
+  { qty: 1, price: 'RM 2.00', label: '1 Bag', icons: 1 },
+  { qty: 5, price: 'RM 8.00', label: '5 Bags', badge: 'Popular', icons: 2 },
+  { qty: 10, price: 'RM 14.00', label: '10 Bags', badge: 'Best Value', icons: 3 },
 ];
 
 export default function FertilizerPage() {
@@ -37,7 +37,11 @@ export default function FertilizerPage() {
             whileTap={{ scale: 0.98 }}
             className="bg-card border rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden"
           >
-            <img src={fertilizerBag} alt="Fertilizer" className="w-10 h-10 object-contain" />
+            <div className="flex items-end -space-x-2">
+              {Array.from({ length: pkg.icons }).map((_, i) => (
+                <img key={i} src={fertilizerBag} alt="" className="w-9 h-9 object-contain" />
+              ))}
+            </div>
             <div className="flex-1">
               <p className="font-bold text-foreground">{pkg.label}</p>
               <p className="text-sm text-muted-foreground">Skip 24h growth per use</p>
