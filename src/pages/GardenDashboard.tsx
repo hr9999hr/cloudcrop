@@ -94,73 +94,96 @@ export default function GardenDashboard() {
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(170deg, hsl(90 55% 62%) 0%, hsl(95 50% 48%) 40%, hsl(100 45% 38%) 100%)',
+          background: 'linear-gradient(170deg, hsl(90 60% 58%) 0%, hsl(100 55% 45%) 50%, hsl(105 48% 38%) 100%)',
           boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
-          padding: '1.5rem 0.5rem',
-          minHeight: '420px',
+          padding: '1rem',
+          minHeight: '460px',
         }}
       >
-        {/* Grass texture */}
-        <div className="absolute inset-0 opacity-[0.06]"
-          style={{ backgroundImage: 'radial-gradient(hsl(80 60% 70%) 1px, transparent 1px)', backgroundSize: '12px 12px' }}
+        {/* Grass texture overlay */}
+        <div className="absolute inset-0 opacity-[0.08]"
+          style={{ backgroundImage: 'radial-gradient(hsl(80 70% 75%) 1.5px, transparent 1.5px)', backgroundSize: '10px 10px' }}
+        />
+        {/* Darker grass patches */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'radial-gradient(circle at 30% 40%, hsl(100 40% 30%) 0%, transparent 50%), radial-gradient(circle at 70% 60%, hsl(90 40% 30%) 0%, transparent 40%)' }}
         />
 
         {/* Farm label */}
-        <div className="relative z-10 flex justify-center mb-4">
-          <span className="text-[10px] font-extrabold text-white/80 bg-black/15 px-3 py-1 rounded-full backdrop-blur-sm">
+        <div className="relative z-10 flex justify-center mb-3">
+          <span className="text-[11px] font-extrabold text-white/90 bg-black/20 px-4 py-1.5 rounded-full backdrop-blur-sm shadow-sm">
             🌾 Farm Plots — Level {farmerLevel}
           </span>
         </div>
 
-        {/* Isometric diamond grid */}
-        <div className="relative z-10 flex items-center justify-center">
+        {/* Fenced farm area with isometric grid */}
+        <div className="relative z-10 mx-auto" style={{ maxWidth: '500px' }}>
+          {/* Fence / border around plots */}
           <div
+            className="relative rounded-xl p-4"
             style={{
-              transform: 'rotateX(55deg) rotateZ(45deg)',
-              transformStyle: 'preserve-3d',
-              display: 'grid',
-              gridTemplateColumns: `repeat(3, 90px)`,
-              gap: '4px',
+              background: 'linear-gradient(135deg, hsla(35 60% 45% / 0.25), hsla(30 50% 35% / 0.15))',
+              border: '3px solid hsla(35 50% 40% / 0.35)',
+              boxShadow: 'inset 0 2px 10px hsla(0 0% 0% / 0.1), 0 4px 20px hsla(0 0% 0% / 0.15)',
             }}
           >
-            {plants.map((plant) => (
-              <motion.div
-                key={plant.id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: plant.id * 0.08 }}
-                style={{
-                  width: '90px',
-                  height: '90px',
-                  transformStyle: 'preserve-3d',
-                }}
-              >
-                <PlantCard
-                  plant={plant}
-                  onPlant={(id) => setPlantDialogSlot(id)}
-                  onHarvest={handleHarvest}
-                  onPlantClick={handlePlantClick}
-                />
-              </motion.div>
-            ))}
+            {/* Dirt path texture inside fence */}
+            <div className="absolute inset-0 rounded-xl opacity-[0.06]"
+              style={{ backgroundImage: 'radial-gradient(hsla(30 40% 50% / 0.5) 2px, transparent 2px)', backgroundSize: '8px 8px' }}
+            />
 
-            {/* Locked plots */}
-            {Array.from({ length: maxSlots - plants.length }, (_, i) => (
-              <motion.div
-                key={`locked-${i}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.5 }}
-                transition={{ delay: 0.5 + i * 0.08 }}
-                className="relative"
-                style={{ width: '90px', height: '90px' }}
-              >
-                <img src={soilPlot} alt="Locked plot" className="w-full h-full object-cover opacity-40 grayscale" loading="lazy" width={512} height={512} />
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <Lock className="w-5 h-5 text-white/40" />
-                  <p className="text-[8px] font-bold text-white/40">Lv.{farmerLevel + 1}</p>
-                </div>
-              </motion.div>
-            ))}
+            {/* Grid of plots - standard flat grid, no extreme rotation */}
+            <div
+              className="grid gap-2 relative z-10"
+              style={{
+                gridTemplateColumns: 'repeat(3, 1fr)',
+              }}
+            >
+              {plants.map((plant) => (
+                <motion.div
+                  key={plant.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: plant.id * 0.08 }}
+                  className="aspect-square"
+                >
+                  <PlantCard
+                    plant={plant}
+                    onPlant={(id) => setPlantDialogSlot(id)}
+                    onHarvest={handleHarvest}
+                    onPlantClick={handlePlantClick}
+                  />
+                </motion.div>
+              ))}
+
+              {/* Locked plots */}
+              {Array.from({ length: maxSlots - plants.length }, (_, i) => (
+                <motion.div
+                  key={`locked-${i}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.6 }}
+                  transition={{ delay: 0.5 + i * 0.08 }}
+                  className="relative aspect-square rounded-lg overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, hsla(30 30% 50% / 0.3), hsla(30 20% 40% / 0.2))',
+                    border: '2px dashed hsla(0 0% 100% / 0.15)',
+                  }}
+                >
+                  <img src={soilPlot} alt="Locked plot" className="w-full h-full object-cover opacity-30 grayscale" loading="lazy" width={512} height={512} />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Lock className="w-6 h-6 text-white/30" />
+                    <p className="text-[9px] font-bold text-white/35 mt-1">Lv.{farmerLevel + 1}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Decorative fence posts */}
+          <div className="flex justify-between mt-2 px-2">
+            <span className="text-lg">🌻</span>
+            <span className="text-lg">🌻</span>
+            <span className="text-lg">🌻</span>
           </div>
         </div>
       </div>
