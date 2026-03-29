@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.png";
+import fertilizerBag from "@/assets/fertilizer-bag.png";
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +21,7 @@ import {
 const items = [
   { title: "Garden", url: "/", icon: Home, emoji: "🌱" },
   { title: "Inventory", url: "/inventory", icon: Backpack, emoji: "🎒" },
-  { title: "Fertilizer Shop", url: "/fertilizer", icon: Beaker, emoji: "💊" },
+  { title: "Fertilizer Shop", url: "/fertilizer", icon: Beaker, emoji: "💊", customImg: true },
   { title: "Supermarket", url: "/marketplace", icon: ShoppingCart, emoji: "🛒" },
   { title: "Delivery", url: "/delivery", icon: Truck, emoji: "📦" },
   { title: "Wallet", url: "/wallet", icon: Wallet, emoji: "💰" },
@@ -83,7 +84,11 @@ export function AppSidebar() {
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sidebar-foreground/80 hover:bg-sidebar-accent transition-colors"
                       activeClassName="bg-sidebar-accent text-sidebar-primary font-bold"
                     >
-                      <span className="text-lg">{item.emoji}</span>
+                      {item.customImg ? (
+                        <img src={fertilizerBag} alt="" className="w-5 h-5 object-contain" />
+                      ) : (
+                        <span className="text-lg">{item.emoji}</span>
+                      )}
                       {!collapsed && <span className="text-sm font-semibold">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>

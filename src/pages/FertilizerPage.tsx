@@ -26,7 +26,10 @@ export default function FertilizerPage() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h1 className="text-2xl font-extrabold text-foreground mb-1">Fertilizer Shop 💊</h1>
+      <div className="flex items-center gap-2 mb-1">
+        <img src={fertilizerBag} alt="Fertilizer" className="w-8 h-8 object-contain" />
+        <h1 className="text-2xl font-extrabold text-foreground">Fertilizer Shop</h1>
+      </div>
       <p className="text-sm text-muted-foreground mb-6">Speed up your crops with premium fertilizer</p>
 
       <div className="space-y-4">
