@@ -135,7 +135,8 @@ export default function GardenDashboard() {
               const tileH = 70;
               const rows = Math.ceil(allSlots.length / cols);
               const containerW = (cols + 1) * tileW * 0.5 + tileW * 0.5;
-              const containerH = rows * tileH + tileH;
+              const slotFrameHeight = tileH + 36;
+              const containerH = rows * tileH + slotFrameHeight;
 
               return (
                 <div style={{ width: containerW, height: containerH + 40, position: 'relative' }}>
@@ -158,7 +159,7 @@ export default function GardenDashboard() {
                             left: isoX,
                             top: isoY,
                             width: tileW,
-                            height: tileH + 50,
+                            height: slotFrameHeight,
                             zIndex: (row + col) * 2 + 1,
                           }}
                         >
@@ -182,12 +183,12 @@ export default function GardenDashboard() {
                           left: isoX,
                           top: isoY,
                           width: tileW,
-                          height: tileH + 30,
+                          height: slotFrameHeight,
                           zIndex: (row + col) * 2,
                         }}
                       >
                       <div className="w-full h-full relative">
-                          <img src={soilPlot} alt="" className="w-full h-full object-contain opacity-30" draggable={false} />
+                          <img src={soilPlot} alt="" className="w-full h-auto object-contain opacity-30" draggable={false} />
                           <div className="absolute inset-0 flex flex-col items-center justify-center">
                             <Lock className="w-5 h-5 text-white/40" />
                             <p className="text-[8px] font-bold text-white/40 mt-0.5">Lv.{farmerLevel + 1}</p>
