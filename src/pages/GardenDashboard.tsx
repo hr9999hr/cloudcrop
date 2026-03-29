@@ -108,6 +108,23 @@ export default function GardenDashboard() {
         </div>
       </motion.div>
 
+      {/* Weather Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-4 rounded-xl p-2.5 border border-border shadow-sm bg-card flex items-center gap-3"
+      >
+        <span className="text-2xl">{weatherInfo.label.split(' ')[0]}</span>
+        <div className="flex-1">
+          <p className="text-sm font-bold text-foreground">{weatherInfo.label}</p>
+          <p className="text-[10px] text-muted-foreground">{weatherInfo.desc}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs font-bold text-primary">💧 {weatherInfo.waterNeeded} water</p>
+          <p className="text-[10px] text-muted-foreground">needed today</p>
+        </div>
+      </motion.div>
+
       {/* Hay Day-style Isometric Farm */}
       <div
         className="relative rounded-2xl overflow-hidden"
