@@ -5,6 +5,7 @@ import { WelcomePopup } from "@/components/WelcomePopup";
 import { PlantSelectionDialog } from "@/components/PlantSelectionDialog";
 import { HarvestPopup } from "@/components/HarvestPopup";
 import { PlantDetailPopup } from "@/components/PlantDetailPopup";
+import { LevelUpPopup } from "@/components/LevelUpPopup";
 import { motion } from "framer-motion";
 import { Star, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
@@ -15,6 +16,8 @@ export default function GardenDashboard() {
   const [plantDialogSlot, setPlantDialogSlot] = useState<number | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<PlantSlot | null>(null);
   const [harvestSlot, setHarvestSlot] = useState<{ slotId: number; plantName: string; emoji: string; yieldCoins: number; quantity: number } | null>(null);
+  const [levelUpLevel, setLevelUpLevel] = useState<number | null>(null);
+  const prevLevel = useRef(farmerLevel);
 
   const harvestPlant = useGameStore((s) => s.harvestPlant);
 
