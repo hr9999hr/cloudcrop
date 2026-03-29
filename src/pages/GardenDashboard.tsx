@@ -28,6 +28,11 @@ export default function GardenDashboard() {
   }, [updateProgress]);
 
   useEffect(() => {
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      prevLevel.current = farmerLevel;
+      return;
+    }
     if (farmerLevel > prevLevel.current) {
       setLevelUpLevel(farmerLevel);
     }
