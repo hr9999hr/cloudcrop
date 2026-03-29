@@ -119,19 +119,19 @@ export default function GardenDashboard() {
           <span className="text-base">🌳</span>
         </div>
 
-        {/* Isometric container */}
+        {/* Isometric container — Hay Day angle: ~35deg tilt, slight Z rotation */}
         <div
           className="relative z-10"
           style={{
-            perspective: '800px',
-            perspectiveOrigin: '50% 30%',
+            perspective: '900px',
+            perspectiveOrigin: '50% 20%',
           }}
         >
           <div
             style={{
-              transform: 'rotateX(45deg) rotateZ(-5deg) scale(0.92)',
+              transform: 'rotateX(38deg) rotateZ(-2deg) scale(0.88)',
               transformStyle: 'preserve-3d',
-              transformOrigin: 'center center',
+              transformOrigin: 'center 60%',
             }}
           >
             <div className="grid grid-cols-3 gap-3">
