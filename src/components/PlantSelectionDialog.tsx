@@ -18,17 +18,24 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
 
+  // First planting is free if user has never harvested and has no active plants
+  const isFirstPlanting = totalHarvests === 0 && !plants.some(p => p.status === 'growing' || p.status === 'ready');
+
   const handleConfirmPlant = () => {
     if (!selectedSeed) return;
     const seedOption = SEED_OPTIONS.find((s) => selectedSeed.includes(s.name));
     if (!seedOption) return;
 
-    // Deduct seed cost in CC
-    if (coins < seedOption.costCC) {
-      toast.error(`Not enough CC! Need ${seedOption.costCC} CC to plant ${seedOption.name}.`);
-      return;
+    if (!isFirstPlanting) {
+      // Deduct seed cost in CC
+      if (coins < seedOption.costCC) {
+        toast.error(`Not enough CC! Need ${seedOption.costCC} CC to plant ${seedOption.name}.`);
+        return;
+      }
+      spendCoins(seedOption.costCC, `Planted ${seedOption.name} seed`, undefined, 'Garden');
+    } else {
+      toast.success("🎁 First planting is free! No CC cost.");
     }
-    spendCoins(seedOption.costCC, `Planted ${seedOption.name} seed`, undefined, 'Garden');
 
     plantSeed(slotId, seedOption.name, seedOption.emoji, seedOption.durationMs, seedOption.yieldCoins);
     setSelectedSeed(null);
