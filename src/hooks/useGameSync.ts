@@ -47,6 +47,7 @@ export function useGameSync() {
             cart: (data.cart as any[]) || [],
             hasSeenWelcome: data.has_seen_welcome ?? false,
             dailyLoginClaimed: data.daily_login_claimed ?? false,
+            weatherChangedAt: Date.now(),
           });
         } else {
           // First time: create a row with defaults
