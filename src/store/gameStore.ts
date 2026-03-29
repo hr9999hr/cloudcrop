@@ -57,6 +57,8 @@ interface GameState {
   deliveryAddress: string;
   hasSeenWelcome: boolean;
   dailyLoginClaimed: boolean;
+  farmerLevel: number;
+  totalHarvests: number;
 
   // Actions
   setHasSeenWelcome: (v: boolean) => void;
