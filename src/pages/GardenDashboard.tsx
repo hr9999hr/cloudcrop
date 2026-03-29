@@ -231,6 +231,7 @@ export default function GardenDashboard() {
         onBag={handleBag}
         onClose={() => setHarvestSlot(null)}
       />
+      <LevelUpPopup open={levelUpLevel !== null} level={levelUpLevel || 1} onClose={() => setLevelUpLevel(null)} />
     </div>
   );
 }
