@@ -55,6 +55,7 @@ interface GameState {
   transactions: Transaction[];
   deliveries: DeliveryOrder[];
   deliveryAddress: string;
+  cart: CartItem[];
   hasSeenWelcome: boolean;
   dailyLoginClaimed: boolean;
   farmerLevel: number;
