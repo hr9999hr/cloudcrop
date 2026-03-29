@@ -167,10 +167,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     return {
       plants: s.plants.map((p) =>
         p.id === slotId
-          ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins }
-              , health: 100, lastWateredAt: Date.now() }
+          ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins, health: 100, lastWateredAt: Date.now() }
           : p
-      ).map(x => x), // force new array
+      ),
       inventory: newInventory,
     };
   }),
