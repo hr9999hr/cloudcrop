@@ -20,6 +20,7 @@ import {
 
 const items = [
   { title: "Garden", url: "/", icon: Home, emoji: "🌱" },
+  { title: "Missions", url: "/missions", icon: Home, emoji: "🎯" },
   { title: "Inventory", url: "/inventory", icon: Backpack, emoji: "🎒" },
   { title: "Fertilizer Shop", url: "/fertilizer", icon: Beaker, emoji: "💊", customImg: true },
   { title: "Supermarket", url: "/marketplace", icon: ShoppingCart, emoji: "🛒" },

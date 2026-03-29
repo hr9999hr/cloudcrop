@@ -95,6 +95,7 @@ interface GameState {
   createDelivery: (items: DeliveryOrder['items']) => void;
   updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
   topUpRealMoney: (amount: number) => void;
+  addWaterDrops: (amount: number) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   updateCartQty: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
@@ -452,6 +453,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       { id: Date.now().toString(), type: 'earn', amount, description: `[RM] Top up RM ${amount.toFixed(2)}`, timestamp: Date.now() },
       ...s.transactions,
     ],
+  })),
+
+  addWaterDrops: (amount) => set((s) => ({
+    waterDrops: s.waterDrops + amount,
   })),
 
   addToCart: (item) => set((s) => {
