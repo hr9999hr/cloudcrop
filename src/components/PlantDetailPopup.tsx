@@ -145,9 +145,16 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
       icon: <Droplets className="w-5 h-5" />,
       color: 'text-water',
       bg: 'bg-water/10',
-      disabled: waterDrops <= 0 || isReady,
-      onClick: () => playAnimation('water', () => waterPlant(plant.id)),
-      subtitle: `${waterDrops} drops left`,
+      disabled: isReady,
+      onClick: () => {
+        if (waterDrops <= 0) {
+          onClose();
+          navigate('/missions');
+        } else {
+          playAnimation('water', () => waterPlant(plant.id));
+        }
+      },
+      subtitle: waterDrops <= 0 ? 'Get drops → Missions' : `${waterDrops} drops left`,
     },
     {
       label: 'Fertilizer',
