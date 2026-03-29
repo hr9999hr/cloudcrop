@@ -208,10 +208,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (!plant || plant.status !== 'ready') return { coins: 0, plantName: '', emoji: '', quantity: 0 };
     const earned = plant.yieldCoins;
     const harvestQty = Math.max(1, Math.floor(plant.progress / 20));
+    const healthFactor = Math.max(0.3, (plant.health ?? 100) / 100);
+    const finalQty = Math.max(1, Math.floor(harvestQty * healthFactor));
 
     const resetPlant = s.plants.map((p) =>
       p.id === slotId
-        ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0 }
+        ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0, health: 100, lastWateredAt: null }
         : p
     );
 
@@ -237,15 +239,15 @@ export const useGameStore = create<GameState>((set, get) => ({
         totalHarvests: newTotalHarvests,
         farmerLevel: newLevel,
         transactions: [
-          { id: Date.now().toString(), type: 'earn', amount: earned, description: `Sold ${harvestQty}x ${plant.plantName}`, source: 'Garden', timestamp: Date.now() },
+          { id: Date.now().toString(), type: 'earn', amount: earned, description: `Sold ${finalQty}x ${plant.plantName}`, source: 'Garden', timestamp: Date.now() },
           ...s.transactions,
         ],
       });
     } else {
       const existingItem = s.inventory.find((i) => i.name === plant.plantName && i.category === 'fruits');
       const newInventory = existingItem
-        ? s.inventory.map((i) => i.name === plant.plantName && i.category === 'fruits' ? { ...i, quantity: i.quantity + harvestQty } : i)
-        : [...s.inventory, { id: `harvest-${Date.now()}`, name: plant.plantName!, emoji: plant.plantEmoji!, category: 'fruits' as const, quantity: harvestQty, description: `Freshly harvested ${plant.plantName}` }];
+        ? s.inventory.map((i) => i.name === plant.plantName && i.category === 'fruits' ? { ...i, quantity: i.quantity + finalQty } : i)
+        : [...s.inventory, { id: `harvest-${Date.now()}`, name: plant.plantName!, emoji: plant.plantEmoji!, category: 'fruits' as const, quantity: finalQty, description: `Freshly harvested ${plant.plantName}` }];
       set({
         plants: newPlants,
         inventory: newInventory,
@@ -253,18 +255,31 @@ export const useGameStore = create<GameState>((set, get) => ({
         farmerLevel: newLevel,
       });
     }
-    return { coins: action === 'sell' ? earned : 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: harvestQty };
+    return { coins: action === 'sell' ? earned : 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: finalQty };
   },
 
   updateProgress: () => set((s) => ({
     plants: s.plants.map((p) => {
       if (p.status !== 'growing' || !p.plantedAt) return p;
-      const elapsed = Date.now() - p.plantedAt;
-      const progress = Math.min(100, (elapsed / p.growthDurationMs) * 100);
-      if (progress >= 100) {
-        return { ...p, progress: 100, status: 'ready' as PlantStatus };
+
+      // Health decay: loses 2% every 30s since last watered
+      let newHealth = p.health ?? 100;
+      if (p.lastWateredAt) {
+        const sinceWatered = Date.now() - p.lastWateredAt;
+        const decayAmount = Math.floor(sinceWatered / 30000) * 2;
+        newHealth = Math.max(0, 100 - decayAmount);
       }
-      return { ...p, progress };
+
+      // Growth slows when health < 50%
+      const healthMult = newHealth >= 50 ? 1 : newHealth / 100;
+      const elapsed = Date.now() - p.plantedAt;
+      const baseProgress = Math.min(100, (elapsed / p.growthDurationMs) * 100);
+      const progress = Math.min(100, baseProgress * healthMult + (1 - healthMult) * p.progress);
+
+      if (progress >= 100) {
+        return { ...p, progress: 100, health: newHealth, status: 'ready' as PlantStatus };
+      }
+      return { ...p, progress, health: newHealth };
     }),
   })),
 
