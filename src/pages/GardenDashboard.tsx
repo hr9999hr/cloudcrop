@@ -138,7 +138,7 @@ export default function GardenDashboard() {
               const containerH = rows * tileH + tileH;
 
               return (
-                <div style={{ width: containerW, height: containerH, position: 'relative' }}>
+                <div style={{ width: containerW, height: containerH + 40, position: 'relative' }}>
                   {allSlots.map((slot, idx) => {
                     const row = Math.floor(idx / cols);
                     const col = idx % cols;
@@ -158,8 +158,8 @@ export default function GardenDashboard() {
                             left: isoX,
                             top: isoY,
                             width: tileW,
-                            height: tileH + 30,
-                            zIndex: row + col,
+                            height: tileH + 50,
+                            zIndex: (row + col) * 2 + 1,
                           }}
                         >
                           <PlantCard
@@ -183,7 +183,7 @@ export default function GardenDashboard() {
                           top: isoY,
                           width: tileW,
                           height: tileH + 30,
-                          zIndex: row + col,
+                          zIndex: (row + col) * 2,
                         }}
                       >
                       <div className="w-full h-full relative">

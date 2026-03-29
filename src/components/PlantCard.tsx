@@ -77,6 +77,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       whileHover={{ scale: 1.06, y: -3 }}
       whileTap={{ scale: 0.96 }}
       className="cursor-pointer relative w-full h-full flex items-center justify-center"
+      style={{ overflow: 'visible' }}
       onClick={() => isReady ? onHarvest(plant.id) : onPlantClick?.(plant)}
     >
       {/* Soil base */}
