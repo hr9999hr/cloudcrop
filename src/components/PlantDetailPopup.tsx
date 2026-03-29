@@ -12,7 +12,9 @@ interface PlantDetailPopupProps {
 
 export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps) {
   const { waterPlant, fertilizePlant, waterDrops, inventory } = useGameStore();
-  const hasFertilizer = inventory.some((i) => i.category === 'fertilizers' && i.quantity > 0);
+  const navigate = useNavigate();
+  const fertilizerCount = inventory.filter(i => i.category === 'fertilizers').reduce((a, i) => a + i.quantity, 0);
+  const hasFertilizer = fertilizerCount > 0;
 
   if (!open || !plant || plant.status === 'empty') return null;
 
