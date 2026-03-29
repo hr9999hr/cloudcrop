@@ -4,7 +4,16 @@ import { PlantSlot } from "@/store/gameStore";
 import soilPlot from "@/assets/farm/soil-plot.png";
 import stageSeedling from "@/assets/farm/stage-seedling.png";
 import stageGrowing from "@/assets/farm/stage-growing.png";
+import cropKangkung from "@/assets/farm/crop-kangkung.png";
+import cropSawi from "@/assets/farm/crop-sawi.png";
+import cropBayam from "@/assets/farm/crop-bayam.png";
+import cropTimun from "@/assets/farm/crop-timun.png";
+import cropBendi from "@/assets/farm/crop-bendi.png";
 import cropTomato from "@/assets/farm/crop-tomato.png";
+import cropKacangPanjang from "@/assets/farm/crop-kacang-panjang.png";
+import cropCiliPadi from "@/assets/farm/crop-cili-padi.png";
+import cropTerung from "@/assets/farm/crop-terung.png";
+import cropLabu from "@/assets/farm/crop-labu.png";
 
 interface PlantCardProps {
   plant: PlantSlot;
@@ -13,9 +22,17 @@ interface PlantCardProps {
   onPlantClick?: (plant: PlantSlot) => void;
 }
 
-// Only Tomato has a custom final image; others use generic stages
 const CROP_IMAGES: Record<string, string> = {
+  Kangkung: cropKangkung,
+  Sawi: cropSawi,
+  Bayam: cropBayam,
+  Timun: cropTimun,
+  Bendi: cropBendi,
   Tomato: cropTomato,
+  'Kacang Panjang': cropKacangPanjang,
+  'Cili Padi': cropCiliPadi,
+  Terung: cropTerung,
+  Labu: cropLabu,
 };
 
 function getCropImage(plantName: string | null, progress: number): string {
