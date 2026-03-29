@@ -70,8 +70,7 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                       <div className="flex-1">
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          {opt ? <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.yieldCoins} coins</span></> : ''}
-                        </p>
+                          {opt ? <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.yieldCoins} coins</span></> : null}
                         </p>
                       </div>
                       <span className="text-xs font-bold text-muted-foreground">x{seed.quantity}</span>
