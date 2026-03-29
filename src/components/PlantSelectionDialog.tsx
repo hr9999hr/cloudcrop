@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import ccCoin from "@/assets/cc-coin.png";
+import { toast } from "sonner";
 
 interface PlantSelectionDialogProps {
   open: boolean;
@@ -12,7 +13,7 @@ interface PlantSelectionDialogProps {
 }
 
 export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDialogProps) {
-  const { plantSeed, inventory } = useGameStore();
+  const { plantSeed, inventory, coins, spendCoins } = useGameStore();
   const [selectedSeed, setSelectedSeed] = useState<string | null>(null);
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
@@ -21,6 +22,13 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
     if (!selectedSeed) return;
     const seedOption = SEED_OPTIONS.find((s) => selectedSeed.includes(s.name));
     if (!seedOption) return;
+
+    // Deduct seed cost in CC
+    if (coins < seedOption.costCC) {
+      toast.error(`Not enough CC! Need ${seedOption.costCC} CC to plant ${seedOption.name}.`);
+      return;
+    }
+    spendCoins(seedOption.costCC, `Planted ${seedOption.name} seed`, undefined, 'Garden');
 
     plantSeed(slotId, seedOption.name, seedOption.emoji, seedOption.durationMs, seedOption.yieldCoins);
     setSelectedSeed(null);
@@ -70,7 +78,7 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                       <div className="flex-1">
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          {opt ? <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.yieldCoins} coins</span></> : null}
+                          {opt ? <><img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.costCC} CC cost ·</span> <span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></> : null}
                         </p>
                       </div>
                       <span className="text-xs font-bold text-muted-foreground">x{seed.quantity}</span>

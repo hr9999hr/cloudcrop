@@ -47,28 +47,30 @@ const products: Product[] = [
   { id: 'f6', name: 'Premium Strawberries (250g)', emoji: '🍓', category: 'fruits', vendor: 'BioFarm MY', condition: 'Perfect', price: 18.90, paymentType: 'money' },
   { id: 'f7', name: 'Premium Grapes (500g)', emoji: '🍇', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Perfect', price: 22.00, paymentType: 'money' },
 
-  // Vegetables - Basic (CC)
-  { id: 'v1', name: 'Basic Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Basic', price: 6, paymentType: 'coins' },
-  { id: 'v2', name: 'Basic Carrots (500g)', emoji: '🥕', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Basic', price: 4, paymentType: 'coins' },
-  { id: 'v3', name: 'Small Lettuce Bundle', emoji: '🥬', category: 'vegetables', vendor: 'Green Valley', condition: 'Basic', price: 5, paymentType: 'coins' },
-  { id: 'v4', name: 'Mixed Chili Pack', emoji: '🌶️', category: 'vegetables', vendor: 'Spice Garden', condition: 'Basic', price: 7, paymentType: 'coins' },
+  // Vegetables - Basic (CC) - Malaysian B-grade produce
+  { id: 'v1', name: 'Basic Kangkung (500g)', emoji: '🥬', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Basic', price: 250, paymentType: 'coins' },
+  { id: 'v2', name: 'Basic Sawi (500g)', emoji: '🥗', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Basic', price: 250, paymentType: 'coins' },
+  { id: 'v3', name: 'Basic Bendi (300g)', emoji: '🫛', category: 'vegetables', vendor: 'Green Valley', condition: 'Basic', price: 300, paymentType: 'coins' },
+  { id: 'v4', name: 'Basic Cili (100g)', emoji: '🌶️', category: 'vegetables', vendor: 'Spice Garden', condition: 'Basic', price: 150, paymentType: 'coins' },
   // Vegetables - Good (RM)
-  { id: 'v5', name: 'Good Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Good', price: 9.90, paymentType: 'money' },
-  { id: 'v6', name: 'Good Broccoli (500g)', emoji: '🥦', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Good', price: 7.50, paymentType: 'money' },
-  { id: 'v7', name: 'Good Sweet Corn (3pcs)', emoji: '🌽', category: 'vegetables', vendor: 'Uncle Tan Farm', condition: 'Good', price: 6.00, paymentType: 'money' },
+  { id: 'v5', name: 'Good Kangkung (500g)', emoji: '🥬', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Good', price: 3.50, paymentType: 'money' },
+  { id: 'v6', name: 'Good Terung (500g)', emoji: '🍆', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Good', price: 4.00, paymentType: 'money' },
+  { id: 'v7', name: 'Good Timun (3pcs)', emoji: '🥒', category: 'vegetables', vendor: 'Uncle Tan Farm', condition: 'Good', price: 3.00, paymentType: 'money' },
   // Vegetables - Perfect
-  { id: 'v8', name: 'Organic Spinach', emoji: '🥗', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Perfect', price: 12.50, paymentType: 'money' },
-  { id: 'v9', name: 'Premium Capsicum (3pcs)', emoji: '🫑', category: 'vegetables', vendor: 'Green Valley', condition: 'Perfect', price: 14.00, paymentType: 'money' },
+  { id: 'v8', name: 'Organic Bayam (500g)', emoji: '🌿', category: 'vegetables', vendor: 'BioFarm MY', condition: 'Perfect', price: 5.50, paymentType: 'money' },
+  { id: 'v9', name: 'Premium Tomato (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Green Valley', condition: 'Perfect', price: 9.90, paymentType: 'money' },
 
-  // Seeds (RM)
-  { id: 's1', name: 'Tomato Seed Pack', emoji: '🍅', category: 'seeds', vendor: 'SeedMart', price: 2.50, paymentType: 'money' },
-  { id: 's2', name: 'Carrot Seed Pack', emoji: '🥕', category: 'seeds', vendor: 'SeedMart', price: 2.00, paymentType: 'money' },
-  { id: 's3', name: 'Lettuce Seed Pack', emoji: '🥬', category: 'seeds', vendor: 'SeedMart', price: 1.80, paymentType: 'money' },
-  { id: 's4', name: 'Corn Seed Pack', emoji: '🌽', category: 'seeds', vendor: 'GreenGrow', price: 3.00, paymentType: 'money' },
-  { id: 's5', name: 'Chili Seed Pack', emoji: '🌶️', category: 'seeds', vendor: 'GreenGrow', price: 2.50, paymentType: 'money' },
-  { id: 's6', name: 'Spinach Seed Pack', emoji: '🥗', category: 'seeds', vendor: 'SeedMart', price: 1.50, paymentType: 'money' },
-  { id: 's7', name: 'Broccoli Seed Pack', emoji: '🥦', category: 'seeds', vendor: 'GreenGrow', price: 2.80, paymentType: 'money' },
-  { id: 's8', name: 'Watermelon Seed Pack', emoji: '🍉', category: 'seeds', vendor: 'SeedMart', price: 3.50, paymentType: 'money' },
+  // Seeds (CC coins) - matching the 10 Malaysian crops
+  { id: 's1', name: 'Kangkung Seed', emoji: '🥬', category: 'seeds', vendor: 'SeedMart', price: 10, paymentType: 'coins' },
+  { id: 's2', name: 'Sawi Seed', emoji: '🥗', category: 'seeds', vendor: 'SeedMart', price: 15, paymentType: 'coins' },
+  { id: 's3', name: 'Bayam Seed', emoji: '🌿', category: 'seeds', vendor: 'SeedMart', price: 15, paymentType: 'coins' },
+  { id: 's4', name: 'Timun Seed', emoji: '🥒', category: 'seeds', vendor: 'GreenGrow', price: 20, paymentType: 'coins' },
+  { id: 's5', name: 'Bendi Seed', emoji: '🫛', category: 'seeds', vendor: 'GreenGrow', price: 25, paymentType: 'coins' },
+  { id: 's6', name: 'Tomato Seed', emoji: '🍅', category: 'seeds', vendor: 'SeedMart', price: 30, paymentType: 'coins' },
+  { id: 's7', name: 'Kacang Panjang Seed', emoji: '🫘', category: 'seeds', vendor: 'GreenGrow', price: 35, paymentType: 'coins' },
+  { id: 's8', name: 'Cili Padi Seed', emoji: '🌶️', category: 'seeds', vendor: 'GreenGrow', price: 40, paymentType: 'coins' },
+  { id: 's9', name: 'Terung Seed', emoji: '🍆', category: 'seeds', vendor: 'SeedMart', price: 50, paymentType: 'coins' },
+  { id: 's10', name: 'Labu Seed', emoji: '🎃', category: 'seeds', vendor: 'GreenGrow', price: 80, paymentType: 'coins' },
 ];
 
 
@@ -156,7 +158,7 @@ export default function MarketplacePage() {
     const deliveryCartItems = cart.filter((i) => i.category !== 'seeds');
 
     seedItems.forEach((item) => {
-      addToInventory({ name: item.name.replace(' Pack', ''), emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
+      addToInventory({ name: item.name, emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
     });
 
     // Create delivery for produce (no inventory storage)

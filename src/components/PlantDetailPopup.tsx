@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Droplets, Beaker, Bug, Shield } from "lucide-react";
-import { PlantSlot, useGameStore } from "@/store/gameStore";
+import { PlantSlot, useGameStore, getWeatherInfo } from "@/store/gameStore";
 import { useNavigate } from "react-router-dom";
+import ccCoin from "@/assets/cc-coin.png";
 
 interface PlantDetailPopupProps {
   open: boolean;
@@ -11,8 +12,9 @@ interface PlantDetailPopupProps {
 }
 
 export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps) {
-  const { waterPlant, fertilizePlant, waterDrops, inventory } = useGameStore();
+  const { waterPlant, fertilizePlant, waterDrops, inventory, weather } = useGameStore();
   const navigate = useNavigate();
+  const weatherInfo = getWeatherInfo(weather);
   const fertilizerCount = inventory.filter(i => i.category === 'fertilizers').reduce((a, i) => a + i.quantity, 0);
   const hasFertilizer = fertilizerCount > 0;
 
@@ -126,6 +128,18 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               {healthPercent < 50 && (
                 <p className="text-[10px] text-destructive font-bold mt-1">⚠️ Low health slows growth & reduces harvest!</p>
               )}
+              {(plant.neglectPenalty ?? 0) > 0 && (
+                <div className="flex items-center gap-1 mt-1">
+                  <img src={ccCoin} alt="CC" className="w-3 h-3" />
+                  <p className="text-[10px] text-destructive font-bold">-{plant.neglectPenalty} CC penalty from missed watering</p>
+                </div>
+              )}
+              <div className="mt-2 p-1.5 bg-muted/50 rounded-lg">
+                <p className="text-[10px] text-muted-foreground">
+                  {weatherInfo.label} · Needs {weatherInfo.waterNeeded} 💧 today
+                  {plant.wateredThisCycle && ' ✅ Watered'}
+                </p>
+              </div>
             </div>
           </div>
 

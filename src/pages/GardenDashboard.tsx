@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useGameStore, PlantSlot, LEVEL_CONFIG } from "@/store/gameStore";
+import { useGameStore, PlantSlot, LEVEL_CONFIG, getWeatherInfo } from "@/store/gameStore";
 import { PlantCard } from "@/components/PlantCard";
 import { WelcomePopup } from "@/components/WelcomePopup";
 import { PlantSelectionDialog } from "@/components/PlantSelectionDialog";
@@ -12,7 +12,8 @@ import logo from "@/assets/logo.png";
 import soilPlot from "@/assets/farm/soil-plot.png";
 
 export default function GardenDashboard() {
-  const { plants, updateProgress, farmerLevel, totalHarvests } = useGameStore();
+  const { plants, updateProgress, farmerLevel, totalHarvests, weather } = useGameStore();
+  const weatherInfo = getWeatherInfo(weather);
   const [plantDialogSlot, setPlantDialogSlot] = useState<number | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<PlantSlot | null>(null);
   const [harvestSlot, setHarvestSlot] = useState<{ slotId: number; plantName: string; emoji: string; yieldCoins: number; quantity: number } | null>(null);
@@ -104,6 +105,23 @@ export default function GardenDashboard() {
             style={{ background: 'linear-gradient(90deg, hsl(120 50% 45%), hsl(80 70% 50%))' }}
             animate={{ width: `${Math.min(100, progressToNext)}%` }}
           />
+        </div>
+      </motion.div>
+
+      {/* Weather Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-4 rounded-xl p-2.5 border border-border shadow-sm bg-card flex items-center gap-3"
+      >
+        <span className="text-2xl">{weatherInfo.label.split(' ')[0]}</span>
+        <div className="flex-1">
+          <p className="text-sm font-bold text-foreground">{weatherInfo.label}</p>
+          <p className="text-[10px] text-muted-foreground">{weatherInfo.desc}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs font-bold text-primary">💧 {weatherInfo.waterNeeded} water</p>
+          <p className="text-[10px] text-muted-foreground">needed today</p>
         </div>
       </motion.div>
 

@@ -1,15 +1,10 @@
 import { motion } from "framer-motion";
-import { Scissors } from "lucide-react";
 import { PlantSlot } from "@/store/gameStore";
 
 import soilPlot from "@/assets/farm/soil-plot.png";
 import stageSeedling from "@/assets/farm/stage-seedling.png";
 import stageGrowing from "@/assets/farm/stage-growing.png";
 import cropTomato from "@/assets/farm/crop-tomato.png";
-import cropCarrot from "@/assets/farm/crop-carrot.png";
-import cropLettuce from "@/assets/farm/crop-lettuce.png";
-import cropCorn from "@/assets/farm/crop-corn.png";
-import cropChili from "@/assets/farm/crop-chili.png";
 
 interface PlantCardProps {
   plant: PlantSlot;
@@ -18,12 +13,9 @@ interface PlantCardProps {
   onPlantClick?: (plant: PlantSlot) => void;
 }
 
+// Only Tomato has a custom final image; others use generic stages
 const CROP_IMAGES: Record<string, string> = {
   Tomato: cropTomato,
-  Carrot: cropCarrot,
-  Lettuce: cropLettuce,
-  Corn: cropCorn,
-  Chili: cropChili,
 };
 
 function getCropImage(plantName: string | null, progress: number): string {
@@ -34,6 +26,26 @@ function getCropImage(plantName: string | null, progress: number): string {
 }
 
 export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCardProps) {
+  // === DEAD PLANT ===
+  if (plant.status === 'dead') {
+    return (
+      <motion.div
+        whileHover={{ scale: 1.06, y: -3 }}
+        whileTap={{ scale: 0.96 }}
+        className="cursor-pointer relative w-full h-full flex items-center justify-center"
+        onClick={() => onPlant(plant.id)}
+      >
+        <img src={soilPlot} alt="Dead plot" className="w-full h-auto drop-shadow-md opacity-60" draggable={false} loading="lazy" width={512} height={512} />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md text-center">
+            <p className="text-[10px] font-extrabold text-red-300">☠️ Dead</p>
+            <p className="text-[8px] text-white/60">Tap to replant</p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   // === EMPTY PLOT ===
   if (plant.status === 'empty') {
     return (
@@ -43,16 +55,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         className="cursor-pointer relative w-full h-full flex items-center justify-center"
         onClick={() => onPlant(plant.id)}
       >
-        <img
-          src={soilPlot}
-          alt="Empty plot"
-          className="w-full h-auto drop-shadow-md"
-          draggable={false}
-          loading="lazy"
-          width={512}
-          height={512}
-        />
-        {/* Plant label */}
+        <img src={soilPlot} alt="Empty plot" className="w-full h-auto drop-shadow-md" draggable={false} loading="lazy" width={512} height={512} />
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.8, 1, 0.8] }}
@@ -69,7 +72,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
   // === GROWING / READY ===
   const isReady = plant.status === 'ready';
   const cropImage = getCropImage(plant.plantName, plant.progress);
-  const cropScale = 0.6 + (plant.progress / 100) * 0.4; // grows from 60% to 100%
+  const cropScale = 0.6 + (plant.progress / 100) * 0.4;
 
   return (
     <motion.div
@@ -80,7 +83,6 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       style={{ overflow: 'visible' }}
       onClick={() => isReady ? onHarvest(plant.id) : onPlantClick?.(plant)}
     >
-      {/* Soil base */}
       <img
         src={soilPlot}
         alt=""
@@ -89,12 +91,9 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         loading="lazy"
         width={512}
         height={512}
-        style={{
-          filter: isReady ? 'brightness(1.05)' : undefined,
-        }}
+        style={{ filter: isReady ? 'brightness(1.05)' : undefined }}
       />
 
-      {/* Crop sitting on top of soil */}
       <motion.img
         src={cropImage}
         alt={plant.plantName || 'Growing crop'}
@@ -171,9 +170,11 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         </>
       )}
 
-      {/* Plant name below */}
+      {/* Plant name + emoji below */}
       <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 50 }}>
-        <p className="text-[8px] font-extrabold text-white drop-shadow-md">{plant.plantName}</p>
+        <p className="text-[8px] font-extrabold text-white drop-shadow-md">
+          {plant.plantEmoji} {plant.plantName}
+        </p>
       </div>
     </motion.div>
   );
