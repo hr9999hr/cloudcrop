@@ -36,9 +36,16 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
       icon: <Beaker className="w-5 h-5" />,
       color: 'text-primary',
       bg: 'bg-primary/10',
-      disabled: !hasFertilizer || isReady,
-      onClick: () => fertilizePlant(plant.id),
-      subtitle: `${inventory.filter(i => i.category === 'fertilizers').reduce((a, i) => a + i.quantity, 0)} bags`,
+      disabled: isReady,
+      onClick: () => {
+        if (!hasFertilizer) {
+          onClose();
+          navigate('/fertilizer');
+        } else {
+          fertilizePlant(plant.id);
+        }
+      },
+      subtitle: hasFertilizer ? `${fertilizerCount} bags` : 'Buy fertilizer →',
     },
     {
       label: 'Pest & Disease Control',
