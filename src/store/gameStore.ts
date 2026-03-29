@@ -455,6 +455,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     ],
   })),
 
+  addWaterDrops: (amount) => set((s) => ({
+    waterDrops: s.waterDrops + amount,
+  })),
+
   addToCart: (item) => set((s) => {
     const existing = s.cart.find((c) => c.id === item.id);
     if (existing) {
