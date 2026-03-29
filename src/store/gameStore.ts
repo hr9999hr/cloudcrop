@@ -154,13 +154,22 @@ export const useGameStore = create<GameState>((set, get) => ({
     waterDrops: s.waterDrops + 1,
   })),
 
-  plantSeed: (slotId, seedName, emoji, durationMs, yieldCoins) => set((s) => ({
-    plants: s.plants.map((p) =>
-      p.id === slotId
-        ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins }
-        : p
-    ),
-  })),
+  plantSeed: (slotId, seedName, emoji, durationMs, yieldCoins) => set((s) => {
+    // Find the seed in inventory and decrement
+    const seedInv = s.inventory.find((i) => i.category === 'seeds' && i.name.includes(seedName) && i.quantity > 0);
+    const newInventory = seedInv
+      ? s.inventory.map((i) => i.id === seedInv.id ? { ...i, quantity: i.quantity - 1 } : i).filter((i) => i.quantity > 0)
+      : s.inventory;
+
+    return {
+      plants: s.plants.map((p) =>
+        p.id === slotId
+          ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins }
+          : p
+      ),
+      inventory: newInventory,
+    };
+  }),
 
   waterPlant: (slotId) => {
     const s = get();
