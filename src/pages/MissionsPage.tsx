@@ -58,9 +58,21 @@ const MISSIONS: Mission[] = [
 ];
 
 const COMPLETED_KEY = "cloudcrop_completed_missions";
+const COMPLETED_DATE_KEY = "cloudcrop_missions_date";
+
+function getTodayStr(): string {
+  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+}
 
 function getCompletedMissions(): string[] {
   try {
+    const savedDate = localStorage.getItem(COMPLETED_DATE_KEY);
+    if (savedDate !== getTodayStr()) {
+      // New day — reset missions
+      localStorage.removeItem(COMPLETED_KEY);
+      localStorage.setItem(COMPLETED_DATE_KEY, getTodayStr());
+      return [];
+    }
     return JSON.parse(localStorage.getItem(COMPLETED_KEY) || "[]");
   } catch {
     return [];
@@ -69,6 +81,7 @@ function getCompletedMissions(): string[] {
 
 function saveCompletedMissions(ids: string[]) {
   localStorage.setItem(COMPLETED_KEY, JSON.stringify(ids));
+  localStorage.setItem(COMPLETED_DATE_KEY, getTodayStr());
 }
 
 export default function MissionsPage() {
