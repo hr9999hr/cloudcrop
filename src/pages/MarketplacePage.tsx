@@ -81,8 +81,7 @@ const conditionTabs = [
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
-  const { coins, realMoney, spendCoins, spendRealMoney, addToInventory, createDelivery, deliveryAddress } = useGameStore();
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { coins, realMoney, spendCoins, spendRealMoney, addToInventory, createDelivery, deliveryAddress, cart, addToCart: storeAddToCart, updateCartQty, removeFromCart: storeRemoveFromCart, clearCart } = useGameStore();
   const [showCart, setShowCart] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [paymentFilter, setPaymentFilter] = useState<'all' | PaymentType>('all');
@@ -96,24 +95,16 @@ export default function MarketplacePage() {
     .filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const addToCart = (product: Product) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.id === product.id);
-      if (existing) {
-        return prev.map((i) => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
+    storeAddToCart(product);
     toast.success(`Added ${product.name} to cart!`);
   };
 
   const updateQty = (id: string, delta: number) => {
-    setCart((prev) =>
-      prev.map((i) => i.id === id ? { ...i, quantity: Math.max(0, i.quantity + delta) } : i).filter((i) => i.quantity > 0)
-    );
+    updateCartQty(id, delta);
   };
 
   const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((i) => i.id !== id));
+    storeRemoveFromCart(id);
   };
 
   const coinItems = cart.filter((i) => i.paymentType === 'coins');
