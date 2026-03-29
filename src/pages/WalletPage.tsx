@@ -33,6 +33,7 @@ export default function WalletPage() {
   const [showTopUp, setShowTopUp] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState('');
   const [expandedTx, setExpandedTx] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'transactions' | 'report'>('transactions');
 
   const ccTransactions = transactions.filter((t) => !t.description.startsWith('[RM]'));
   const rmTransactions = transactions.filter((t) => t.description.startsWith('[RM]'));
