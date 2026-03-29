@@ -48,8 +48,8 @@ const products: Product[] = [
   { id: 'f7', name: 'Premium Grapes (500g)', emoji: '🍇', category: 'fruits', vendor: 'Tropical Harvest', condition: 'Perfect', price: 22.00, paymentType: 'money' },
 
   // Vegetables - Basic (CC)
-  { id: 'v1', name: 'Wonky Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Basic', price: 6, paymentType: 'coins' },
-  { id: 'v2', name: 'Wonky Carrots (500g)', emoji: '🥕', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Basic', price: 4, paymentType: 'coins' },
+  { id: 'v1', name: 'Basic Tomatoes (1kg)', emoji: '🍅', category: 'vegetables', vendor: 'Pak Ali Farm', condition: 'Basic', price: 6, paymentType: 'coins' },
+  { id: 'v2', name: 'Basic Carrots (500g)', emoji: '🥕', category: 'vegetables', vendor: 'Mak Cik Organik', condition: 'Basic', price: 4, paymentType: 'coins' },
   { id: 'v3', name: 'Small Lettuce Bundle', emoji: '🥬', category: 'vegetables', vendor: 'Green Valley', condition: 'Basic', price: 5, paymentType: 'coins' },
   { id: 'v4', name: 'Mixed Chili Pack', emoji: '🌶️', category: 'vegetables', vendor: 'Spice Garden', condition: 'Basic', price: 7, paymentType: 'coins' },
   // Vegetables - Good (RM)
