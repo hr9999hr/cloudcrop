@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGameStore, Transaction } from "@/store/gameStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Banknote, Plus, X, ChevronDown, ChevronUp, ShoppingCart, Sprout, Store, FileText } from "lucide-react";
+import { Banknote, Plus, X, ChevronDown, ChevronUp, ShoppingCart, Sprout, Store, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
