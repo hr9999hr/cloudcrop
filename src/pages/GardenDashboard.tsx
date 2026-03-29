@@ -6,7 +6,7 @@ import { PlantSelectionDialog } from "@/components/PlantSelectionDialog";
 import { HarvestPopup } from "@/components/HarvestPopup";
 import { PlantDetailPopup } from "@/components/PlantDetailPopup";
 import { motion } from "framer-motion";
-import { Star, Lock, Fence } from "lucide-react";
+import { Star, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export default function GardenDashboard() {
@@ -35,18 +35,11 @@ export default function GardenDashboard() {
     setHarvestSlot({ slotId, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', yieldCoins: plant.yieldCoins, quantity });
   };
 
-  const handleSell = () => {
-    if (harvestSlot) harvestPlant(harvestSlot.slotId, 'sell');
-  };
-
-  const handleBag = () => {
-    if (harvestSlot) harvestPlant(harvestSlot.slotId, 'bag');
-  };
+  const handleSell = () => { if (harvestSlot) harvestPlant(harvestSlot.slotId, 'sell'); };
+  const handleBag = () => { if (harvestSlot) harvestPlant(harvestSlot.slotId, 'bag'); };
 
   const handlePlantClick = (plant: PlantSlot) => {
-    if (plant.status === 'growing' || plant.status === 'ready') {
-      setSelectedPlant(plant);
-    }
+    if (plant.status === 'growing' || plant.status === 'ready') setSelectedPlant(plant);
   };
 
   const maxSlots = nextLevelCfg ? nextLevelCfg.slots : currentLevelCfg.slots;
@@ -56,11 +49,11 @@ export default function GardenDashboard() {
       <WelcomePopup />
 
       {/* Header */}
-      <div className="mb-4 flex items-center gap-3">
-        <img src={logo} alt="CloudCrop" className="h-14 w-14 rounded-2xl shadow-lg" />
+      <div className="mb-3 flex items-center gap-3">
+        <img src={logo} alt="CloudCrop" className="h-12 w-12 rounded-2xl shadow-lg" />
         <div className="flex-1">
           <h1 className="text-xl font-extrabold text-foreground">My Farm 🌾</h1>
-          <p className="text-xs text-muted-foreground">Your Hay Day-style farm awaits!</p>
+          <p className="text-[11px] text-muted-foreground">Your isometric farm adventure!</p>
         </div>
       </div>
 
@@ -68,8 +61,7 @@ export default function GardenDashboard() {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-4 rounded-2xl p-3 border border-border shadow-sm"
-        style={{ background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(100 30% 95%) 100%)' }}
+        className="mb-4 rounded-xl p-3 border border-border shadow-sm bg-card"
       >
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
@@ -77,133 +69,127 @@ export default function GardenDashboard() {
               <Star className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-extrabold text-foreground">Level {farmerLevel} Farmer</p>
+              <p className="text-sm font-extrabold text-foreground">Level {farmerLevel}</p>
               <p className="text-[10px] text-muted-foreground">{totalHarvests} harvests</p>
             </div>
           </div>
           <div className="text-right">
             <p className="text-xs font-bold text-primary">{plants.length} plots</p>
             {nextLevelCfg && (
-              <p className="text-[10px] text-muted-foreground">
-                {nextLevelCfg.harvestsNeeded - totalHarvests} to next
-              </p>
+              <p className="text-[10px] text-muted-foreground">{nextLevelCfg.harvestsNeeded - totalHarvests} to Lv.{nextLevelCfg.level}</p>
             )}
           </div>
         </div>
-        <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: 'hsl(var(--muted))' }}>
+        <div className="w-full rounded-full h-2 overflow-hidden bg-muted">
           <motion.div
             className="h-full rounded-full"
             style={{ background: 'linear-gradient(90deg, hsl(120 50% 45%), hsl(80 70% 50%))' }}
             animate={{ width: `${Math.min(100, progressToNext)}%` }}
-            transition={{ duration: 0.5 }}
           />
-        </div>
-        <div className="flex justify-between mt-1">
-          {LEVEL_CONFIG.map(cfg => (
-            <span key={cfg.level} className={`text-[9px] font-bold ${farmerLevel >= cfg.level ? 'text-primary' : 'text-muted-foreground/50'}`}>
-              Lv.{cfg.level} • {cfg.slots} plots
-            </span>
-          ))}
         </div>
       </motion.div>
 
-      {/* Farm Field - Hay Day style */}
+      {/* Isometric Farm Field */}
       <div
-        className="relative rounded-2xl p-5 overflow-hidden"
+        className="relative rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, hsl(95 50% 55%) 0%, hsl(100 45% 42%) 50%, hsl(105 40% 35%) 100%)',
-          boxShadow: 'inset 0 2px 20px rgba(255,255,255,0.15), 0 8px 32px rgba(0,0,0,0.15)',
+          background: 'linear-gradient(180deg, hsl(95 55% 58%) 0%, hsl(100 50% 40%) 60%, hsl(105 42% 32%) 100%)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.2), inset 0 2px 20px rgba(255,255,255,0.1)',
+          padding: '1.25rem 1rem 2rem',
         }}
       >
-        {/* Grass texture overlay */}
-        <div className="absolute inset-0 opacity-[0.08]"
+        {/* Grass dots */}
+        <div className="absolute inset-0 opacity-[0.06]"
           style={{
-            backgroundImage: `radial-gradient(circle at 20% 30%, white 1px, transparent 1px),
-              radial-gradient(circle at 60% 70%, white 1px, transparent 1px),
-              radial-gradient(circle at 80% 20%, white 1px, transparent 1px),
-              radial-gradient(circle at 40% 90%, white 1px, transparent 1px)`,
-            backgroundSize: '100px 80px, 80px 100px, 120px 60px, 60px 120px',
+            backgroundImage: `radial-gradient(white 1px, transparent 1px)`,
+            backgroundSize: '18px 18px',
           }}
         />
 
-        {/* Decorative wooden fence top */}
-        <div className="flex items-center gap-2 mb-4 relative z-10">
-          <div className="flex items-center gap-1">
-            <span className="text-lg">🌳</span>
-            <span className="text-sm">🌿</span>
+        {/* Decorations top */}
+        <div className="relative z-10 flex items-center justify-between mb-3 px-1">
+          <span className="text-base">🌳</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs">🏡</span>
+            <span className="text-[10px] font-extrabold text-white/80 bg-black/15 px-2 py-0.5 rounded-full backdrop-blur-sm">
+              Farm Plots
+            </span>
+            <span className="text-xs">🌻</span>
           </div>
-          <div className="flex-1 h-[3px] rounded-full" style={{ background: 'linear-gradient(90deg, hsl(30 50% 40%), hsl(35 45% 55%), hsl(30 50% 40%))' }} />
-          <span className="text-xs font-extrabold text-white/80 px-2 py-0.5 rounded-full" style={{ background: 'hsla(30, 50%, 35%, 0.7)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-            🌾 Farm Plots
-          </span>
-          <div className="flex-1 h-[3px] rounded-full" style={{ background: 'linear-gradient(90deg, hsl(30 50% 40%), hsl(35 45% 55%), hsl(30 50% 40%))' }} />
-          <div className="flex items-center gap-1">
-            <span className="text-sm">🌿</span>
-            <span className="text-lg">🌳</span>
+          <span className="text-base">🌳</span>
+        </div>
+
+        {/* Isometric container */}
+        <div
+          className="relative z-10"
+          style={{
+            perspective: '800px',
+            perspectiveOrigin: '50% 30%',
+          }}
+        >
+          <div
+            style={{
+              transform: 'rotateX(45deg) rotateZ(-5deg) scale(0.92)',
+              transformStyle: 'preserve-3d',
+              transformOrigin: 'center center',
+            }}
+          >
+            <div className="grid grid-cols-3 gap-3">
+              {plants.map((plant) => (
+                <motion.div
+                  key={plant.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: plant.id * 0.1 }}
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <PlantCard
+                    plant={plant}
+                    onPlant={(id) => setPlantDialogSlot(id)}
+                    onHarvest={handleHarvest}
+                    onPlantClick={handlePlantClick}
+                  />
+                </motion.div>
+              ))}
+
+              {/* Locked plots */}
+              {Array.from({ length: maxSlots - plants.length }, (_, i) => (
+                <motion.div
+                  key={`locked-${i}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 + i * 0.1 }}
+                >
+                  <div style={{ width: '100%', paddingBottom: '70%', position: 'relative' }}>
+                    <div
+                      className="absolute inset-0 rounded-md flex flex-col items-center justify-center"
+                      style={{
+                        background: 'linear-gradient(160deg, hsla(30, 20%, 42%, 0.5) 0%, hsla(25, 25%, 30%, 0.5) 100%)',
+                        border: '2px dashed hsla(30, 20%, 65%, 0.25)',
+                      }}
+                    >
+                      <Lock className="w-4 h-4 text-white/20 mb-0.5" />
+                      <p className="text-[8px] font-bold text-white/25">Lv.{farmerLevel + 1}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Plot grid */}
-        <div className="grid grid-cols-3 gap-4 relative z-10">
-          {plants.map((plant) => (
-            <motion.div
-              key={plant.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: plant.id * 0.08 }}
-            >
-              <PlantCard
-                plant={plant}
-                onPlant={(id) => setPlantDialogSlot(id)}
-                onHarvest={handleHarvest}
-                onPlantClick={handlePlantClick}
-              />
-            </motion.div>
-          ))}
-
-          {/* Locked slots */}
-          {Array.from({ length: maxSlots - plants.length }, (_, i) => (
-            <motion.div
-              key={`locked-${i}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 + i * 0.1 }}
-            >
-              <div className="w-full aspect-square rounded-lg flex flex-col items-center justify-center"
-                style={{
-                  background: 'linear-gradient(180deg, hsla(30, 20%, 40%, 0.4) 0%, hsla(25, 25%, 30%, 0.4) 100%)',
-                  border: '2px dashed hsla(30, 20%, 60%, 0.3)',
-                }}
-              >
-                <Lock className="w-5 h-5 text-white/25 mb-0.5" />
-                <p className="text-[9px] font-bold text-white/30">Lv.{farmerLevel + 1}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Decorative bottom */}
-        <div className="flex justify-center gap-2 mt-4 relative z-10">
-          <span className="text-sm">🌻</span>
-          <span className="text-xs">🌼</span>
+        {/* Bottom decorations */}
+        <div className="relative z-10 flex justify-center items-center gap-3 mt-4">
+          <span className="text-sm">🐔</span>
+          <span className="text-xs">🌾</span>
           <span className="text-sm">🐝</span>
           <span className="text-xs">🌼</span>
-          <span className="text-sm">🌻</span>
+          <span className="text-sm">🐔</span>
         </div>
       </div>
 
-      <PlantSelectionDialog
-        open={plantDialogSlot !== null}
-        slotId={plantDialogSlot || 0}
-        onClose={() => setPlantDialogSlot(null)}
-      />
-
-      <PlantDetailPopup
-        open={selectedPlant !== null}
-        plant={selectedPlant}
-        onClose={() => setSelectedPlant(null)}
-      />
-
+      <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
+      <PlantDetailPopup open={selectedPlant !== null} plant={selectedPlant} onClose={() => setSelectedPlant(null)} />
       <HarvestPopup
         open={harvestSlot !== null}
         plantName={harvestSlot?.plantName || ''}
