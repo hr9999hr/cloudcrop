@@ -12,6 +12,8 @@ export interface PlantSlot {
   growthDurationMs: number;
   progress: number;
   yieldCoins: number;
+  health: number;
+  lastWateredAt: number | null;
 }
 
 export interface InventoryItem {
@@ -116,6 +118,7 @@ export { LEVEL_CONFIG };
 
 const makeEmptySlot = (id: number): PlantSlot => ({
   id, status: 'empty', plantName: null, plantEmoji: null, plantedAt: null, growthDurationMs: 0, progress: 0, yieldCoins: 0,
+  health: 100, lastWateredAt: null,
 });
 
 const getSlotsForLevel = (level: number): number => {
@@ -165,8 +168,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       plants: s.plants.map((p) =>
         p.id === slotId
           ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins }
+              , health: 100, lastWateredAt: Date.now() }
           : p
-      ),
+      ).map(x => x), // force new array
       inventory: newInventory,
     };
   }),
@@ -178,7 +182,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       waterDrops: s.waterDrops - 1,
       plants: s.plants.map((p) =>
         p.id === slotId && p.status === 'growing'
-          ? { ...p, progress: Math.min(100, p.progress + 10) }
+          ? { ...p, health: Math.min(100, (p.health ?? 100) + 25), lastWateredAt: Date.now() }
           : p
       ),
     });
