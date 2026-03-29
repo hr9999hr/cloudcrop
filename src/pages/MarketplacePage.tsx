@@ -158,7 +158,7 @@ export default function MarketplacePage() {
     const deliveryCartItems = cart.filter((i) => i.category !== 'seeds');
 
     seedItems.forEach((item) => {
-      addToInventory({ name: item.name.replace(' Pack', ''), emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
+      addToInventory({ name: item.name, emoji: item.emoji, category: 'seeds', quantity: item.quantity, description: `Purchased from Supermarket` });
     });
 
     // Create delivery for produce (no inventory storage)
