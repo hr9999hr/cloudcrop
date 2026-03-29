@@ -36,17 +36,17 @@ export default function FertilizerPage() {
             whileTap={{ scale: 0.98 }}
             className="bg-card border rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden"
           >
-            {pkg.badge && (
-              <div className="absolute top-2 right-2 gradient-farm text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
-                {pkg.badge}
-              </div>
-            )}
             <span className="text-3xl">{pkg.emoji}</span>
             <div className="flex-1">
               <p className="font-bold text-foreground">{pkg.label}</p>
               <p className="text-sm text-muted-foreground">Skip 24h growth per use</p>
             </div>
-            <div className="text-right">
+            <div className="text-right flex flex-col items-center">
+              {pkg.badge && (
+                <span className="gradient-farm text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">
+                  {pkg.badge}
+                </span>
+              )}
               <p className="font-extrabold text-foreground">{pkg.price}</p>
               <Button
                 size="sm"
