@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
+import ccCoin from "@/assets/cc-coin.png";
 
 interface PlantSelectionDialogProps {
   open: boolean;
@@ -68,8 +69,9 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                       <span className="text-3xl">{seed.emoji}</span>
                       <div className="flex-1">
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {opt ? `⏱ ${(opt.durationMs / 60000).toFixed(1)} min · 🪙 ${opt.yieldCoins} coins` : ''}
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          {opt ? <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.yieldCoins} coins</span></> : ''}
+                        </p>
                         </p>
                       </div>
                       <span className="text-xs font-bold text-muted-foreground">x{seed.quantity}</span>
