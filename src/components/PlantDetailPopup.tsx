@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Droplets, Beaker, Bug, Shield } from "lucide-react";
 import { PlantSlot, useGameStore } from "@/store/gameStore";
+import { useNavigate } from "react-router-dom";
 
 interface PlantDetailPopupProps {
   open: boolean;
