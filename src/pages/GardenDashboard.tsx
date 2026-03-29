@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGameStore, PlantSlot, LEVEL_CONFIG } from "@/store/gameStore";
 import { PlantCard } from "@/components/PlantCard";
 import { WelcomePopup } from "@/components/WelcomePopup";
