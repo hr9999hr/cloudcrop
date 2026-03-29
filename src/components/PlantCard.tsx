@@ -138,14 +138,6 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       {/* Harvest effects */}
       {isReady && (
         <>
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute top-[5%] right-[10%] rounded-full p-1 shadow-lg z-10"
-            style={{ background: 'linear-gradient(135deg, hsl(45 90% 55%), hsl(35 85% 45%))' }}
-          >
-            <Scissors className="w-3 h-3 text-amber-900" />
-          </motion.div>
           {[...Array(4)].map((_, i) => (
             <motion.span
               key={i}
