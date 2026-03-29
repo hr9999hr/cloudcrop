@@ -12,6 +12,7 @@ import MarketplacePage from "@/pages/MarketplacePage";
 import WalletPage from "@/pages/WalletPage";
 import DeliveryPage from "@/pages/DeliveryPage";
 import SettingsPage from "@/pages/SettingsPage";
+import MissionsPage from "@/pages/MissionsPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
@@ -50,6 +51,7 @@ const AppRoutes = () => (
     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
     <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/" element={<ProtectedRoute><AppLayout><GardenDashboard /></AppLayout></ProtectedRoute>} />
+    <Route path="/missions" element={<ProtectedRoute><AppLayout><MissionsPage /></AppLayout></ProtectedRoute>} />
     <Route path="/inventory" element={<ProtectedRoute><AppLayout><InventoryPage /></AppLayout></ProtectedRoute>} />
     <Route path="/fertilizer" element={<ProtectedRoute><AppLayout><FertilizerPage /></AppLayout></ProtectedRoute>} />
     <Route path="/marketplace" element={<ProtectedRoute><AppLayout><MarketplacePage /></AppLayout></ProtectedRoute>} />

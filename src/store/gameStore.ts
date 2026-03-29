@@ -95,6 +95,7 @@ interface GameState {
   createDelivery: (items: DeliveryOrder['items']) => void;
   updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
   topUpRealMoney: (amount: number) => void;
+  addWaterDrops: (amount: number) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   updateCartQty: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
