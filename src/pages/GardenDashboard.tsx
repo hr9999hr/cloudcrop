@@ -6,7 +6,7 @@ import { PlantSelectionDialog } from "@/components/PlantSelectionDialog";
 import { HarvestPopup } from "@/components/HarvestPopup";
 import { PlantDetailPopup } from "@/components/PlantDetailPopup";
 import { motion } from "framer-motion";
-import { TreePine, Star, Lock } from "lucide-react";
+import { Star, Lock, Fence } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export default function GardenDashboard() {
@@ -49,7 +49,6 @@ export default function GardenDashboard() {
     }
   };
 
-  // Show locked slots for next level preview
   const maxSlots = nextLevelCfg ? nextLevelCfg.slots : currentLevelCfg.slots;
 
   return (
@@ -58,76 +57,100 @@ export default function GardenDashboard() {
 
       {/* Header */}
       <div className="mb-4 flex items-center gap-3">
-        <img
-          src={logo}
-          alt="CloudCrop"
-          className="h-14 w-14 rounded-2xl shadow-lg"
-        />
+        <img src={logo} alt="CloudCrop" className="h-14 w-14 rounded-2xl shadow-lg" />
         <div className="flex-1">
-          <h1 className="text-xl font-extrabold text-foreground">My Farm 🌿</h1>
-          <p className="text-xs text-muted-foreground">Grow crops, earn coins, feed the world!</p>
+          <h1 className="text-xl font-extrabold text-foreground">My Farm 🌾</h1>
+          <p className="text-xs text-muted-foreground">Your Hay Day-style farm awaits!</p>
         </div>
       </div>
 
-      {/* Level & XP Bar */}
+      {/* Level Bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-5 bg-card border border-border rounded-2xl p-4 shadow-sm"
+        className="mb-4 rounded-2xl p-3 border border-border shadow-sm"
+        style={{ background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(100 30% 95%) 100%)' }}
       >
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
-            <div className="bg-primary/10 rounded-full p-2">
-              <Star className="w-5 h-5 text-primary" />
+            <div className="rounded-full p-1.5" style={{ background: 'linear-gradient(135deg, hsl(45 80% 55%), hsl(35 90% 45%))' }}>
+              <Star className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-extrabold text-foreground">Farmer Level {farmerLevel}</p>
-              <p className="text-[10px] text-muted-foreground">{totalHarvests} total harvests</p>
+              <p className="text-sm font-extrabold text-foreground">Level {farmerLevel} Farmer</p>
+              <p className="text-[10px] text-muted-foreground">{totalHarvests} harvests</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs font-bold text-primary">{plants.length} slots</p>
+            <p className="text-xs font-bold text-primary">{plants.length} plots</p>
             {nextLevelCfg && (
               <p className="text-[10px] text-muted-foreground">
-                {nextLevelCfg.harvestsNeeded - totalHarvests} more to Lv.{nextLevelCfg.level}
+                {nextLevelCfg.harvestsNeeded - totalHarvests} to next
               </p>
             )}
           </div>
         </div>
-        <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+        <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: 'hsl(var(--muted))' }}>
           <motion.div
-            className="h-full rounded-full bg-primary"
+            className="h-full rounded-full"
+            style={{ background: 'linear-gradient(90deg, hsl(120 50% 45%), hsl(80 70% 50%))' }}
             animate={{ width: `${Math.min(100, progressToNext)}%` }}
             transition={{ duration: 0.5 }}
           />
         </div>
         <div className="flex justify-between mt-1">
           {LEVEL_CONFIG.map(cfg => (
-            <span key={cfg.level} className={`text-[9px] font-bold ${farmerLevel >= cfg.level ? 'text-primary' : 'text-muted-foreground'}`}>
-              Lv.{cfg.level} ({cfg.slots} plots)
+            <span key={cfg.level} className={`text-[9px] font-bold ${farmerLevel >= cfg.level ? 'text-primary' : 'text-muted-foreground/50'}`}>
+              Lv.{cfg.level} • {cfg.slots} plots
             </span>
           ))}
         </div>
       </motion.div>
 
-      {/* Farm Grid */}
-      <div className="relative bg-gradient-to-b from-[hsl(var(--sky))]/30 to-[hsl(var(--growth))]/10 rounded-2xl p-4 border border-border">
-        {/* Decorative fence top */}
-        <div className="flex items-center gap-2 mb-3">
-          <TreePine className="w-4 h-4 text-primary/60" />
-          <div className="flex-1 h-px bg-[hsl(var(--earth-light))]" />
-          <span className="text-xs font-bold text-muted-foreground">🌾 Farm Plots</span>
-          <div className="flex-1 h-px bg-[hsl(var(--earth-light))]" />
-          <TreePine className="w-4 h-4 text-primary/60" />
+      {/* Farm Field - Hay Day style */}
+      <div
+        className="relative rounded-2xl p-5 overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, hsl(95 50% 55%) 0%, hsl(100 45% 42%) 50%, hsl(105 40% 35%) 100%)',
+          boxShadow: 'inset 0 2px 20px rgba(255,255,255,0.15), 0 8px 32px rgba(0,0,0,0.15)',
+        }}
+      >
+        {/* Grass texture overlay */}
+        <div className="absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 20% 30%, white 1px, transparent 1px),
+              radial-gradient(circle at 60% 70%, white 1px, transparent 1px),
+              radial-gradient(circle at 80% 20%, white 1px, transparent 1px),
+              radial-gradient(circle at 40% 90%, white 1px, transparent 1px)`,
+            backgroundSize: '100px 80px, 80px 100px, 120px 60px, 60px 120px',
+          }}
+        />
+
+        {/* Decorative wooden fence top */}
+        <div className="flex items-center gap-2 mb-4 relative z-10">
+          <div className="flex items-center gap-1">
+            <span className="text-lg">🌳</span>
+            <span className="text-sm">🌿</span>
+          </div>
+          <div className="flex-1 h-[3px] rounded-full" style={{ background: 'linear-gradient(90deg, hsl(30 50% 40%), hsl(35 45% 55%), hsl(30 50% 40%))' }} />
+          <span className="text-xs font-extrabold text-white/80 px-2 py-0.5 rounded-full" style={{ background: 'hsla(30, 50%, 35%, 0.7)', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
+            🌾 Farm Plots
+          </span>
+          <div className="flex-1 h-[3px] rounded-full" style={{ background: 'linear-gradient(90deg, hsl(30 50% 40%), hsl(35 45% 55%), hsl(30 50% 40%))' }} />
+          <div className="flex items-center gap-1">
+            <span className="text-sm">🌿</span>
+            <span className="text-lg">🌳</span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        {/* Plot grid */}
+        <div className="grid grid-cols-3 gap-4 relative z-10">
           {plants.map((plant) => (
             <motion.div
               key={plant.id}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: plant.id * 0.05 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: plant.id * 0.08 }}
             >
               <PlantCard
                 plant={plant}
@@ -138,18 +161,34 @@ export default function GardenDashboard() {
             </motion.div>
           ))}
 
-          {/* Locked slots preview */}
+          {/* Locked slots */}
           {Array.from({ length: maxSlots - plants.length }, (_, i) => (
             <motion.div
               key={`locked-${i}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="w-full aspect-square rounded-xl bg-muted/50 border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center"
+              transition={{ delay: 0.5 + i * 0.1 }}
             >
-              <Lock className="w-5 h-5 text-muted-foreground/30 mb-1" />
-              <p className="text-[9px] text-muted-foreground/40 font-bold">Lv.{farmerLevel + 1}</p>
+              <div className="w-full aspect-square rounded-lg flex flex-col items-center justify-center"
+                style={{
+                  background: 'linear-gradient(180deg, hsla(30, 20%, 40%, 0.4) 0%, hsla(25, 25%, 30%, 0.4) 100%)',
+                  border: '2px dashed hsla(30, 20%, 60%, 0.3)',
+                }}
+              >
+                <Lock className="w-5 h-5 text-white/25 mb-0.5" />
+                <p className="text-[9px] font-bold text-white/30">Lv.{farmerLevel + 1}</p>
+              </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Decorative bottom */}
+        <div className="flex justify-center gap-2 mt-4 relative z-10">
+          <span className="text-sm">🌻</span>
+          <span className="text-xs">🌼</span>
+          <span className="text-sm">🐝</span>
+          <span className="text-xs">🌼</span>
+          <span className="text-sm">🌻</span>
         </div>
       </div>
 
