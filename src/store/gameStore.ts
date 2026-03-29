@@ -141,6 +141,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   transactions: [],
   deliveries: [],
   deliveryAddress: '',
+  cart: [],
   hasSeenWelcome: false,
   dailyLoginClaimed: false,
   farmerLevel: 1,
