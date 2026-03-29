@@ -42,7 +42,8 @@ export default function GardenDashboard() {
   const handleHarvest = (slotId: number) => {
     const plant = plants.find(p => p.id === slotId);
     if (!plant || plant.status !== 'ready') return;
-    const quantity = Math.max(1, Math.floor(plant.progress / 20));
+    const healthFactor = Math.max(0.3, (plant.health ?? 100) / 100);
+    const quantity = Math.max(1, Math.floor((plant.progress / 20) * healthFactor));
     setHarvestSlot({ slotId, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', yieldCoins: plant.yieldCoins, quantity });
   };
 

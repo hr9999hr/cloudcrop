@@ -121,7 +121,16 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
 
       {/* Progress bar */}
       {!isReady && (
-        <div className="absolute bottom-[2%] left-[18%] right-[18%]" style={{ zIndex: 50 }}>
+        <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
+          {/* Health bar */}
+          <div className="h-1 rounded-full overflow-hidden mb-0.5" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: (plant.health ?? 100) >= 50 ? 'hsl(0 70% 60%)' : 'hsl(0 80% 45%)' }}
+              animate={{ width: `${plant.health ?? 100}%` }}
+            />
+          </div>
+          {/* Growth bar */}
           <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
             <motion.div
               className="h-full rounded-full"

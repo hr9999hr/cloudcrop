@@ -19,7 +19,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   if (!open || !plant || plant.status === 'empty') return null;
 
   const isReady = plant.status === 'ready';
-  const healthPercent = Math.round(plant.progress);
+  const growthPercent = Math.round(plant.progress);
+  const healthPercent = Math.round(plant.health ?? 100);
 
   const actions = [
     {
@@ -101,21 +102,30 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
 
             {/* Plant info */}
             <div className="flex-1">
-              <h3 className="text-lg font-extrabold text-foreground mb-2">Plant Health</h3>
-              <div className="w-full bg-muted rounded-full h-3 mb-1 overflow-hidden">
+              <h3 className="text-sm font-extrabold text-foreground mb-2">Growth</h3>
+              <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
                 <motion.div
-                  className={`h-full rounded-full ${healthPercent >= 50 ? 'bg-growth' : 'bg-destructive'}`}
+                  className="h-full rounded-full bg-growth"
+                  animate={{ width: `${growthPercent}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground font-semibold mb-3">
+                {growthPercent}% — {isReady ? '🎉 Harvest ready!' : `${Math.round(100 - growthPercent)}% to go`}
+              </p>
+
+              <h3 className="text-sm font-extrabold text-foreground mb-2">Health ❤️</h3>
+              <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
+                <motion.div
+                  className={`h-full rounded-full ${healthPercent >= 50 ? 'bg-red-400' : 'bg-destructive'}`}
                   animate={{ width: `${healthPercent}%` }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground font-semibold mb-3">
-                {healthPercent}% — {isReady ? '🎉 Harvest ready!' : healthPercent >= 50 ? 'Healthy' : '⚠️ Needs attention'}
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                {healthPercent}% — {healthPercent >= 70 ? '💚 Healthy' : healthPercent >= 40 ? '💛 Needs water' : '❤️‍🩹 Critical! Water now!'}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {isReady
-                  ? `Yields ${plant.yieldCoins} CC coins`
-                  : `${Math.round(100 - healthPercent)}% to go`}
-              </p>
+              {healthPercent < 50 && (
+                <p className="text-[10px] text-destructive font-bold mt-1">⚠️ Low health slows growth & reduces harvest!</p>
+              )}
             </div>
           </div>
 
