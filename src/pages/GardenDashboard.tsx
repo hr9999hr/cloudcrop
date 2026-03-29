@@ -8,6 +8,9 @@ import { PlantDetailPopup } from "@/components/PlantDetailPopup";
 import { motion } from "framer-motion";
 import { Star, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
+import barnImg from "@/assets/farm/barn.png";
+import treeImg from "@/assets/farm/tree.png";
+import soilPlot from "@/assets/farm/soil-plot.png";
 
 export default function GardenDashboard() {
   const { plants, updateProgress, farmerLevel, totalHarvests } = useGameStore();
@@ -53,7 +56,7 @@ export default function GardenDashboard() {
         <img src={logo} alt="CloudCrop" className="h-12 w-12 rounded-2xl shadow-lg" />
         <div className="flex-1">
           <h1 className="text-xl font-extrabold text-foreground">My Farm 🌾</h1>
-          <p className="text-[11px] text-muted-foreground">Your isometric farm adventure!</p>
+          <p className="text-[11px] text-muted-foreground">Grow crops, harvest & earn!</p>
         </div>
       </div>
 
@@ -89,59 +92,65 @@ export default function GardenDashboard() {
         </div>
       </motion.div>
 
-      {/* Isometric Farm Field */}
+      {/* Hay Day-style Farm Scene */}
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, hsl(95 55% 58%) 0%, hsl(100 50% 40%) 60%, hsl(105 42% 32%) 100%)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.2), inset 0 2px 20px rgba(255,255,255,0.1)',
-          padding: '1.25rem 1rem 2rem',
+          background: 'linear-gradient(170deg, hsl(90 55% 62%) 0%, hsl(95 50% 48%) 40%, hsl(100 45% 38%) 100%)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
+          padding: '1rem',
+          minHeight: '380px',
         }}
       >
-        {/* Grass dots */}
-        <div className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage: `radial-gradient(white 1px, transparent 1px)`,
-            backgroundSize: '18px 18px',
-          }}
+        {/* Grass texture */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '14px 14px' }}
         />
 
-        {/* Decorations top */}
-        <div className="relative z-10 flex items-center justify-between mb-3 px-1">
-          <span className="text-base">🌳</span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs">🏡</span>
-            <span className="text-[10px] font-extrabold text-white/80 bg-black/15 px-2 py-0.5 rounded-full backdrop-blur-sm">
-              Farm Plots
-            </span>
-            <span className="text-xs">🌻</span>
-          </div>
-          <span className="text-base">🌳</span>
+        {/* Decorative elements - barn & trees */}
+        <div className="relative z-10 flex items-start justify-between mb-2">
+          <motion.img
+            src={treeImg}
+            alt="Tree"
+            className="w-16 h-16 object-contain -mt-2 -ml-1"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            loading="lazy"
+            width={64}
+            height={64}
+          />
+          <motion.img
+            src={barnImg}
+            alt="Barn"
+            className="w-20 h-20 object-contain -mt-3 -mr-1"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            loading="lazy"
+            width={80}
+            height={80}
+          />
         </div>
 
-        {/* Isometric container — Hay Day angle: ~35deg tilt, slight Z rotation */}
+        {/* Farm label */}
+        <div className="relative z-10 flex justify-center mb-3">
+          <span className="text-[10px] font-extrabold text-white/80 bg-black/15 px-3 py-1 rounded-full backdrop-blur-sm">
+            🌾 Farm Plots — Level {farmerLevel}
+          </span>
+        </div>
+
+        {/* Isometric plot grid */}
         <div
           className="relative z-10"
-          style={{
-            perspective: '900px',
-            perspectiveOrigin: '50% 20%',
-          }}
+          style={{ perspective: '800px', perspectiveOrigin: '50% 25%' }}
         >
-          <div
-            style={{
-              transform: 'rotateX(38deg) rotateZ(-2deg) scale(0.88)',
-              transformStyle: 'preserve-3d',
-              transformOrigin: 'center 60%',
-            }}
-          >
-            <div className="grid grid-cols-3 gap-3">
+          <div style={{ transform: 'rotateX(20deg) scale(0.95)', transformOrigin: 'center 55%' }}>
+            <div className="grid grid-cols-3 gap-3 px-2">
               {plants.map((plant) => (
                 <motion.div
                   key={plant.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: plant.id * 0.1 }}
-                  style={{ transformStyle: 'preserve-3d' }}
                 >
                   <PlantCard
                     plant={plant}
@@ -157,20 +166,14 @@ export default function GardenDashboard() {
                 <motion.div
                   key={`locked-${i}`}
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  animate={{ opacity: 0.6 }}
                   transition={{ delay: 0.6 + i * 0.1 }}
+                  className="relative"
                 >
-                  <div style={{ width: '100%', paddingBottom: '70%', position: 'relative' }}>
-                    <div
-                      className="absolute inset-0 rounded-md flex flex-col items-center justify-center"
-                      style={{
-                        background: 'linear-gradient(160deg, hsla(30, 20%, 42%, 0.5) 0%, hsla(25, 25%, 30%, 0.5) 100%)',
-                        border: '2px dashed hsla(30, 20%, 65%, 0.25)',
-                      }}
-                    >
-                      <Lock className="w-4 h-4 text-white/20 mb-0.5" />
-                      <p className="text-[8px] font-bold text-white/25">Lv.{farmerLevel + 1}</p>
-                    </div>
+                  <img src={soilPlot} alt="Locked plot" className="w-full h-auto opacity-40 grayscale" loading="lazy" width={512} height={512} />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Lock className="w-5 h-5 text-white/40" />
+                    <p className="text-[8px] font-bold text-white/40">Lv.{farmerLevel + 1}</p>
                   </div>
                 </motion.div>
               ))}
@@ -178,13 +181,15 @@ export default function GardenDashboard() {
           </div>
         </div>
 
-        {/* Bottom decorations */}
-        <div className="relative z-10 flex justify-center items-center gap-3 mt-4">
-          <span className="text-sm">🐔</span>
-          <span className="text-xs">🌾</span>
-          <span className="text-sm">🐝</span>
-          <span className="text-xs">🌼</span>
-          <span className="text-sm">🐔</span>
+        {/* Bottom decorative trees */}
+        <div className="relative z-10 flex justify-between items-end mt-2 px-2">
+          <motion.img src={treeImg} alt="Tree" className="w-12 h-12 object-contain" loading="lazy" width={48} height={48} />
+          <div className="flex gap-2 items-end">
+            <span className="text-base">🐔</span>
+            <span className="text-lg">🐄</span>
+            <span className="text-base">🐔</span>
+          </div>
+          <motion.img src={treeImg} alt="Tree" className="w-14 h-14 object-contain -scale-x-100" loading="lazy" width={56} height={56} />
         </div>
       </div>
 
