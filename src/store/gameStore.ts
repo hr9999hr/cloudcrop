@@ -261,7 +261,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (existing) {
       return { inventory: s.inventory.map((i) => i.name === item.name ? { ...i, quantity: i.quantity + item.quantity } : i) };
     }
-    return { inventory: [...s.inventory, { ...item, id: Date.now().toString() }] };
+    return { inventory: [...s.inventory, { ...item, id: `inv-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }] };
   }),
 
   removeFromInventory: (id, qty) => set((s) => ({
