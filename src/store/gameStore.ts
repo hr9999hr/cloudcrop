@@ -327,4 +327,22 @@ export const useGameStore = create<GameState>((set, get) => ({
       ...s.transactions,
     ],
   })),
+
+  addToCart: (item) => set((s) => {
+    const existing = s.cart.find((c) => c.id === item.id);
+    if (existing) {
+      return { cart: s.cart.map((c) => c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c) };
+    }
+    return { cart: [...s.cart, { ...item, quantity: 1 }] };
+  }),
+
+  updateCartQty: (id, delta) => set((s) => ({
+    cart: s.cart.map((c) => c.id === id ? { ...c, quantity: Math.max(0, c.quantity + delta) } : c).filter((c) => c.quantity > 0),
+  })),
+
+  removeFromCart: (id) => set((s) => ({
+    cart: s.cart.filter((c) => c.id !== id),
+  })),
+
+  clearCart: () => set({ cart: [] }),
 }));
