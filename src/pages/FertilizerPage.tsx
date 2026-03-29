@@ -37,7 +37,7 @@ export default function FertilizerPage() {
             className="bg-card border rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden"
           >
             {pkg.badge && (
-              <div className="absolute top-2 right-2 gradient-farm text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
+              <div className="absolute top-2 right-2 gradient-farm text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
                 {pkg.badge}
               </div>
             )}
