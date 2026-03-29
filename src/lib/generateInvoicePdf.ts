@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 interface InvoiceItem {
   name: string;
@@ -151,7 +151,7 @@ export function generateTransactionInvoicePdf(data: TransactionInvoiceData) {
     if (totalCC > 0) footParts.push(`${totalCC} CC`);
     if (totalRM > 0) footParts.push(`RM ${totalRM.toFixed(2)}`);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["Item", "Qty", "Unit Price", "Total"]],
@@ -168,7 +168,7 @@ export function generateTransactionInvoicePdf(data: TransactionInvoiceData) {
   } else {
     // Simple single-line transaction
     const amountStr = isRM ? `RM ${data.amount.toFixed(2)}` : `${data.amount} CC`;
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["Description", "Type", "Amount"]],
@@ -261,7 +261,7 @@ export function generateInvoicePdf(data: InvoiceData) {
   doc.text("EARNINGS", margin, y);
   y += 6;
 
-  (doc as any).autoTable({
+  autoTable(doc, {
     startY: y,
     margin: { left: margin, right: margin },
     head: [["Description", "Amount"]],
@@ -290,7 +290,7 @@ export function generateInvoicePdf(data: InvoiceData) {
       `${(i.price / i.qty).toFixed(0)} CC`, `${i.price} CC`,
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["Item", "Qty", "Unit Price", "Total"]],
@@ -318,7 +318,7 @@ export function generateInvoicePdf(data: InvoiceData) {
       `RM ${(i.price / i.qty).toFixed(2)}`, `RM ${i.price.toFixed(2)}`,
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["Item", "Qty", "Unit Price", "Total"]],
@@ -391,7 +391,7 @@ export function generateSummaryReportPdf(months: MonthData[]) {
   const totRME = months.reduce((s, m) => s + m.rmEarned, 0);
   const totRMS = months.reduce((s, m) => s + m.rmSpent, 0);
 
-  (doc as any).autoTable({
+  autoTable(doc, {
     startY: y,
     margin: { left: margin, right: margin },
     head: [["Month", "Txns", "CC +", "CC −", "Net CC", "RM +", "RM −", "Net RM"]],
