@@ -61,9 +61,7 @@ const products: Product[] = [
   { id: 's8', name: 'Watermelon Seed Pack', emoji: '🍉', category: 'seeds', vendor: 'SeedMart', price: 3.50, paymentType: 'money' },
 ];
 
-interface CartItem extends Product {
-  quantity: number;
-}
+
 
 const categoryTabs = [
   { key: 'all', label: 'All' },
