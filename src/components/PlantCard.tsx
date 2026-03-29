@@ -88,36 +88,50 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
   return (
     <motion.div
       layout
-      whileHover={{ scale: 1.08, y: -5 }}
-      whileTap={{ scale: 0.95 }}
-      className="cursor-pointer relative"
+      whileHover={{ scale: 1.05, y: -3 }}
+      whileTap={{ scale: 0.96 }}
+      className="cursor-pointer relative w-full h-full rounded-lg overflow-hidden"
       onClick={() => isReady ? onHarvest(plant.id) : onPlantClick?.(plant)}
+      style={{
+        background: isReady
+          ? 'linear-gradient(145deg, hsl(45 70% 45%), hsl(35 60% 35%))'
+          : 'linear-gradient(145deg, hsl(30 55% 42%), hsl(25 50% 32%))',
+        border: isReady ? '2px solid hsla(45 80% 60% / 0.7)' : '2px solid hsla(30 40% 50% / 0.5)',
+        boxShadow: isReady
+          ? '0 4px 16px hsla(45 80% 50% / 0.4), inset 0 1px 0 hsla(0 0% 100% / 0.15)'
+          : '0 4px 12px hsla(0 0% 0% / 0.2), inset 0 1px 0 hsla(0 0% 100% / 0.1)',
+      }}
     >
-      {/* Crop image with growth-based opacity/scale */}
-      <motion.img
-        src={cropImage}
-        alt={plant.plantName || 'Growing crop'}
-        className="w-full h-auto drop-shadow-lg"
-        draggable={false}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{
-          opacity: 1,
-          scale: isReady ? [1, 1.02, 1] : 1,
-        }}
-        transition={isReady ? { repeat: Infinity, duration: 2 } : { duration: 0.5 }}
-      />
+      {/* Soil base */}
+      <img src={soilPlot} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" draggable={false} />
 
-      {/* Progress bar overlay at bottom */}
+      {/* Crop image centered */}
+      <div className="absolute inset-0 flex items-center justify-center p-2">
+        <motion.img
+          src={cropImage}
+          alt={plant.plantName || 'Growing crop'}
+          className="w-3/4 h-3/4 object-contain drop-shadow-lg"
+          draggable={false}
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{
+            opacity: 1,
+            scale: isReady ? [1, 1.04, 1] : 1,
+          }}
+          transition={isReady ? { repeat: Infinity, duration: 2 } : { duration: 0.5 }}
+        />
+      </div>
+
+      {/* Progress bar */}
       {!isReady && (
-        <div className="absolute bottom-[12%] left-[15%] right-[15%]">
-          <div className="h-1.5 rounded-full bg-black/30 overflow-hidden backdrop-blur-sm">
+        <div className="absolute bottom-2 left-2 right-2">
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
             <motion.div
               className="h-full rounded-full"
-              style={{ background: 'linear-gradient(90deg, #4ade80, #facc15)' }}
+              style={{ background: 'linear-gradient(90deg, hsl(120 60% 50%), hsl(60 80% 55%))' }}
               animate={{ width: `${plant.progress}%` }}
             />
           </div>
-          <p className="text-[7px] font-extrabold text-white text-center mt-0.5 drop-shadow-md">
+          <p className="text-[8px] font-extrabold text-white text-center mt-0.5 drop-shadow-md">
             {growthLabel} • {Math.round(plant.progress)}%
           </p>
         </div>
