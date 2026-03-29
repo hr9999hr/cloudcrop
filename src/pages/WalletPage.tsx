@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useGameStore, Transaction } from "@/store/gameStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Banknote, Plus, X, ChevronDown, ChevronUp, ShoppingCart, Sprout, Store, FileText } from "lucide-react";
+import { Banknote, Plus, X, ChevronDown, ChevronUp, ShoppingCart, Sprout, Store, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ccCoin from "@/assets/cc-coin.png";
 import { MonthlyReport } from "@/components/MonthlyReport";
+import { generateTransactionInvoicePdf } from "@/lib/generateInvoicePdf";
 
 function getTransactionTitle(tx: Transaction) {
   if (tx.items && tx.items.length > 0) {
@@ -166,8 +167,8 @@ export default function WalletPage() {
                 return (
                   <div key={tx.id} className="bg-card border rounded-xl overflow-hidden">
                     <button
-                      onClick={() => (hasItems || tx.source) && setExpandedTx(isExpanded ? null : tx.id)}
-                      className={`w-full flex items-center gap-3 p-3 text-left ${(hasItems || tx.source) ? 'cursor-pointer hover:bg-accent/50' : 'cursor-default'}`}
+                      onClick={() => setExpandedTx(isExpanded ? null : tx.id)}
+                      className="w-full flex items-center gap-3 p-3 text-left cursor-pointer hover:bg-accent/50"
                     >
                       {isRM ? (
                         <Banknote className="w-5 h-5 text-money flex-shrink-0" />
@@ -183,9 +184,7 @@ export default function WalletPage() {
                       <span className={`font-bold text-sm whitespace-nowrap ${tx.type === 'earn' ? 'text-growth' : 'text-destructive'}`}>
                         {tx.type === 'earn' ? '+' : '-'}{isRM ? `RM ${tx.amount.toFixed(2)}` : tx.amount}
                       </span>
-                      {(hasItems || tx.source) && (
-                        isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                      )}
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                     </button>
                     <AnimatePresence>
                       {isExpanded && (
@@ -219,6 +218,27 @@ export default function WalletPage() {
                                 ))}
                               </>
                             )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full rounded-xl text-xs mt-2 gap-1.5"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const invoiceNo = `CC-${new Date(tx.timestamp).getFullYear()}${String(new Date(tx.timestamp).getMonth() + 1).padStart(2, '0')}-${tx.id.slice(0, 4).toUpperCase()}`;
+                                generateTransactionInvoicePdf({
+                                  invoiceNo,
+                                  type: tx.type,
+                                  amount: tx.amount,
+                                  description: tx.description,
+                                  source: tx.source,
+                                  timestamp: tx.timestamp,
+                                  items: tx.items,
+                                });
+                              }}
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              Download Invoice (PDF)
+                            </Button>
                           </div>
                         </motion.div>
                       )}
