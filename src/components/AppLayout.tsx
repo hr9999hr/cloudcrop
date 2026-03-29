@@ -12,6 +12,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const { coins, realMoney, waterDrops, weather } = useGameStore();
+  useGameSync();
 
   const weatherEmojis: Record<string, string> = {
     sunny: '☀️',
