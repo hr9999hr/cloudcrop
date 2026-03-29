@@ -26,6 +26,13 @@ export default function GardenDashboard() {
     return () => clearInterval(interval);
   }, [updateProgress]);
 
+  useEffect(() => {
+    if (farmerLevel > prevLevel.current) {
+      setLevelUpLevel(farmerLevel);
+    }
+    prevLevel.current = farmerLevel;
+  }, [farmerLevel]);
+
   const currentLevelCfg = LEVEL_CONFIG.find(c => c.level === farmerLevel)!;
   const nextLevelCfg = LEVEL_CONFIG.find(c => c.level === farmerLevel + 1);
   const progressToNext = nextLevelCfg
