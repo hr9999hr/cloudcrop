@@ -167,8 +167,8 @@ export default function WalletPage() {
                 return (
                   <div key={tx.id} className="bg-card border rounded-xl overflow-hidden">
                     <button
-                      onClick={() => (hasItems || tx.source) && setExpandedTx(isExpanded ? null : tx.id)}
-                      className={`w-full flex items-center gap-3 p-3 text-left ${(hasItems || tx.source) ? 'cursor-pointer hover:bg-accent/50' : 'cursor-default'}`}
+                      onClick={() => setExpandedTx(isExpanded ? null : tx.id)}
+                      className="w-full flex items-center gap-3 p-3 text-left cursor-pointer hover:bg-accent/50"
                     >
                       {isRM ? (
                         <Banknote className="w-5 h-5 text-money flex-shrink-0" />
