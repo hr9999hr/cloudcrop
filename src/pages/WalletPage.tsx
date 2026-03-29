@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ccCoin from "@/assets/cc-coin.png";
 import { MonthlyReport } from "@/components/MonthlyReport";
+import { generateTransactionInvoicePdf } from "@/lib/generateInvoicePdf";
 
 function getTransactionTitle(tx: Transaction) {
   if (tx.items && tx.items.length > 0) {
