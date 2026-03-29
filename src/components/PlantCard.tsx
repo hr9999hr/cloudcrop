@@ -46,25 +46,35 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
   if (plant.status === 'empty') {
     return (
       <motion.div
-        whileHover={{ scale: 1.08, y: -4 }}
-        whileTap={{ scale: 0.95 }}
-        className="cursor-pointer relative"
+        whileHover={{ scale: 1.05, y: -3 }}
+        whileTap={{ scale: 0.96 }}
+        className="cursor-pointer relative w-full h-full rounded-lg overflow-hidden"
         onClick={() => onPlant(plant.id)}
+        style={{
+          background: 'linear-gradient(145deg, hsl(30 55% 42%), hsl(25 50% 32%))',
+          border: '2px solid hsla(30 40% 50% / 0.5)',
+          boxShadow: '0 4px 12px hsla(0 0% 0% / 0.2), inset 0 1px 0 hsla(0 0% 100% / 0.1)',
+        }}
       >
+        {/* Soil texture */}
         <img
           src={soilPlot}
           alt="Empty plot"
-          className="w-full h-auto drop-shadow-lg"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
           draggable={false}
         />
-        {/* "Tap to plant" overlay */}
+        {/* Tilled row lines */}
+        <div className="absolute inset-0 opacity-20"
+          style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 8px, hsla(0 0% 0% / 0.15) 8px, hsla(0 0% 0% / 0.15) 9px)', }}
+        />
+        {/* Plant button */}
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="bg-black/30 backdrop-blur-sm rounded-lg px-2 py-1"
+            animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ repeat: Infinity, duration: 2.5 }}
+            className="bg-white/25 backdrop-blur-sm rounded-xl px-3 py-1.5 shadow-lg"
           >
-            <p className="text-[9px] font-bold text-white">+ Plant</p>
+            <p className="text-[11px] font-extrabold text-white drop-shadow-md">+ Plant</p>
           </motion.div>
         </div>
       </motion.div>
