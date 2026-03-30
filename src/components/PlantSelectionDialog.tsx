@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
-import ccCoin from "@/assets/cc-coin.png";
 import { toast } from "sonner";
 
 interface PlantSelectionDialogProps {
@@ -13,29 +12,15 @@ interface PlantSelectionDialogProps {
 }
 
 export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDialogProps) {
-  const { plantSeed, inventory, coins, spendCoins, totalHarvests, plants } = useGameStore();
+  const { plantSeed, inventory } = useGameStore();
   const [selectedSeed, setSelectedSeed] = useState<string | null>(null);
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
-
-  // First planting is free if user has never harvested and has no active plants
-  const isFirstPlanting = totalHarvests === 0 && !plants.some(p => p.status === 'growing' || p.status === 'ready');
 
   const handleConfirmPlant = () => {
     if (!selectedSeed) return;
     const seedOption = SEED_OPTIONS.find((s) => selectedSeed.includes(s.name));
     if (!seedOption) return;
-
-    if (!isFirstPlanting) {
-      // Deduct seed cost in CC
-      if (coins < seedOption.costCC) {
-        toast.error(`Not enough CC! Need ${seedOption.costCC} CC to plant ${seedOption.name}.`);
-        return;
-      }
-      spendCoins(seedOption.costCC, `Planted ${seedOption.name} seed`, undefined, 'Garden');
-    } else {
-      toast.success("🎁 First planting is free! No CC cost.");
-    }
 
     plantSeed(slotId, seedOption.name, seedOption.emoji, seedOption.durationMs, seedOption.yieldCoins);
     setSelectedSeed(null);
@@ -86,9 +71,7 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           {opt ? (
-                            isFirstPlanting
-                              ? <><span className="text-primary font-bold">🎁 FREE</span> <span>· ⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
-                              : <><img src={ccCoin} alt="CC" className="w-3.5 h-3.5 inline" /> <span>{opt.costCC} CC cost ·</span> <span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
+                            <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
                           ) : null}
                         </p>
                       </div>
