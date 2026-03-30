@@ -13,29 +13,15 @@ interface PlantSelectionDialogProps {
 }
 
 export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDialogProps) {
-  const { plantSeed, inventory, coins, spendCoins, totalHarvests, plants } = useGameStore();
+  const { plantSeed, inventory } = useGameStore();
   const [selectedSeed, setSelectedSeed] = useState<string | null>(null);
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
-
-  // First planting is free if user has never harvested and has no active plants
-  const isFirstPlanting = totalHarvests === 0 && !plants.some(p => p.status === 'growing' || p.status === 'ready');
 
   const handleConfirmPlant = () => {
     if (!selectedSeed) return;
     const seedOption = SEED_OPTIONS.find((s) => selectedSeed.includes(s.name));
     if (!seedOption) return;
-
-    if (!isFirstPlanting) {
-      // Deduct seed cost in CC
-      if (coins < seedOption.costCC) {
-        toast.error(`Not enough CC! Need ${seedOption.costCC} CC to plant ${seedOption.name}.`);
-        return;
-      }
-      spendCoins(seedOption.costCC, `Planted ${seedOption.name} seed`, undefined, 'Garden');
-    } else {
-      toast.success("🎁 First planting is free! No CC cost.");
-    }
 
     plantSeed(slotId, seedOption.name, seedOption.emoji, seedOption.durationMs, seedOption.yieldCoins);
     setSelectedSeed(null);
