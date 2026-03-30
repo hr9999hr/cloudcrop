@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
-import ccCoin from "@/assets/cc-coin.png";
 import { toast } from "sonner";
 
 interface PlantSelectionDialogProps {
