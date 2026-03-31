@@ -133,6 +133,9 @@ export default function MissionsPage() {
         </p>
       </div>
 
+      {/* 7-Day Check-in Streak */}
+      <CheckInStreak />
+
       {/* Progress card */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
