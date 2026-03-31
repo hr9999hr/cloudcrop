@@ -169,7 +169,7 @@ export default function MarketplacePage() {
     }
 
     const seedMsg = seedItems.length > 0 ? ' Seeds added to inventory.' : '';
-    const deliveryMsg = deliveryCartItems.length > 0 ? ' Produce will be delivered to your address!' : '';
+    const deliveryMsg = deliveryCartItems.length > 0 ? ' Produce will be sent to your collection point!' : '';
     toast.success(`🎉 Purchase successful!${seedMsg}${deliveryMsg}`);
     clearCart();
     setShowCart(false);
