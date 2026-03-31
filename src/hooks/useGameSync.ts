@@ -4,7 +4,7 @@ import { useGameStore } from "@/store/gameStore";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const SAVE_DEBOUNCE_MS = 2000;
+const SAVE_DEBOUNCE_MS = 500;
 
 export function useGameSync() {
   const { user } = useAuth();
@@ -32,14 +32,26 @@ export function useGameSync() {
         }
 
         if (data) {
-          // Restore state from DB
+          // Restore state from DB, ensuring new fields have defaults
+          const plants = ((data.plants as any[]) || []).map((p: any) => ({
+            ...p,
+            missedWaterings: p.missedWaterings ?? 0,
+            heatwaveFailures: p.heatwaveFailures ?? 0,
+            monsoonDays: p.monsoonDays ?? 0,
+            currentCycleStart: p.currentCycleStart ?? p.plantedAt ?? 0,
+            heatwaveWateredTwice: p.heatwaveWateredTwice ?? false,
+            wateringIntervalMs: p.wateringIntervalMs ?? 0,
+            lastHealthDecayAt: p.lastHealthDecayAt ?? 0,
+            fertilizedUntil: p.fertilizedUntil ?? 0,
+          }));
+
           useGameStore.setState({
             coins: Number(data.coins) || 0,
             realMoney: Number(data.real_money) || 50,
             waterDrops: data.water_drops ?? 3,
             farmerLevel: data.farmer_level ?? 1,
             totalHarvests: data.total_harvests ?? 0,
-            plants: (data.plants as any[]) || [],
+            plants,
             inventory: (data.inventory as any[]) || [],
             transactions: (data.transactions as any[]) || [],
             deliveries: (data.deliveries as any[]) || [],
