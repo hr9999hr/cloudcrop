@@ -5,6 +5,7 @@ import { Droplets, Beaker, Bug, Shield } from "lucide-react";
 import { PlantSlot, useGameStore, getWeatherInfo } from "@/store/gameStore";
 import { useNavigate } from "react-router-dom";
 import ccCoin from "@/assets/cc-coin.png";
+import { formatDuration } from "@/lib/formatDuration";
 
 interface PlantDetailPopupProps {
   open: boolean;
