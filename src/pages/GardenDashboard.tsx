@@ -10,6 +10,8 @@ import { motion } from "framer-motion";
 import { Star, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
 import soilPlot from "@/assets/farm/soil-plot.png";
+import { WeatherEffects } from "@/components/farm/WeatherEffects";
+import { FarmDecorations } from "@/components/farm/FarmDecorations";
 
 export default function GardenDashboard() {
   const { plants, updateProgress, farmerLevel, totalHarvests, weather } = useGameStore();
