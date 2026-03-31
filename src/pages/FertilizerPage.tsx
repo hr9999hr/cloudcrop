@@ -30,14 +30,14 @@ export default function FertilizerPage() {
   const handleBuy = (qty: number) => {
     const price = getPrice(qty);
     if (!spendRealMoney(price, `Bought ${qty} Fertilizer bag${qty > 1 ? 's' : ''}`, [
-      { name: 'Fertilizer', emoji: '💊', quantity: qty, price, paymentType: 'money' }
+      { name: 'Fertilizer', emoji: '🧪', quantity: qty, price, paymentType: 'money' }
     ], 'Fertilizer Shop')) {
       toast.error(`Not enough RM! Need RM ${price.toFixed(2)} but you have RM ${realMoney.toFixed(2)}.`);
       return;
     }
     addToInventory({
       name: 'Fertilizer',
-      emoji: '💊',
+      emoji: '🧪',
       category: 'fertilizers',
       quantity: qty,
       description: 'Skip 24 hours of growth time',
