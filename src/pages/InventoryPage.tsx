@@ -49,7 +49,8 @@ export default function InventoryPage() {
     .filter((g) => g !== null);
 
   const isSeed = selectedItem?.category === 'seeds';
-  const isSellable = selectedItem && !isSeed;
+  const isFertilizer = selectedItem?.category === 'fertilizers';
+  const isSellable = selectedItem && !isSeed && !isFertilizer;
 
   const seedOption = selectedItem ? SEED_OPTIONS.find((s) => selectedItem.name.includes(s.name)) : null;
 
