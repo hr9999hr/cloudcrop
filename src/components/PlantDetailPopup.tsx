@@ -134,18 +134,18 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   const growthPercent = Math.round(plant.progress);
   const healthPercent = Math.round(plant.health ?? 100);
 
-  // Watering timer info
+  // Watering cycle info (SRS-aligned)
   const now = Date.now();
-  const sinceWatered = now - (plant.lastWateredAt || plant.plantedAt || now);
   const intervalMs = plant.wateringIntervalMs || 45000;
-  const overdueMs = Math.max(0, sinceWatered - intervalMs);
-  const isOverdue = overdueMs > 0 && !isReady && !isDead;
-  const nextWaterIn = Math.max(0, intervalMs - sinceWatered);
-  const nextWaterSec = Math.ceil(nextWaterIn / 1000);
+  const cycleStart = plant.currentCycleStart || plant.plantedAt || now;
+  const cycleElapsed = now - cycleStart;
+  const cycleRemaining = Math.max(0, intervalMs - cycleElapsed);
+  const cycleRemainingSec = Math.ceil(cycleRemaining / 1000);
+  const isOverdue = cycleElapsed > intervalMs && !plant.wateredThisCycle;
 
-  // Fertilizer boost
-  const isFertilized = (plant.fertilizedUntil || 0) > now;
-  const fertTimeLeft = isFertilized ? Math.ceil(((plant.fertilizedUntil || 0) - now) / 1000) : 0;
+  // Fertilizer: shifts time (SRS FUN-014)
+  const isFertilized = false; // no longer time-boost based
+  const fertTimeLeft = 0;
 
   const playAnimation = (type: ActionAnimation, callback: () => void) => {
     setActionAnim(type);
@@ -172,14 +172,16 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         ? 'Get drops → Missions'
         : isOverdue
         ? `⚠️ Overdue! ${waterDrops} drops left`
-        : `Next in ${nextWaterSec}s · ${waterDrops} drops`,
+        : plant.wateredThisCycle
+        ? `✅ Watered · ${cycleRemainingSec}s til next cycle`
+        : `Water now! ${cycleRemainingSec}s left · ${waterDrops} drops`,
     },
     {
       label: 'Fertilizer',
       icon: <Beaker className="w-5 h-5" />,
       color: 'text-primary',
-      bg: isFertilized ? 'bg-green-500/15' : 'bg-primary/10',
-      disabled: isReady || isDead || isFertilized,
+      bg: 'bg-primary/10',
+      disabled: isReady || isDead,
       onClick: () => {
         if (!hasFertilizer) {
           onClose();
@@ -188,10 +190,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
           playAnimation('fertilizer', () => fertilizePlant(plant.id));
         }
       },
-      subtitle: isFertilized
-        ? `⚡ Boosted! ${fertTimeLeft}s left`
-        : hasFertilizer
-        ? `${fertilizerCount} bags · +50% speed`
+      subtitle: hasFertilizer
+        ? `${fertilizerCount} bags · Skip 60s growth`
         : 'Buy fertilizer →',
     },
     {
@@ -252,9 +252,6 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               {isDead && (
                 <span className="text-xs font-bold text-destructive mt-1">Plant died! 😢</span>
               )}
-              {isFertilized && !isReady && !isDead && (
-                <span className="text-xs font-bold text-primary mt-1">⚡ Fertilized</span>
-              )}
             </div>
 
             {/* Plant info */}
@@ -262,7 +259,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               <h3 className="text-sm font-extrabold text-foreground mb-2">Growth 🌱</h3>
               <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
                 <motion.div
-                  className={`h-full rounded-full ${isFertilized ? 'bg-primary' : 'bg-growth'}`}
+                  className="h-full rounded-full bg-growth"
                   animate={{ width: `${growthPercent}%` }}
                 />
               </div>
@@ -270,9 +267,6 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 <p className="text-[10px] text-muted-foreground font-semibold">
                   {growthPercent}% — {isReady ? '🎉 Harvest ready!' : isDead ? '💀 Dead' : `${Math.round(100 - growthPercent)}% to go`}
                 </p>
-                {isFertilized && !isReady && (
-                  <p className="text-[10px] text-primary font-bold">⚡ 1.5x speed</p>
-                )}
               </div>
 
               <h3 className="text-sm font-extrabold text-foreground mb-2">Health ❤️</h3>
@@ -291,10 +285,21 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                   ⚠️ Overdue! Water now — health dropping!
                 </p>
               )}
-              {(plant.neglectPenalty ?? 0) > 0 && (
-                <div className="flex items-center gap-1 mt-1">
-                  <img src={ccCoin} alt="CC" className="w-3 h-3" />
-                  <p className="text-[10px] text-destructive font-bold">-{plant.neglectPenalty} CC penalty</p>
+              {/* SRS penalty breakdown */}
+              {((plant.missedWaterings || 0) > 0 || (plant.heatwaveFailures || 0) > 0 || (plant.monsoonDays || 0) > 0) && (
+                <div className="mt-1 space-y-0.5">
+                  {(plant.missedWaterings || 0) > 0 && (
+                    <div className="flex items-center gap-1">
+                      <img src={ccCoin} alt="CC" className="w-3 h-3" />
+                      <p className="text-[10px] text-destructive font-bold">-{(plant.missedWaterings || 0) * 15} CC missed watering ({plant.missedWaterings}×)</p>
+                    </div>
+                  )}
+                  {(plant.heatwaveFailures || 0) > 0 && (
+                    <p className="text-[10px] text-destructive font-bold">🔥 -{((plant.heatwaveFailures || 0) * 30)}% heatwave penalty ({plant.heatwaveFailures}×)</p>
+                  )}
+                  {(plant.monsoonDays || 0) > 0 && (
+                    <p className="text-[10px] text-destructive font-bold">⛈️ -{((plant.monsoonDays || 0) * 30)}% root rot ({plant.monsoonDays}×)</p>
+                  )}
                 </div>
               )}
 
@@ -305,8 +310,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 </p>
                 {!isReady && !isDead && (
                   <p className="text-[10px] text-muted-foreground">
-                    💧 Water every {Math.round(intervalMs / 1000)}s
-                    {isOverdue ? ' · ⚠️ OVERDUE' : ` · Next in ${nextWaterSec}s`}
+                    💧 Cycle: {Math.round(intervalMs / 1000)}s
+                    {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingSec}s left` : isOverdue ? ' · ⚠️ OVERDUE' : ` · Water now! ${cycleRemainingSec}s left`}
                     {(weather === 'rainy' || weather === 'monsoon') && ' · ☔ Auto-watered'}
                   </p>
                 )}
