@@ -5,6 +5,7 @@ import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { formatDuration } from "@/lib/formatDuration";
 
 interface PlantSelectionDialogProps {
   open: boolean;

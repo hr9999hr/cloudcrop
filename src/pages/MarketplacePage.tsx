@@ -452,7 +452,7 @@ export default function MarketplacePage() {
                                   <span className="text-sm">⏱️</span>
                                   <div>
                                     <p className="text-[10px] text-muted-foreground">Grow Time</p>
-                                    <p className="text-xs font-bold">{Math.round(seedInfo.durationMs / 60000)} min</p>
+                                    <p className="text-xs font-bold">{formatDuration(seedInfo.durationMs)}</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">

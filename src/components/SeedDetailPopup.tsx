@@ -76,7 +76,7 @@ export function SeedDetailPopup({ open, seedName, onConfirm, onClose }: SeedDeta
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-muted-foreground" />
-              <span className="font-bold text-foreground">{durationMin} minutes</span>
+              <span className="font-bold text-foreground">{durationLabel}</span>
               <span className="text-muted-foreground">growth time</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
