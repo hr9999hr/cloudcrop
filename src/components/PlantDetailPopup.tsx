@@ -307,8 +307,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 </p>
                 {!isReady && !isDead && (
                   <p className="text-[10px] text-muted-foreground">
-                    💧 Water every {Math.round(intervalMs / 1000)}s
-                    {isOverdue ? ' · ⚠️ OVERDUE' : ` · Next in ${nextWaterSec}s`}
+                    💧 Cycle: {Math.round(intervalMs / 1000)}s
+                    {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingSec}s left` : isOverdue ? ' · ⚠️ OVERDUE' : ` · Water now! ${cycleRemainingSec}s left`}
                     {(weather === 'rainy' || weather === 'monsoon') && ' · ☔ Auto-watered'}
                   </p>
                 )}
