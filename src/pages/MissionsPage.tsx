@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, CheckCircle2, Droplets, Trophy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import CheckInStreak from "@/components/CheckInStreak";
 
 interface Mission {
   id: string;
@@ -131,6 +132,9 @@ export default function MissionsPage() {
           Watch planting tutorials to earn water drops 💧
         </p>
       </div>
+
+      {/* 7-Day Check-in Streak */}
+      <CheckInStreak />
 
       {/* Progress card */}
       <motion.div
