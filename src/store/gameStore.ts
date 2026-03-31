@@ -333,11 +333,11 @@ export const useGameStore = create<GameState>((set, get) => ({
           newHealth = Math.max(0, newHealth - 15);
         }
         // Monsoon automatic penalty (root rot)
-        if (newWeather === 'monsoon') {
+        if (s.weather === 'monsoon') {
           newHealth = Math.max(0, newHealth - 20);
         }
         // Rainy day auto-waters
-        if (newWeather === 'rainy') {
+        if (s.weather === 'rainy') {
           newHealth = Math.min(100, newHealth + 15);
           newWateredThisCycle = true;
         } else {
