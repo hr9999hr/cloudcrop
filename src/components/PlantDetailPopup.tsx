@@ -194,7 +194,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         }
       },
       subtitle: hasFertilizer
-        ? `${fertilizerCount} bags · Skip 60s growth`
+        ? `${fertilizerCount} bags · Skip 24h growth`
         : 'Buy fertilizer →',
     },
     {
