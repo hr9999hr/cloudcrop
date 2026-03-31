@@ -191,10 +191,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       ? s.inventory.map((i) => i.id === seedInv.id ? { ...i, quantity: i.quantity - 1 } : i).filter((i) => i.quantity > 0)
       : s.inventory;
 
+    // Calculate waterings needed based on growth duration
+    // Roughly 1 watering per minute of grow time, minimum 3
+    const wateringsNeeded = Math.max(3, Math.ceil(durationMs / 60000));
+
     return {
       plants: s.plants.map((p) =>
         p.id === slotId
-          ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins, health: 100, lastWateredAt: Date.now(), neglectPenalty: 0, wateredThisCycle: true }
+          ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins, health: 100, lastWateredAt: Date.now(), neglectPenalty: 0, wateredThisCycle: true, totalWaterings: 0, wateringsNeeded }
           : p
       ),
       inventory: newInventory,
@@ -204,11 +208,27 @@ export const useGameStore = create<GameState>((set, get) => ({
   waterPlant: (slotId) => {
     const s = get();
     if (s.waterDrops <= 0) return;
+    const plant = s.plants.find(p => p.id === slotId);
+    if (!plant || plant.status !== 'growing') return;
+
+    const newTotalWaterings = (plant.totalWaterings || 0) + 1;
+    const needed = plant.wateringsNeeded || 5;
+    const newProgress = Math.min(100, (newTotalWaterings / needed) * 100);
+    const isReady = newProgress >= 100;
+
     set({
       waterDrops: s.waterDrops - 1,
       plants: s.plants.map((p) =>
         p.id === slotId && p.status === 'growing'
-          ? { ...p, health: Math.min(100, (p.health ?? 100) + 25), lastWateredAt: Date.now(), wateredThisCycle: true }
+          ? {
+              ...p,
+              health: Math.min(100, (p.health ?? 100) + 20),
+              lastWateredAt: Date.now(),
+              wateredThisCycle: true,
+              totalWaterings: newTotalWaterings,
+              progress: newProgress,
+              status: isReady ? 'ready' as PlantStatus : 'growing' as PlantStatus,
+            }
           : p
       ),
     });
