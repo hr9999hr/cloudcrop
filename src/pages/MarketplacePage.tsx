@@ -413,6 +413,54 @@ export default function MarketplacePage() {
         </motion.div>
       )}
 
+      {/* Product Detail Popup */}
+      <AlertDialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProduct(null)}>
+        <AlertDialogContent className="rounded-2xl max-w-sm">
+          {selectedProduct && (
+            <>
+              <AlertDialogHeader>
+                <div className="text-center text-7xl py-4">{selectedProduct.emoji}</div>
+                <AlertDialogTitle className="text-center text-lg">{selectedProduct.name}</AlertDialogTitle>
+                <AlertDialogDescription asChild>
+                  <div className="space-y-3 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      {conditionBadge(selectedProduct.condition)}
+                      <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">{selectedProduct.category}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Vendor: <span className="font-semibold text-foreground">{selectedProduct.vendor}</span></p>
+                    <div className="bg-muted/50 rounded-xl p-3">
+                      {selectedProduct.paymentType === 'coins' ? (
+                        <div className="flex items-center justify-center gap-1.5">
+                          <img src={ccCoin} alt="CC" className="w-5 h-5" />
+                          <span className="font-extrabold text-lg text-coin">{selectedProduct.price} CC</span>
+                        </div>
+                      ) : (
+                        <p className="font-extrabold text-lg text-money">RM {selectedProduct.price.toFixed(2)}</p>
+                      )}
+                    </div>
+                    {selectedProduct.category === 'seeds' && (
+                      <p className="text-xs text-muted-foreground">🌱 This seed will be added to your inventory after purchase.</p>
+                    )}
+                    {selectedProduct.category !== 'seeds' && (
+                      <p className="text-xs text-muted-foreground">📦 This item will be delivered to your address after purchase.</p>
+                    )}
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-row gap-2 sm:gap-2">
+                <AlertDialogCancel className="rounded-xl flex-1 mt-0">Close</AlertDialogCancel>
+                <AlertDialogAction
+                  className="gradient-farm text-primary-foreground rounded-xl flex-1"
+                  onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add to Cart
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </>
+          )}
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={showCheckoutConfirm} onOpenChange={setShowCheckoutConfirm}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
