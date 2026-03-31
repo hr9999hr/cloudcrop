@@ -438,9 +438,50 @@ export default function MarketplacePage() {
                         <p className="font-extrabold text-lg text-money">RM {selectedProduct.price.toFixed(2)}</p>
                       )}
                     </div>
-                    {selectedProduct.category === 'seeds' && (
-                      <p className="text-xs text-muted-foreground">🌱 This seed will be added to your inventory after purchase.</p>
-                    )}
+                    {selectedProduct.category === 'seeds' && (() => {
+                      const seedName = selectedProduct.name.replace(' Seed', '');
+                      const seedInfo = SEED_OPTIONS.find(s => s.name === seedName);
+                      return (
+                        <div className="space-y-2">
+                          {seedInfo && (
+                            <div className="bg-accent/50 rounded-xl p-3 text-left space-y-1.5">
+                              <p className="text-xs text-muted-foreground italic">"{seedInfo.description}"</p>
+                              <div className="grid grid-cols-2 gap-2 pt-1">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-sm">⏱️</span>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground">Grow Time</p>
+                                    <p className="text-xs font-bold text-foreground">{seedInfo.durationMs / 60000} min</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-sm">💰</span>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground">Harvest Yield</p>
+                                    <p className="text-xs font-bold text-coin">{seedInfo.yieldCoins} CC</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-sm">📈</span>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground">Profit</p>
+                                    <p className="text-xs font-bold text-emerald-600">+{seedInfo.yieldCoins - seedInfo.costCC} CC</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-sm">💧</span>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground">Needs Water</p>
+                                    <p className="text-xs font-bold text-foreground">Yes</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          <p className="text-xs text-muted-foreground">🌱 This seed will be added to your inventory after purchase.</p>
+                        </div>
+                      );
+                    })()}
                     {selectedProduct.category !== 'seeds' && (
                       <p className="text-xs text-muted-foreground">📦 This item will be delivered to your address after purchase.</p>
                     )}
