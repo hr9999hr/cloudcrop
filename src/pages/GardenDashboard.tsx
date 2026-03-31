@@ -133,9 +133,17 @@ export default function GardenDashboard() {
         className="relative rounded-2xl overflow-hidden"
         style={{
           boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
-          padding: '2rem 1rem 2.5rem',
+          perspective: '900px',
         }}
       >
+        <div
+          className="relative"
+          style={{
+            transform: 'rotateX(18deg) rotateZ(0deg)',
+            transformOrigin: 'center center',
+            padding: '2.5rem 1rem 3rem',
+          }}
+        >
         {/* Farm background image */}
         <img
           src={farmBg}
@@ -254,6 +262,7 @@ export default function GardenDashboard() {
           </div>
         </div>
 
+        </div>
       </div>
 
       <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
