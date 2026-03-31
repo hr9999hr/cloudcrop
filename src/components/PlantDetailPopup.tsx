@@ -130,8 +130,22 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   if (!open || !plant || plant.status === 'empty') return null;
 
   const isReady = plant.status === 'ready';
+  const isDead = plant.status === 'dead';
   const growthPercent = Math.round(plant.progress);
   const healthPercent = Math.round(plant.health ?? 100);
+
+  // Watering timer info
+  const now = Date.now();
+  const sinceWatered = now - (plant.lastWateredAt || plant.plantedAt || now);
+  const intervalMs = plant.wateringIntervalMs || 45000;
+  const overdueMs = Math.max(0, sinceWatered - intervalMs);
+  const isOverdue = overdueMs > 0 && !isReady && !isDead;
+  const nextWaterIn = Math.max(0, intervalMs - sinceWatered);
+  const nextWaterSec = Math.ceil(nextWaterIn / 1000);
+
+  // Fertilizer boost
+  const isFertilized = (plant.fertilizedUntil || 0) > now;
+  const fertTimeLeft = isFertilized ? Math.ceil(((plant.fertilizedUntil || 0) - now) / 1000) : 0;
 
   const playAnimation = (type: ActionAnimation, callback: () => void) => {
     setActionAnim(type);
@@ -144,8 +158,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
       label: 'Water',
       icon: <Droplets className="w-5 h-5" />,
       color: 'text-water',
-      bg: 'bg-water/10',
-      disabled: isReady,
+      bg: isOverdue ? 'bg-destructive/15' : 'bg-water/10',
+      disabled: isReady || isDead,
       onClick: () => {
         if (waterDrops <= 0) {
           onClose();
@@ -154,14 +168,18 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
           playAnimation('water', () => waterPlant(plant.id));
         }
       },
-      subtitle: waterDrops <= 0 ? 'Get drops → Missions' : `${waterDrops} drops left`,
+      subtitle: waterDrops <= 0
+        ? 'Get drops → Missions'
+        : isOverdue
+        ? `⚠️ Overdue! ${waterDrops} drops left`
+        : `Next in ${nextWaterSec}s · ${waterDrops} drops`,
     },
     {
       label: 'Fertilizer',
       icon: <Beaker className="w-5 h-5" />,
       color: 'text-primary',
-      bg: 'bg-primary/10',
-      disabled: isReady,
+      bg: isFertilized ? 'bg-green-500/15' : 'bg-primary/10',
+      disabled: isReady || isDead || isFertilized,
       onClick: () => {
         if (!hasFertilizer) {
           onClose();
@@ -170,7 +188,11 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
           playAnimation('fertilizer', () => fertilizePlant(plant.id));
         }
       },
-      subtitle: hasFertilizer ? `${fertilizerCount} bags` : 'Buy fertilizer →',
+      subtitle: isFertilized
+        ? `⚡ Boosted! ${fertTimeLeft}s left`
+        : hasFertilizer
+        ? `${fertilizerCount} bags · +50% speed`
+        : 'Buy fertilizer →',
     },
     {
       label: 'Pest & Disease Control',
@@ -218,14 +240,20 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
             <div className="bg-muted rounded-xl p-6 flex flex-col items-center justify-center min-w-[140px]">
               <motion.span
                 className="text-6xl mb-2"
-                animate={isReady ? { y: [0, -5, 0] } : {}}
-                transition={{ repeat: Infinity, duration: 1.5 }}
+                animate={isReady ? { y: [0, -5, 0] } : isDead ? { opacity: 0.4 } : {}}
+                transition={{ repeat: isReady ? Infinity : 0, duration: 1.5 }}
               >
-                {plant.plantEmoji}
+                {isDead ? '💀' : plant.plantEmoji}
               </motion.span>
               <p className="text-sm font-bold text-foreground">{plant.plantName}</p>
               {isReady && (
                 <span className="text-xs font-bold text-harvest mt-1">Ready to harvest! ✨</span>
+              )}
+              {isDead && (
+                <span className="text-xs font-bold text-destructive mt-1">Plant died! 😢</span>
+              )}
+              {isFertilized && !isReady && !isDead && (
+                <span className="text-xs font-bold text-primary mt-1">⚡ Fertilized</span>
               )}
             </div>
 
@@ -234,50 +262,59 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               <h3 className="text-sm font-extrabold text-foreground mb-2">Growth 🌱</h3>
               <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full bg-growth"
+                  className={`h-full rounded-full ${isFertilized ? 'bg-primary' : 'bg-growth'}`}
                   animate={{ width: `${growthPercent}%` }}
                 />
               </div>
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[10px] text-muted-foreground font-semibold">
-                  {growthPercent}% — {isReady ? '🎉 Harvest ready!' : `${Math.round(100 - growthPercent)}% to go`}
+                  {growthPercent}% — {isReady ? '🎉 Harvest ready!' : isDead ? '💀 Dead' : `${Math.round(100 - growthPercent)}% to go`}
                 </p>
-                {plant.wateringsNeeded > 0 && !isReady && (
-                  <p className="text-[10px] text-water font-bold">
-                    💧 {plant.totalWaterings || 0}/{plant.wateringsNeeded} waters
-                  </p>
+                {isFertilized && !isReady && (
+                  <p className="text-[10px] text-primary font-bold">⚡ 1.5x speed</p>
                 )}
               </div>
 
               <h3 className="text-sm font-extrabold text-foreground mb-2">Health ❤️</h3>
               <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
                 <motion.div
-                  className={`h-full rounded-full ${healthPercent >= 50 ? 'bg-red-400' : 'bg-destructive'}`}
+                  className={`h-full rounded-full ${healthPercent >= 60 ? 'bg-green-500' : healthPercent >= 30 ? 'bg-yellow-500' : 'bg-destructive'}`}
                   animate={{ width: `${healthPercent}%` }}
                 />
               </div>
               <p className="text-[10px] text-muted-foreground font-semibold">
-                {healthPercent}% — {healthPercent >= 70 ? '💚 Healthy' : healthPercent >= 40 ? '💛 Needs water' : '❤️‍🩹 Critical! Water now!'}
+                {healthPercent}% — {healthPercent >= 70 ? '💚 Healthy' : healthPercent >= 40 ? '💛 Thirsty' : healthPercent > 0 ? '❤️‍🩹 Critical!' : '💀 Dead'}
               </p>
-              {healthPercent < 50 && (
-                <p className="text-[10px] text-destructive font-bold mt-1">⚠️ Low health slows growth & reduces harvest!</p>
+
+              {isOverdue && (
+                <p className="text-[10px] text-destructive font-bold mt-1 animate-pulse">
+                  ⚠️ Overdue! Water now — health dropping!
+                </p>
               )}
               {(plant.neglectPenalty ?? 0) > 0 && (
                 <div className="flex items-center gap-1 mt-1">
                   <img src={ccCoin} alt="CC" className="w-3 h-3" />
-                  <p className="text-[10px] text-destructive font-bold">-{plant.neglectPenalty} CC penalty from missed watering</p>
+                  <p className="text-[10px] text-destructive font-bold">-{plant.neglectPenalty} CC penalty</p>
                 </div>
               )}
-              <div className="mt-2 p-1.5 bg-muted/50 rounded-lg">
+
+              {/* Weather & watering info */}
+              <div className="mt-2 p-1.5 bg-muted/50 rounded-lg space-y-0.5">
                 <p className="text-[10px] text-muted-foreground">
-                  {weatherInfo.label} · Needs {weatherInfo.waterNeeded} 💧 today
-                  {plant.wateredThisCycle && ' ✅ Watered'}
+                  {weatherInfo.label} · {weatherInfo.desc}
                 </p>
+                {!isReady && !isDead && (
+                  <p className="text-[10px] text-muted-foreground">
+                    💧 Water every {Math.round(intervalMs / 1000)}s
+                    {isOverdue ? ' · ⚠️ OVERDUE' : ` · Next in ${nextWaterSec}s`}
+                    {(weather === 'rainy' || weather === 'monsoon') && ' · ☔ Auto-watered'}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Action buttons - side panel style */}
+          {/* Action buttons */}
           <div className="grid grid-cols-2 gap-2 mb-4">
             {actions.map((act) => (
               <Button
