@@ -177,7 +177,9 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         : isOverdue
         ? `⚠️ Overdue! ${waterDrops} drops left`
         : plant.wateredThisCycle
-        ? `✅ Watered · ${cycleRemainingLabel} til next cycle`
+        ? wouldOverwater
+          ? `⚠️ Overwatering! -10% health · ${cycleRemainingLabel} til next`
+          : `✅ Watered · ${cycleRemainingLabel} til next cycle`
         : `Water now! ${cycleRemainingLabel} left · ${waterDrops} drops`,
     },
     {
