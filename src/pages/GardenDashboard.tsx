@@ -262,6 +262,7 @@ export default function GardenDashboard() {
           </div>
         </div>
 
+        </div>
       </div>
 
       <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
