@@ -56,7 +56,21 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
             {availableSeeds.length === 0 ? (
               <div className="text-center py-8">
                 <span className="text-4xl">🫗</span>
-                <p className="text-sm text-muted-foreground mt-2">No seeds available! Visit the Marketplace to buy more.</p>
+                {cantAffordSeed ? (
+                  <>
+                    <p className="text-sm text-muted-foreground mt-2">No seeds and not enough CC coins!</p>
+                    <p className="text-xs text-muted-foreground mt-1">Check in for 7 days straight to earn a free seed 🌱</p>
+                    <Button
+                      className="mt-3"
+                      size="sm"
+                      onClick={() => { onClose(); navigate('/missions'); }}
+                    >
+                      Go to Missions →
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-2">No seeds available! Visit the Marketplace to buy more.</p>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
