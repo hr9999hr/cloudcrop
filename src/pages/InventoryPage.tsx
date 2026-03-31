@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, ArrowRight, Minus, Plus, X } from "lucide-react";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import ccCoin from "@/assets/cc-coin.png";
+import fertilizerBag from "@/assets/fertilizer-bag.png";
 import { toast } from "sonner";
 
 const categories = [
@@ -159,7 +160,7 @@ export default function InventoryPage() {
                           : 'bg-card border-border hover:bg-muted'
                       }`}
                     >
-                      {item.emoji}
+                      {item.category === 'fertilizers' ? <img src={fertilizerBag} alt={item.name} className="w-8 h-8 object-contain" /> : item.emoji}
                       <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {item.quantity}
                       </span>
@@ -193,7 +194,7 @@ export default function InventoryPage() {
 
               <div className="flex items-center justify-center mb-4">
                 <div className="w-24 h-24 bg-muted rounded-xl flex items-center justify-center text-5xl">
-                  {selectedItem.emoji}
+                  {selectedItem.category === 'fertilizers' ? <img src={fertilizerBag} alt={selectedItem.name} className="w-16 h-16 object-contain" /> : selectedItem.emoji}
                 </div>
               </div>
 
