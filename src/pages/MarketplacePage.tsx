@@ -98,6 +98,7 @@ export default function MarketplacePage() {
   const [conditionFilter, setConditionFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const filtered = products
     .filter((p) => activeCategory === 'all' || p.category === activeCategory)
