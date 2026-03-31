@@ -231,16 +231,23 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
 
             {/* Plant info */}
             <div className="flex-1">
-              <h3 className="text-sm font-extrabold text-foreground mb-2">Growth</h3>
+              <h3 className="text-sm font-extrabold text-foreground mb-2">Growth 🌱</h3>
               <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
                 <motion.div
                   className="h-full rounded-full bg-growth"
                   animate={{ width: `${growthPercent}%` }}
                 />
               </div>
-              <p className="text-[10px] text-muted-foreground font-semibold mb-3">
-                {growthPercent}% — {isReady ? '🎉 Harvest ready!' : `${Math.round(100 - growthPercent)}% to go`}
-              </p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] text-muted-foreground font-semibold">
+                  {growthPercent}% — {isReady ? '🎉 Harvest ready!' : `${Math.round(100 - growthPercent)}% to go`}
+                </p>
+                {plant.wateringsNeeded > 0 && !isReady && (
+                  <p className="text-[10px] text-water font-bold">
+                    💧 {plant.totalWaterings || 0}/{plant.wateringsNeeded} waters
+                  </p>
+                )}
+              </div>
 
               <h3 className="text-sm font-extrabold text-foreground mb-2">Health ❤️</h3>
               <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
