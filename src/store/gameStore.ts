@@ -15,13 +15,18 @@ export interface PlantSlot {
   health: number;
   lastWateredAt: number | null;
   neglectPenalty: number;
-  wateredThisCycle: boolean;
+  wateredThisCycle: boolean;        // watered this cycle?
   totalWaterings: number;
   wateringsNeeded: number;
-  // New realistic fields
-  wateringIntervalMs: number;    // how often plant needs water (ms)
-  lastHealthDecayAt: number;     // track when we last applied decay
-  fertilizedUntil: number;       // timestamp when fertilizer boost expires
+  wateringIntervalMs: number;       // how often plant needs water (ms)
+  lastHealthDecayAt: number;
+  fertilizedUntil: number;
+  // SRS penalty tracking (FUN-007)
+  missedWaterings: number;          // missed normal watering cycles
+  heatwaveFailures: number;         // heatwave cycles where 2nd watering missed
+  monsoonDays: number;              // monsoon cycles experienced
+  currentCycleStart: number;        // start of current watering cycle
+  heatwaveWateredTwice: boolean;    // tracked 2nd watering in heatwave
 }
 
 export interface InventoryItem {
