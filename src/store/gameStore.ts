@@ -162,10 +162,10 @@ const FERTILIZER_TIME_SKIP_MS = 60_000;  // skip 60s of growth (≈1 demo day)
 
 export function getWeatherInfo(weather: WeatherType) {
   switch (weather) {
-    case 'sunny': return { label: '☀️ Sunny Day', waterNeeded: 1, desc: 'Normal day. Water your plants on time!' };
-    case 'rainy': return { label: '🌦️ Rainy', waterNeeded: 0, desc: 'Rain waters your plants automatically. Health slowly restores.' };
-    case 'heatwave': return { label: '🔥 Heatwave', waterNeeded: 2, desc: 'Extreme heat! Health decays 2x faster. Water often!' };
-    case 'monsoon': return { label: '⛈️ Monsoon', waterNeeded: 0, desc: 'Heavy storm! Auto-watered but root rot damages health.' };
+    case 'sunny': return { label: '☀️ Sunny Day', waterNeeded: 1, desc: 'Normal conditions. Water once per cycle.' };
+    case 'rainy': return { label: '🌦️ Light Rain', waterNeeded: 0, desc: 'No watering needed today!' };
+    case 'heatwave': return { label: '🔥 Heatwave', waterNeeded: 2, desc: 'Water twice this cycle or lose 30% yield!' };
+    case 'monsoon': return { label: '⛈️ Monsoon', waterNeeded: 0, desc: 'Auto-watered but 30% harvest loss from root rot.' };
   }
 }
 
@@ -175,6 +175,8 @@ const makeEmptySlot = (id: number): PlantSlot => ({
   lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false,
   totalWaterings: 0, wateringsNeeded: 0, wateringIntervalMs: 0,
   lastHealthDecayAt: 0, fertilizedUntil: 0,
+  missedWaterings: 0, heatwaveFailures: 0, monsoonDays: 0,
+  currentCycleStart: 0, heatwaveWateredTwice: false,
 });
 
 const getSlotsForLevel = (level: number): number => {
