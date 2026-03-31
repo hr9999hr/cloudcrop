@@ -267,11 +267,12 @@ export const useGameStore = create<GameState>((set, get) => ({
         p.id === slotId && p.status === 'growing'
           ? {
               ...p,
-              health: Math.min(100, (p.health ?? 100) + WATER_HEALTH_RESTORE),
               lastWateredAt: now,
               wateredThisCycle: true,
               totalWaterings: newTotalWaterings,
               lastHealthDecayAt: now,
+              // In heatwave, track if this is the 2nd watering
+              heatwaveWateredTwice: p.wateredThisCycle && s.weather === 'heatwave' ? true : p.heatwaveWateredTwice,
             }
           : p
       ),
@@ -281,14 +282,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   fertilizePlant: (slotId) => set((s) => {
     const fertItem = s.inventory.find((i) => i.category === 'fertilizers' && i.quantity > 0);
     if (!fertItem) return s;
-    const now = Date.now();
+    // FUN-014: Fertilizer shifts plantedAt backward, effectively skipping time
     return {
       inventory: s.inventory.map((i) =>
         i.id === fertItem.id ? { ...i, quantity: i.quantity - 1 } : i
       ).filter((i) => i.quantity > 0),
       plants: s.plants.map((p) =>
-        p.id === slotId && p.status === 'growing'
-          ? { ...p, fertilizedUntil: now + FERTILIZER_BOOST_DURATION_MS }
+        p.id === slotId && p.status === 'growing' && p.plantedAt
+          ? { ...p, plantedAt: p.plantedAt - FERTILIZER_TIME_SKIP_MS }
           : p
       ),
     };
@@ -299,13 +300,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     const plant = s.plants.find((p) => p.id === slotId);
     if (!plant || plant.status !== 'ready') return { coins: 0, plantName: '', emoji: '', quantity: 0 };
 
+    // SRS FUN-007: Calculate yield with penalties
     const baseYield = plant.yieldCoins;
-    const neglectLoss = plant.neglectPenalty;
-    const healthFactor = Math.max(0.3, (plant.health ?? 100) / 100);
-    const adjustedYield = Math.max(0, Math.floor((baseYield - neglectLoss) * healthFactor));
+    const heatwavePenalty = Math.floor((plant.heatwaveFailures || 0) * HEATWAVE_YIELD_PENALTY * baseYield);
+    const monsoonPenalty = Math.floor((plant.monsoonDays || 0) * MONSOON_YIELD_PENALTY * baseYield);
+    const missedWaterPenalty = (plant.missedWaterings || 0) * NEGLECT_PENALTY_CC;
+    const finalYield = Math.max(0, baseYield - heatwavePenalty - monsoonPenalty - missedWaterPenalty);
 
     const harvestQty = Math.max(1, Math.floor(plant.progress / 20));
-    const finalQty = adjustedYield <= 0 ? 0 : Math.max(1, Math.floor(harvestQty * healthFactor));
+    const yieldRatio = baseYield > 0 ? finalYield / baseYield : 1;
+    const finalQty = finalYield <= 0 ? 0 : Math.max(1, Math.round(harvestQty * yieldRatio));
 
     const resetPlant = s.plants.map((p) =>
       p.id === slotId ? makeEmptySlot(slotId) : p
@@ -324,19 +328,20 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    if (adjustedYield <= 0) {
+    // SRS: Plant dies if final_yield <= 0
+    if (finalYield <= 0) {
       set({ plants: newPlants, totalHarvests: newTotalHarvests, farmerLevel: newLevel });
       return { coins: 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: 0 };
     }
 
     if (action === 'sell') {
       set({
-        coins: s.coins + adjustedYield,
+        coins: s.coins + finalYield,
         plants: newPlants,
         totalHarvests: newTotalHarvests,
         farmerLevel: newLevel,
         transactions: [
-          { id: Date.now().toString(), type: 'earn', amount: adjustedYield, description: `Sold ${finalQty}x ${plant.plantName}`, source: 'Garden', timestamp: Date.now() },
+          { id: Date.now().toString(), type: 'earn', amount: finalYield, description: `Sold ${finalQty}x ${plant.plantName}`, source: 'Garden', timestamp: Date.now() },
           ...s.transactions,
         ],
       });
@@ -352,86 +357,102 @@ export const useGameStore = create<GameState>((set, get) => ({
         farmerLevel: newLevel,
       });
     }
-    return { coins: action === 'sell' ? adjustedYield : 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: finalQty };
+    return { coins: action === 'sell' ? finalYield : 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: finalQty };
   },
 
+  // SRS FUN-004: Pure time-based growth
+  // SRS FUN-005/006/007: Cycle-based watering with penalty tracking
   updateProgress: () => set((s) => {
     const now = Date.now();
     const isRainy = s.weather === 'rainy';
     const isMonsoon = s.weather === 'monsoon';
     const isHeatwave = s.weather === 'heatwave';
-    const autoWatered = isRainy || isMonsoon; // rain/monsoon auto-water
+    const autoWatered = isRainy || isMonsoon;
 
     const updatedPlants = s.plants.map((p) => {
       if (p.status !== 'growing' || !p.plantedAt) return p;
 
+      let newMissedWaterings = p.missedWaterings || 0;
+      let newHeatwaveFailures = p.heatwaveFailures || 0;
+      let newMonsoonDays = p.monsoonDays || 0;
+      let newWateredThisCycle = p.wateredThisCycle;
+      let newHeatwaveWateredTwice = p.heatwaveWateredTwice || false;
+      let newCurrentCycleStart = p.currentCycleStart || p.plantedAt;
+      let newLastWateredAt = p.lastWateredAt;
       let newHealth = p.health ?? 100;
-      let newNeglectPenalty = p.neglectPenalty ?? 0;
-      const lastDecay = p.lastHealthDecayAt || p.plantedAt;
-      const secsSinceDecay = (now - lastDecay) / 1000;
 
-      // --- Health Decay ---
-      const sinceWatered = now - (p.lastWateredAt || p.plantedAt);
-      const overdueMs = sinceWatered - (p.wateringIntervalMs || 45000);
+      const intervalMs = p.wateringIntervalMs || 45000;
+      const cycleElapsed = now - newCurrentCycleStart;
 
-      if (overdueMs > 0 && !autoWatered) {
-        // Plant is overdue for watering — health decays
-        let decayRate = HEALTH_DECAY_PER_SEC;
-        if (isHeatwave) decayRate *= HEATWAVE_DECAY_MULTIPLIER;
-        const decayAmount = decayRate * secsSinceDecay;
-        newHealth = Math.max(0, newHealth - decayAmount);
+      // Check if current watering cycle has ended
+      if (cycleElapsed >= intervalMs) {
+        // Evaluate the completed cycle
+        if (autoWatered) {
+          // Rain: no penalty, auto-watered
+          // Monsoon: auto-watered but track rot penalty
+          if (isMonsoon) {
+            newMonsoonDays += 1;
+          }
+        } else if (!newWateredThisCycle) {
+          // Missed watering on a non-rain day
+          newMissedWaterings += 1;
+          // Health drops for neglect (visual feedback)
+          newHealth = Math.max(0, newHealth - 15);
+        } else if (isHeatwave && !newHeatwaveWateredTwice) {
+          // Heatwave: watered once but not twice
+          newHeatwaveFailures += 1;
+          newHealth = Math.max(0, newHealth - 10);
+        }
+
+        // Start new cycle
+        newCurrentCycleStart = now;
+        newWateredThisCycle = autoWatered; // auto-watered resets as true
+        newHeatwaveWateredTwice = false;
+        if (autoWatered) newLastWateredAt = now;
       }
 
-      // Monsoon: root rot passive damage even though auto-watered
-      if (isMonsoon) {
-        newHealth = Math.max(0, newHealth - MONSOON_ROT_PER_SEC * secsSinceDecay);
+      // Health visual: slowly recover if watered, slowly drop if overdue
+      const sinceWatered = now - (newLastWateredAt || p.plantedAt);
+      const isOverdue = sinceWatered > intervalMs && !autoWatered;
+      if (isOverdue && newHealth > 0) {
+        const overdueSeconds = (sinceWatered - intervalMs) / 1000;
+        newHealth = Math.max(0, 100 - overdueSeconds * 1.5);
+      } else if (newWateredThisCycle && newHealth < 100) {
+        newHealth = Math.min(100, newHealth + 0.5);
       }
 
-      // Rain: slowly restore health
-      if (isRainy && newHealth < 100) {
-        newHealth = Math.min(100, newHealth + RAIN_HEALTH_RESTORE * secsSinceDecay / 10);
+      // SRS: Check if accumulated penalties would kill the plant
+      const projectedYield = p.yieldCoins
+        - Math.floor(newHeatwaveFailures * HEATWAVE_YIELD_PENALTY * p.yieldCoins)
+        - Math.floor(newMonsoonDays * MONSOON_YIELD_PENALTY * p.yieldCoins)
+        - (newMissedWaterings * NEGLECT_PENALTY_CC);
+
+      if (projectedYield <= 0) {
+        return {
+          ...p, status: 'dead' as PlantStatus, health: 0,
+          missedWaterings: newMissedWaterings, heatwaveFailures: newHeatwaveFailures,
+          monsoonDays: newMonsoonDays, lastHealthDecayAt: now,
+        };
       }
 
-      // Neglect penalty accumulates when health < 40
-      if (newHealth < 40 && newHealth > 0 && overdueMs > 0) {
-        newNeglectPenalty = Math.min(p.yieldCoins, newNeglectPenalty + Math.floor(secsSinceDecay * 0.2));
-      }
-
-      // Plant dies at 0 health
-      if (newHealth <= 0) {
-        return { ...p, status: 'dead' as PlantStatus, health: 0, neglectPenalty: newNeglectPenalty, lastHealthDecayAt: now };
-      }
-
-      // --- Growth Progress ---
-      // Time-based growth, but rate depends on health
-      const healthRate = Math.max(0.1, newHealth / 100); // min 10% speed at low health
-      const isFertilized = (p.fertilizedUntil || 0) > now;
-      const fertMultiplier = isFertilized ? FERTILIZER_GROWTH_MULTIPLIER : 1.0;
-
-      const elapsedSincePlant = now - p.plantedAt;
-      // Base progress = time elapsed / total duration
-      // But we scale by average health over time (approximated by current health)
-      const rawProgress = (elapsedSincePlant / p.growthDurationMs) * 100;
-      // Apply health factor and fertilizer to the growth rate
-      // Use incremental approach: advance from current progress
-      const timeDelta = secsSinceDecay; // seconds since last update
-      const growthPerSec = (100 / (p.growthDurationMs / 1000)) * healthRate * fertMultiplier;
-      let newProgress = Math.min(100, p.progress + growthPerSec * timeDelta);
-
-      // Auto-water from rain refreshes the watered state
-      const newWateredThisCycle = autoWatered ? true : p.wateredThisCycle;
-      const newLastWateredAt = autoWatered && overdueMs > 0 ? now : p.lastWateredAt;
-
+      // FUN-004: Pure time-based growth
+      const elapsed = now - p.plantedAt;
+      const newProgress = Math.min(100, (elapsed / p.growthDurationMs) * 100);
       const isReady = newProgress >= 100;
 
       return {
         ...p,
         progress: newProgress,
         health: newHealth,
-        neglectPenalty: newNeglectPenalty,
-        lastHealthDecayAt: now,
+        missedWaterings: newMissedWaterings,
+        heatwaveFailures: newHeatwaveFailures,
+        monsoonDays: newMonsoonDays,
+        currentCycleStart: newCurrentCycleStart,
         wateredThisCycle: newWateredThisCycle,
+        heatwaveWateredTwice: newHeatwaveWateredTwice,
         lastWateredAt: newLastWateredAt,
+        lastHealthDecayAt: now,
+        neglectPenalty: newMissedWaterings * NEGLECT_PENALTY_CC,
         status: isReady ? 'ready' as PlantStatus : 'growing' as PlantStatus,
       };
     });
