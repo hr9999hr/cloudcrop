@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, ArrowRight, Minus, Plus, X } from "lucide-react";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import ccCoin from "@/assets/cc-coin.png";
+import fertilizerBag from "@/assets/fertilizer-bag.png";
 import { toast } from "sonner";
 
 const categories = [
