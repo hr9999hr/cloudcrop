@@ -584,4 +584,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     weather,
     weatherChangedAt: Date.now(),
   }),
+
+  setCheckin: (streak, date) => set({ checkinStreak: streak, checkinLastDate: date }),
+
+  setCompletedMissions: (missions, date) => set({ completedMissions: missions, completedMissionsDate: date }),
 }));
