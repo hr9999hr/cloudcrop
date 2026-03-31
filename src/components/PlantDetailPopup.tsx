@@ -172,7 +172,9 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         ? 'Get drops → Missions'
         : isOverdue
         ? `⚠️ Overdue! ${waterDrops} drops left`
-        : `Next in ${nextWaterSec}s · ${waterDrops} drops`,
+        : plant.wateredThisCycle
+        ? `✅ Watered · ${cycleRemainingSec}s til next cycle`
+        : `Water now! ${cycleRemainingSec}s left · ${waterDrops} drops`,
     },
     {
       label: 'Fertilizer',
