@@ -371,8 +371,6 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     return {
       plants: updatedPlants,
-      weather: newWeather,
-      weatherChangedAt: newWeatherChangedAt,
     };
   }),
 
