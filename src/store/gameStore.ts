@@ -467,4 +467,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   })),
 
   clearCart: () => set({ cart: [] }),
+
+  setWeather: (weather) => set({
+    weather,
+    weatherChangedAt: Date.now(),
+  }),
 }));
