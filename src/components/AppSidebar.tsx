@@ -24,7 +24,7 @@ const items = [
   { title: "Inventory", url: "/inventory", icon: Backpack, emoji: "🎒" },
   { title: "Fertilizer Shop", url: "/fertilizer", icon: Beaker, emoji: "💊", customImg: true },
   { title: "Supermarket", url: "/marketplace", icon: ShoppingCart, emoji: "🛒" },
-  { title: "Delivery", url: "/delivery", icon: Truck, emoji: "📦" },
+  { title: "Collection Point", url: "/delivery", icon: Truck, emoji: "📍" },
   { title: "Wallet", url: "/wallet", icon: Wallet, emoji: "💰" },
   { title: "Settings", url: "/settings", icon: Settings, emoji: "⚙️" },
 ];

@@ -130,7 +130,7 @@ export default function MarketplacePage() {
 
     const hasNonSeedItems = cart.some((i) => i.category !== 'seeds');
     if (hasNonSeedItems && !deliveryAddress) {
-      toast.error("Please set your delivery address on the Delivery page first!");
+      toast.error("Please select a collection point on the Collection Point page first!");
       return;
     }
 
