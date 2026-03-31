@@ -180,7 +180,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         ? wouldOverwater
           ? `⚠️ Overwatering! -10% health · ${cycleRemainingLabel} til next`
           : `✅ Watered · ${cycleRemainingLabel} til next cycle`
-        : `Water now! ${cycleRemainingLabel} left · ${waterDrops} drops`,
+        : `Water now! 8-12 hours left · ${waterDrops} drops`,
     },
     {
       label: 'Fertilizer',
@@ -317,7 +317,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 {!isReady && !isDead && (
                   <p className="text-[10px] text-muted-foreground">
                     💧 Cycle: 8-12 hours
-                    {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingLabel} left` : isOverdue ? ' · ⚠️ OVERDUE' : ` · Water now! ${cycleRemainingLabel} left`}
+                    {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingLabel} left` : isOverdue ? ' · ⚠️ OVERDUE' : ' · Water now! 8-12 hours left'}
                     {(weather === 'rainy' || weather === 'monsoon') && ' · ☔ Auto-watered'}
                   </p>
                 )}
