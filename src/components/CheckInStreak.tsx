@@ -140,16 +140,15 @@ export default function CheckInStreak() {
 
       <div className="px-3 pb-3 flex items-center justify-between gap-2">
         <div className="flex-1">
-          {eligibleForFreeSeed ? (
+          {currentStreak >= 7 ? (
             <p className="text-[10px] text-primary font-medium flex items-center gap-1">
               <Sprout className="w-3 h-3" />
-              {currentStreak >= 7
-                ? "Claim your free seed now!"
-                : `${7 - currentStreak} more days for a free seed!`}
+              Claim your free seed now!
             </p>
           ) : (
-            <p className="text-[10px] text-muted-foreground">
-              🌱 Free seed reward unlocks when a plant dies & you're low on coins
+            <p className="text-[10px] text-primary font-medium flex items-center gap-1">
+              <Sprout className="w-3 h-3" />
+              {7 - currentStreak} more days for a free seed!
             </p>
           )}
         </div>
