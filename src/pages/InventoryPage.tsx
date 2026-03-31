@@ -194,7 +194,7 @@ export default function InventoryPage() {
 
               <div className="flex items-center justify-center mb-4">
                 <div className="w-24 h-24 bg-muted rounded-xl flex items-center justify-center text-5xl">
-                  {selectedItem.emoji}
+                  {selectedItem.category === 'fertilizers' ? <img src={fertilizerBag} alt={selectedItem.name} className="w-16 h-16 object-contain" /> : selectedItem.emoji}
                 </div>
               </div>
 
