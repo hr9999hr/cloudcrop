@@ -301,14 +301,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   updateProgress: () => set((s) => {
     const now = Date.now();
 
-    // Weather cycling: change every WEATHER_CYCLE_MS
-    let newWeather = s.weather;
-    let newWeatherChangedAt = s.weatherChangedAt;
+    // Weather is now managed by useRealWeather hook via setWeather
+    // Check if weather changed since last update by comparing weatherChangedAt
     let weatherJustChanged = false;
-
-    if (now - s.weatherChangedAt >= WEATHER_CYCLE_MS) {
-      newWeather = rollWeather();
-      newWeatherChangedAt = now;
+    const weatherAge = now - s.weatherChangedAt;
+    
+    // Detect if weather changed recently (within last 5 seconds = just set by hook)
+    if (weatherAge < 5000 && s.plants.some(p => p.status === 'growing' && !p.wateredThisCycle)) {
       weatherJustChanged = true;
     }
 
