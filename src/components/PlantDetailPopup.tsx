@@ -145,6 +145,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   const cycleRemainingLabel = formatDuration(cycleRemaining);
   const cycleLabel = formatDuration(intervalMs);
   const isOverdue = cycleElapsed > intervalMs && !plant.wateredThisCycle;
+  const wouldOverwater = plant.wateredThisCycle && !(weather === 'heatwave' && !plant.heatwaveWateredTwice);
 
   // Fertilizer: shifts time (SRS FUN-014)
   const isFertilized = false; // no longer time-boost based
