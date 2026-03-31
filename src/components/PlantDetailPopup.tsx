@@ -252,9 +252,6 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               {isDead && (
                 <span className="text-xs font-bold text-destructive mt-1">Plant died! 😢</span>
               )}
-              {isFertilized && !isReady && !isDead && (
-                <span className="text-xs font-bold text-primary mt-1">⚡ Fertilized</span>
-              )}
             </div>
 
             {/* Plant info */}
