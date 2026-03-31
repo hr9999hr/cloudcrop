@@ -285,10 +285,21 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                   ⚠️ Overdue! Water now — health dropping!
                 </p>
               )}
-              {(plant.neglectPenalty ?? 0) > 0 && (
-                <div className="flex items-center gap-1 mt-1">
-                  <img src={ccCoin} alt="CC" className="w-3 h-3" />
-                  <p className="text-[10px] text-destructive font-bold">-{plant.neglectPenalty} CC penalty</p>
+              {/* SRS penalty breakdown */}
+              {((plant.missedWaterings || 0) > 0 || (plant.heatwaveFailures || 0) > 0 || (plant.monsoonDays || 0) > 0) && (
+                <div className="mt-1 space-y-0.5">
+                  {(plant.missedWaterings || 0) > 0 && (
+                    <div className="flex items-center gap-1">
+                      <img src={ccCoin} alt="CC" className="w-3 h-3" />
+                      <p className="text-[10px] text-destructive font-bold">-{(plant.missedWaterings || 0) * 15} CC missed watering ({plant.missedWaterings}×)</p>
+                    </div>
+                  )}
+                  {(plant.heatwaveFailures || 0) > 0 && (
+                    <p className="text-[10px] text-destructive font-bold">🔥 -{((plant.heatwaveFailures || 0) * 30)}% heatwave penalty ({plant.heatwaveFailures}×)</p>
+                  )}
+                  {(plant.monsoonDays || 0) > 0 && (
+                    <p className="text-[10px] text-destructive font-bold">⛈️ -{((plant.monsoonDays || 0) * 30)}% root rot ({plant.monsoonDays}×)</p>
+                  )}
                 </div>
               )}
 
