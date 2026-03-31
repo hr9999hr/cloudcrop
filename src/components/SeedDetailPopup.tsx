@@ -31,7 +31,7 @@ export function SeedDetailPopup({ open, seedName, onConfirm, onClose }: SeedDeta
   const seedOption = SEED_OPTIONS.find((s) => seedName.includes(s.name));
   if (!seedOption) return null;
 
-  const durationMin = (seedOption.durationMs / 60000).toFixed(1);
+  const durationLabel = formatDuration(seedOption.durationMs);
 
   return (
     <AnimatePresence>
