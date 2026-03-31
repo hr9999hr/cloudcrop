@@ -387,7 +387,7 @@ export default function MarketplacePage() {
                 </div>
                 <Button
                   size="sm"
-                  onClick={() => addToCart(product)}
+                  onClick={(e) => { e.stopPropagation(); addToCart(product); }}
                   className="gradient-farm text-primary-foreground rounded-xl text-xs px-3"
                 >
                   <Plus className="w-3 h-3 mr-1" /> Add
