@@ -449,10 +449,10 @@ export default function MarketplacePage() {
                               <p className="text-xs text-muted-foreground italic">"{seedInfo.description}"</p>
                               <div className="grid grid-cols-2 gap-2 pt-1">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-sm">⏱️</span>
+                                  <span className="text-sm">💧</span>
                                   <div>
-                                    <p className="text-[10px] text-muted-foreground">Grow Time</p>
-                                    <p className="text-xs font-bold text-foreground">{seedInfo.durationMs / 60000} min</p>
+                                    <p className="text-[10px] text-muted-foreground">Waterings Needed</p>
+                                    <p className="text-xs font-bold text-water">{Math.max(3, Math.ceil(seedInfo.durationMs / 60000))} times</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
@@ -470,10 +470,10 @@ export default function MarketplacePage() {
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-sm">💧</span>
+                                  <span className="text-sm">⚠️</span>
                                   <div>
-                                    <p className="text-[10px] text-muted-foreground">Needs Water</p>
-                                    <p className="text-xs font-bold text-foreground">Yes</p>
+                                    <p className="text-[10px] text-muted-foreground">If Neglected</p>
+                                    <p className="text-xs font-bold text-destructive">Health drops</p>
                                   </div>
                                 </div>
                               </div>
