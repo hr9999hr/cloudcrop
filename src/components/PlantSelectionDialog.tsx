@@ -5,6 +5,7 @@ import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { formatDuration } from "@/lib/formatDuration";
 
 interface PlantSelectionDialogProps {
   open: boolean;
@@ -89,7 +90,7 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           {opt ? (
-                            <><span>⏱ {opt.durationMs >= 86400000 ? `${(opt.durationMs / 86400000).toFixed(0)} day${opt.durationMs >= 172800000 ? 's' : ''}` : `${(opt.durationMs / 3600000).toFixed(0)}h`} ·</span> <span>→ {opt.yieldCoins} CC</span></>
+                            <><span>⏱ {formatDuration(opt.durationMs)} ·</span> <span>→ {opt.yieldCoins} CC</span></>
                           ) : null}
                         </p>
                       </div>

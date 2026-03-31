@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, ArrowRight } from "lucide-react";
 import ccCoin from "@/assets/cc-coin.png";
 import { SEED_OPTIONS } from "@/store/gameStore";
+import { formatDuration } from "@/lib/formatDuration";
 
 interface SeedDetailPopupProps {
   open: boolean;
@@ -30,7 +31,7 @@ export function SeedDetailPopup({ open, seedName, onConfirm, onClose }: SeedDeta
   const seedOption = SEED_OPTIONS.find((s) => seedName.includes(s.name));
   if (!seedOption) return null;
 
-  const durationMin = (seedOption.durationMs / 60000).toFixed(1);
+  const durationLabel = formatDuration(seedOption.durationMs);
 
   return (
     <AnimatePresence>
@@ -75,7 +76,7 @@ export function SeedDetailPopup({ open, seedName, onConfirm, onClose }: SeedDeta
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-muted-foreground" />
-              <span className="font-bold text-foreground">{durationMin} minutes</span>
+              <span className="font-bold text-foreground">{durationLabel}</span>
               <span className="text-muted-foreground">growth time</span>
             </div>
             <div className="flex items-center gap-2 text-sm">

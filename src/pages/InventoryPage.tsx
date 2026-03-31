@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, ArrowRight, Minus, Plus, X } from "lucide-react";
+import { formatDuration } from "@/lib/formatDuration";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
 import ccCoin from "@/assets/cc-coin.png";
 import fertilizerBag from "@/assets/fertilizer-bag.png";
@@ -214,7 +215,7 @@ export default function InventoryPage() {
                   </div>
 
                   <p className="text-xs text-muted-foreground text-center mb-1">
-                    {(seedOption.durationMs / 60000).toFixed(1)} minutes
+                    {formatDuration(seedOption.durationMs)}
                   </p>
                   <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-4">
                     <span>1 {seedOption.name} =</span>
