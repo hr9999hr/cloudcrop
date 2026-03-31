@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, CheckCircle2, Droplets, Trophy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import CheckInStreak from "@/components/CheckInStreak";
 
 interface Mission {
   id: string;
