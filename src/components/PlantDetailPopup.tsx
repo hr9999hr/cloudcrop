@@ -259,7 +259,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
               <h3 className="text-sm font-extrabold text-foreground mb-2">Growth 🌱</h3>
               <div className="w-full bg-muted rounded-full h-2.5 mb-1 overflow-hidden">
                 <motion.div
-                  className={`h-full rounded-full ${isFertilized ? 'bg-primary' : 'bg-growth'}`}
+                  className="h-full rounded-full bg-growth"
                   animate={{ width: `${growthPercent}%` }}
                 />
               </div>
@@ -267,9 +267,6 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 <p className="text-[10px] text-muted-foreground font-semibold">
                   {growthPercent}% — {isReady ? '🎉 Harvest ready!' : isDead ? '💀 Dead' : `${Math.round(100 - growthPercent)}% to go`}
                 </p>
-                {isFertilized && !isReady && (
-                  <p className="text-[10px] text-primary font-bold">⚡ 1.5x speed</p>
-                )}
               </div>
 
               <h3 className="text-sm font-extrabold text-foreground mb-2">Health ❤️</h3>
