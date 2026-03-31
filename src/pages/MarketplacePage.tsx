@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ShoppingCart, Plus, Minus, X, Search } from "lucide-react";
 import { toast } from "sonner";
-import { useGameStore } from "@/store/gameStore";
+import { useGameStore, SEED_OPTIONS } from "@/store/gameStore";
 import {
   AlertDialog,
   AlertDialogAction,
