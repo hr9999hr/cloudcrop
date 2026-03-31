@@ -17,6 +17,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import ccCoin from "@/assets/cc-coin.png";
+import { formatDuration } from "@/lib/formatDuration";
 
 type PaymentType = 'coins' | 'money';
 type ProductCategory = 'fruits' | 'vegetables' | 'seeds';
