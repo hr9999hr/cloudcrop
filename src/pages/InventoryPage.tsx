@@ -160,7 +160,7 @@ export default function InventoryPage() {
                           : 'bg-card border-border hover:bg-muted'
                       }`}
                     >
-                      {item.emoji}
+                      {item.category === 'fertilizers' ? <img src={fertilizerBag} alt={item.name} className="w-8 h-8 object-contain" /> : item.emoji}
                       <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {item.quantity}
                       </span>
