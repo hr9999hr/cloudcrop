@@ -156,15 +156,15 @@ export default function GardenDashboard() {
                 ...Array.from({ length: maxSlots - plants.length }, (_, i) => ({ type: 'locked' as const, plant: null, index: plants.length + i })),
               ];
               const cols = 3;
-              const tileW = 120;
-              const tileH = 70;
+              const tileW = 150;
+              const tileH = 88;
               const rows = Math.ceil(allSlots.length / cols);
               const containerW = (cols + 1) * tileW * 0.5 + tileW * 0.5;
-              const slotFrameHeight = tileH + 36;
+              const slotFrameHeight = tileH + 44;
               const containerH = rows * tileH + slotFrameHeight;
 
               return (
-                <div style={{ width: containerW, height: containerH + 40, position: 'relative' }}>
+                <div style={{ width: containerW, height: containerH + 50, position: 'relative' }}>
                   {allSlots.map((slot, idx) => {
                     const row = Math.floor(idx / cols);
                     const col = idx % cols;
@@ -186,6 +186,7 @@ export default function GardenDashboard() {
                             width: tileW,
                             height: slotFrameHeight,
                             zIndex: (row + col) * 2 + 1,
+                            clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
                           }}
                         >
                           <PlantCard
@@ -210,6 +211,7 @@ export default function GardenDashboard() {
                           width: tileW,
                           height: slotFrameHeight,
                           zIndex: (row + col) * 2,
+                          clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
                         }}
                       >
                       <div className="w-full h-full relative">
