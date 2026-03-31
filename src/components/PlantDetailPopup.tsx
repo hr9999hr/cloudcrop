@@ -5,6 +5,7 @@ import { Droplets, Beaker, Bug, Shield } from "lucide-react";
 import { PlantSlot, useGameStore, getWeatherInfo } from "@/store/gameStore";
 import { useNavigate } from "react-router-dom";
 import ccCoin from "@/assets/cc-coin.png";
+import { formatDuration } from "@/lib/formatDuration";
 
 interface PlantDetailPopupProps {
   open: boolean;
@@ -141,6 +142,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   const cycleElapsed = now - cycleStart;
   const cycleRemaining = Math.max(0, intervalMs - cycleElapsed);
   const cycleRemainingSec = Math.ceil(cycleRemaining / 1000);
+  const cycleRemainingLabel = formatDuration(cycleRemaining);
+  const cycleLabel = formatDuration(intervalMs);
   const isOverdue = cycleElapsed > intervalMs && !plant.wateredThisCycle;
 
   // Fertilizer: shifts time (SRS FUN-014)
@@ -173,8 +176,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         : isOverdue
         ? `⚠️ Overdue! ${waterDrops} drops left`
         : plant.wateredThisCycle
-        ? `✅ Watered · ${cycleRemainingSec}s til next cycle`
-        : `Water now! ${cycleRemainingSec}s left · ${waterDrops} drops`,
+        ? `✅ Watered · ${cycleRemainingLabel} til next cycle`
+        : `Water now! ${cycleRemainingLabel} left · ${waterDrops} drops`,
     },
     {
       label: 'Fertilizer',
@@ -191,7 +194,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
         }
       },
       subtitle: hasFertilizer
-        ? `${fertilizerCount} bags · Skip 60s growth`
+        ? `${fertilizerCount} bags · Skip 24h growth`
         : 'Buy fertilizer →',
     },
     {
@@ -310,8 +313,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 </p>
                 {!isReady && !isDead && (
                   <p className="text-[10px] text-muted-foreground">
-                    💧 Cycle: {Math.round(intervalMs / 1000)}s
-                    {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingSec}s left` : isOverdue ? ' · ⚠️ OVERDUE' : ` · Water now! ${cycleRemainingSec}s left`}
+                    💧 Cycle: {cycleLabel}
+                    {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingLabel} left` : isOverdue ? ' · ⚠️ OVERDUE' : ` · Water now! ${cycleRemainingLabel} left`}
                     {(weather === 'rainy' || weather === 'monsoon') && ' · ☔ Auto-watered'}
                   </p>
                 )}
