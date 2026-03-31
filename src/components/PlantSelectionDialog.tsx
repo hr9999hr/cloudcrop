@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface PlantSelectionDialogProps {
@@ -12,10 +13,13 @@ interface PlantSelectionDialogProps {
 }
 
 export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDialogProps) {
-  const { plantSeed, inventory } = useGameStore();
+  const { plantSeed, inventory, coins } = useGameStore();
+  const navigate = useNavigate();
   const [selectedSeed, setSelectedSeed] = useState<string | null>(null);
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
+  const cheapestSeedCost = Math.min(...SEED_OPTIONS.map((s) => s.costCC));
+  const cantAffordSeed = coins < cheapestSeedCost;
 
   const handleConfirmPlant = () => {
     if (!selectedSeed) return;
@@ -52,7 +56,21 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
             {availableSeeds.length === 0 ? (
               <div className="text-center py-8">
                 <span className="text-4xl">🫗</span>
-                <p className="text-sm text-muted-foreground mt-2">No seeds available! Visit the Marketplace to buy more.</p>
+                {cantAffordSeed ? (
+                  <>
+                    <p className="text-sm text-muted-foreground mt-2">No seeds and not enough CC coins!</p>
+                    <p className="text-xs text-muted-foreground mt-1">Check in for 7 days straight to earn a free seed 🌱</p>
+                    <Button
+                      className="mt-3"
+                      size="sm"
+                      onClick={() => { onClose(); navigate('/missions'); }}
+                    >
+                      Go to Missions →
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-2">No seeds available! Visit the Marketplace to buy more.</p>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
@@ -71,7 +89,7 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           {opt ? (
-                            <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
+                            <><span>⏱ {opt.durationMs >= 86400000 ? `${(opt.durationMs / 86400000).toFixed(0)} day${opt.durationMs >= 172800000 ? 's' : ''}` : `${(opt.durationMs / 3600000).toFixed(0)}h`} ·</span> <span>→ {opt.yieldCoins} CC</span></>
                           ) : null}
                         </p>
                       </div>
