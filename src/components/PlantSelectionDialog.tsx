@@ -13,10 +13,13 @@ interface PlantSelectionDialogProps {
 }
 
 export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDialogProps) {
-  const { plantSeed, inventory } = useGameStore();
+  const { plantSeed, inventory, coins } = useGameStore();
+  const navigate = useNavigate();
   const [selectedSeed, setSelectedSeed] = useState<string | null>(null);
 
   const availableSeeds = inventory.filter((i) => i.category === 'seeds' && i.quantity > 0);
+  const cheapestSeedCost = Math.min(...SEED_OPTIONS.map((s) => s.costCC));
+  const cantAffordSeed = coins < cheapestSeedCost;
 
   const handleConfirmPlant = () => {
     if (!selectedSeed) return;
