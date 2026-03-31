@@ -131,15 +131,27 @@ export default function GardenDashboard() {
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(170deg, hsl(85 55% 55%) 0%, hsl(95 50% 45%) 50%, hsl(100 45% 38%) 100%)',
+          background: weather === 'rainy'
+            ? 'linear-gradient(170deg, hsl(85 40% 45%) 0%, hsl(95 35% 38%) 50%, hsl(100 30% 32%) 100%)'
+            : weather === 'monsoon'
+            ? 'linear-gradient(170deg, hsl(85 30% 38%) 0%, hsl(95 25% 32%) 50%, hsl(100 20% 28%) 100%)'
+            : weather === 'heatwave'
+            ? 'linear-gradient(170deg, hsl(70 55% 55%) 0%, hsl(80 50% 45%) 50%, hsl(55 45% 40%) 100%)'
+            : 'linear-gradient(170deg, hsl(85 55% 55%) 0%, hsl(95 50% 45%) 50%, hsl(100 45% 38%) 100%)',
           boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
-          padding: '2rem 1rem 1.5rem',
+          padding: '2rem 1rem 2.5rem',
         }}
       >
         {/* Grass texture */}
         <div className="absolute inset-0 opacity-[0.06]"
           style={{ backgroundImage: 'radial-gradient(hsl(80 70% 75%) 1.5px, transparent 1.5px)', backgroundSize: '10px 10px' }}
         />
+
+        {/* Weather effects overlay */}
+        <WeatherEffects weather={weather} />
+
+        {/* Farm decorations */}
+        <FarmDecorations weather={weather} />
 
         {/* Farm label */}
         <div className="relative z-10 flex justify-center mb-6">
