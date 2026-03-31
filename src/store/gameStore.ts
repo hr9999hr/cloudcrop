@@ -117,6 +117,8 @@ interface GameState {
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   setWeather: (weather: WeatherType) => void;
+  setCheckin: (streak: number, date: string) => void;
+  setCompletedMissions: (missions: string[], date: string) => void;
 }
 
 // 10 Malaysian crops — real-life growth times
