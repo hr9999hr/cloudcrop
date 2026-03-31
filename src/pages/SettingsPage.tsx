@@ -63,18 +63,18 @@ export default function SettingsPage() {
     setSaving(true);
 
     // Try update first
-    const { error: updateError } = await supabase
+    const { error: upsertError } = await supabase
       .from("profiles")
-      .update({
+      .upsert({
+        user_id: user.id,
         username: profile.username,
         full_name: profile.full_name,
         date_of_birth: profile.date_of_birth || null,
-      })
-      .eq("user_id", user.id);
+      }, { onConflict: "user_id" });
 
     setSaving(false);
 
-    if (updateError) {
+    if (upsertError) {
       toast.error("Failed to save profile");
       return;
     }
