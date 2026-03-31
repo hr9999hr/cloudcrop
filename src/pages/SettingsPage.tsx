@@ -74,7 +74,7 @@ export default function SettingsPage() {
 
     setSaving(false);
 
-    if (updateError) {
+    if (upsertError) {
       toast.error("Failed to save profile");
       return;
     }
