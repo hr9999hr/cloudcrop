@@ -364,7 +364,8 @@ export default function MarketplacePage() {
             <motion.div
               key={product.id}
               whileHover={{ y: -2 }}
-              className="bg-card border rounded-2xl p-4 flex flex-col"
+              onClick={() => setSelectedProduct(product)}
+              className="bg-card border rounded-2xl p-4 flex flex-col cursor-pointer"
             >
               <div className="text-center text-5xl py-3">{product.emoji}</div>
               <div className="flex items-center gap-1.5 mb-1">
