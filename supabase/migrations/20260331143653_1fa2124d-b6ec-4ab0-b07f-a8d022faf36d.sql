@@ -1,0 +1,1 @@
+UPDATE game_states SET coins = 50 WHERE user_id = '8e8031fc-b43d-43ee-9602-a6935543e6b7';
