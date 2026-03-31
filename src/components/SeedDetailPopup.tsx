@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, ArrowRight } from "lucide-react";
 import ccCoin from "@/assets/cc-coin.png";
 import { SEED_OPTIONS } from "@/store/gameStore";
+import { formatDuration } from "@/lib/formatDuration";
 
 interface SeedDetailPopupProps {
   open: boolean;
