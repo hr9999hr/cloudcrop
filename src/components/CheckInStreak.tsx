@@ -50,10 +50,8 @@ export default function CheckInStreak() {
     return 0;
   }, [streakData, today, yesterday]);
 
-  const hasDeadPlant = plants.some((p) => p.status === "dead");
-  const cheapestSeedCost = Math.min(...SEED_OPTIONS.map((s) => s.costCC));
-  const cantAffordSeed = coins < cheapestSeedCost;
-  const eligibleForFreeSeed = hasDeadPlant && cantAffordSeed;
+  // Free seed reward is always available as a goal
+  const eligibleForFreeSeed = true;
 
   const handleCheckIn = () => {
     if (alreadyCheckedIn) return;
