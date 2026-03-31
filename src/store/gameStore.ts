@@ -323,72 +323,56 @@ export const useGameStore = create<GameState>((set, get) => ({
   updateProgress: () => set((s) => {
     const now = Date.now();
 
-    // Weather is now managed by useRealWeather hook via setWeather
-    // Check if weather changed since last update by comparing weatherChangedAt
-    let weatherJustChanged = false;
-    const weatherAge = now - s.weatherChangedAt;
-    
-    // Detect if weather changed recently (within last 5 seconds = just set by hook)
-    if (weatherAge < 5000 && s.plants.some(p => p.status === 'growing' && !p.wateredThisCycle)) {
-      weatherJustChanged = true;
-    }
-
     const updatedPlants = s.plants.map((p) => {
       if (p.status !== 'growing' || !p.plantedAt) return p;
 
       let newHealth = p.health ?? 100;
       let newNeglectPenalty = p.neglectPenalty ?? 0;
-      let newWateredThisCycle = p.wateredThisCycle ?? false;
 
-      // On weather change, apply penalties for the previous cycle
-      if (weatherJustChanged) {
-        // Check if plant was watered during previous weather cycle
-        if (!newWateredThisCycle && s.weather !== 'rainy') {
-          // Missed watering penalty: -15 CC from harvest
-          newNeglectPenalty += NEGLECT_PENALTY_CC;
-          // Also reduce health
-          newHealth = Math.max(0, newHealth - 15);
-        }
-        // Heatwave extra penalty if not double-watered
-        if (s.weather === 'heatwave' && !newWateredThisCycle) {
-          newNeglectPenalty += NEGLECT_PENALTY_CC; // Extra penalty
-          newHealth = Math.max(0, newHealth - 15);
-        }
-        // Monsoon automatic penalty (root rot)
-        if (s.weather === 'monsoon') {
-          newHealth = Math.max(0, newHealth - 20);
-        }
-        // Rainy day auto-waters
-        if (s.weather === 'rainy') {
-          newHealth = Math.min(100, newHealth + 15);
-          newWateredThisCycle = true;
-        } else {
-          newWateredThisCycle = false; // Reset for new cycle
-        }
-      }
-
-      // Gradual health decay if not watered recently
+      // Gradual health decay if not watered recently (every 30s without water = -3 health)
       if (p.lastWateredAt) {
         const sinceWatered = now - p.lastWateredAt;
-        const decayAmount = Math.floor(sinceWatered / 30000) * 2;
-        newHealth = Math.max(0, 100 - decayAmount);
+        // Decay starts after 60 seconds of no watering
+        if (sinceWatered > 60000) {
+          const decayPeriods = Math.floor((sinceWatered - 60000) / 30000);
+          const decayAmount = decayPeriods * 3;
+          newHealth = Math.max(0, (p.health ?? 100) - decayAmount);
+        }
+      } else {
+        // Never watered after planting — decay faster
+        const sincePlanted = now - p.plantedAt;
+        if (sincePlanted > 30000) {
+          const decayAmount = Math.floor(sincePlanted / 30000) * 5;
+          newHealth = Math.max(0, 100 - decayAmount);
+        }
       }
 
-      // Growth calculation - slows when health < 50%
-      const healthMult = newHealth >= 50 ? 1 : newHealth / 100;
-      const elapsed = now - p.plantedAt;
-      const baseProgress = Math.min(100, (elapsed / p.growthDurationMs) * 100);
-      const progress = Math.min(100, baseProgress * healthMult + (1 - healthMult) * p.progress);
-
-      // Plant death: if yield would be 0 or below
-      if (newNeglectPenalty >= p.yieldCoins && p.yieldCoins > 0) {
-        return { ...p, status: 'dead' as PlantStatus, progress: 0, health: 0, neglectPenalty: newNeglectPenalty };
+      // Weather effects on health
+      if (s.weather === 'heatwave') {
+        // Heatwave drains health faster
+        newHealth = Math.max(0, newHealth - 1);
+      }
+      if (s.weather === 'monsoon') {
+        // Monsoon causes root rot
+        newHealth = Math.max(0, newHealth - 0.5);
       }
 
-      if (progress >= 100) {
-        return { ...p, progress: 100, health: newHealth, status: 'ready' as PlantStatus, neglectPenalty: newNeglectPenalty, wateredThisCycle: newWateredThisCycle };
+      // Neglect penalty increases when health drops below 40
+      if (newHealth < 40 && newHealth > 0) {
+        const timeSinceWater = p.lastWateredAt ? now - p.lastWateredAt : now - p.plantedAt;
+        if (timeSinceWater > 120000) { // 2 min without water
+          newNeglectPenalty = Math.min(p.yieldCoins, newNeglectPenalty + 1);
+        }
       }
-      return { ...p, progress, health: newHealth, neglectPenalty: newNeglectPenalty, wateredThisCycle: newWateredThisCycle };
+
+      // Plant death: health reaches 0
+      if (newHealth <= 0) {
+        return { ...p, status: 'dead' as PlantStatus, progress: p.progress, health: 0, neglectPenalty: newNeglectPenalty };
+      }
+
+      // Progress is only advanced by watering (handled in waterPlant action)
+      // Here we just update health
+      return { ...p, health: newHealth, neglectPenalty: newNeglectPenalty };
     });
 
     return {
