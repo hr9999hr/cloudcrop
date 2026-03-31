@@ -16,8 +16,12 @@ export interface PlantSlot {
   lastWateredAt: number | null;
   neglectPenalty: number;
   wateredThisCycle: boolean;
-  totalWaterings: number; // how many times the plant has been watered
-  wateringsNeeded: number; // total waterings needed to reach 100%
+  totalWaterings: number;
+  wateringsNeeded: number;
+  // New realistic fields
+  wateringIntervalMs: number;    // how often plant needs water (ms)
+  lastHealthDecayAt: number;     // track when we last applied decay
+  fertilizedUntil: number;       // timestamp when fertilizer boost expires
 }
 
 export interface InventoryItem {
@@ -50,6 +54,7 @@ export interface DeliveryOrder {
   estimatedMinutes: number;
   completedAt?: number;
 }
+
 export interface CartItem {
   id: string;
   name: string;
@@ -105,8 +110,7 @@ interface GameState {
   setWeather: (weather: WeatherType) => void;
 }
 
-// 10 Malaysian crops from the seed catalog
-// Times scaled for demo: 1 real day ≈ 1 demo minute
+// 10 Malaysian crops — demo-scaled times
 const SEED_OPTIONS = [
   { id: 1, name: 'Kangkung', emoji: '🥬', costCC: 10, durationMs: 3 * 60 * 1000, yieldCoins: 30, description: 'The ultimate beginner crop. Fast and cheap.' },
   { id: 2, name: 'Sawi', emoji: '🥗', costCC: 15, durationMs: 4 * 60 * 1000, yieldCoins: 40, description: 'Low risk, steady income for casual players.' },
@@ -130,23 +134,47 @@ const LEVEL_CONFIG = [
 
 export { LEVEL_CONFIG };
 
-// Weather is now fetched from real weather API — see useRealWeather hook
-// Keep cycle interval for penalty calculations (8 hours = 2-3 changes per day)
-const WEATHER_CYCLE_MS = 8 * 60 * 60 * 1000; // 8 hours
-const NEGLECT_PENALTY_CC = 15; // CC lost per missed watering day
+// ---- Realistic Growth Constants ----
+// Plants need watering every N seconds (scaled for demo)
+// Fast crops (3min): water every ~45s → ~4 waterings
+// Slow crops (14min): water every ~60s → ~14 waterings
+function calcWateringInterval(durationMs: number): number {
+  // ~45s for short crops, up to ~70s for long crops
+  const totalMin = durationMs / 60000;
+  return Math.round((35 + totalMin * 3) * 1000); // 38s–77s
+}
+
+function calcWateringsNeeded(durationMs: number): number {
+  const interval = calcWateringInterval(durationMs);
+  return Math.max(3, Math.ceil(durationMs / interval));
+}
+
+// Health decay rate: how much health to lose per second when overdue
+const HEALTH_DECAY_PER_SEC = 1.5;        // lose 1.5 HP/s when overdue
+const HEATWAVE_DECAY_MULTIPLIER = 2.0;   // heatwave doubles decay
+const MONSOON_ROT_PER_SEC = 0.8;         // monsoon root rot passive damage
+const WATER_HEALTH_RESTORE = 25;         // each watering restores 25 HP
+const FERTILIZER_BOOST_DURATION_MS = 120_000; // 2 min boost
+const FERTILIZER_GROWTH_MULTIPLIER = 1.5;     // 50% faster growth
+const RAIN_HEALTH_RESTORE = 10;          // rain restores 10 HP per cycle
+
+const NEGLECT_PENALTY_CC = 15;
 
 export function getWeatherInfo(weather: WeatherType) {
   switch (weather) {
-    case 'sunny': return { label: '☀️ Sunny Day', waterNeeded: 1, desc: 'Normal day. Water your plants!' };
-    case 'rainy': return { label: '🌦️ Light Rain', waterNeeded: 0, desc: 'Free day! No watering needed.' };
-    case 'heatwave': return { label: '🔥 Heatwave', waterNeeded: 2, desc: 'Hot day! Plants need 2 waters. -30% harvest if missed.' };
-    case 'monsoon': return { label: '⛈️ Monsoon', waterNeeded: 0, desc: 'Bad storm! Automatic -30% harvest from root rot.' };
+    case 'sunny': return { label: '☀️ Sunny Day', waterNeeded: 1, desc: 'Normal day. Water your plants on time!' };
+    case 'rainy': return { label: '🌦️ Rainy', waterNeeded: 0, desc: 'Rain waters your plants automatically. Health slowly restores.' };
+    case 'heatwave': return { label: '🔥 Heatwave', waterNeeded: 2, desc: 'Extreme heat! Health decays 2x faster. Water often!' };
+    case 'monsoon': return { label: '⛈️ Monsoon', waterNeeded: 0, desc: 'Heavy storm! Auto-watered but root rot damages health.' };
   }
 }
 
 const makeEmptySlot = (id: number): PlantSlot => ({
-  id, status: 'empty', plantName: null, plantEmoji: null, plantedAt: null, growthDurationMs: 0, progress: 0, yieldCoins: 0,
-  health: 100, lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false, totalWaterings: 0, wateringsNeeded: 0,
+  id, status: 'empty', plantName: null, plantEmoji: null, plantedAt: null,
+  growthDurationMs: 0, progress: 0, yieldCoins: 0, health: 100,
+  lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false,
+  totalWaterings: 0, wateringsNeeded: 0, wateringIntervalMs: 0,
+  lastHealthDecayAt: 0, fertilizedUntil: 0,
 });
 
 const getSlotsForLevel = (level: number): number => {
@@ -156,7 +184,6 @@ const getSlotsForLevel = (level: number): number => {
 
 const initialPlants: PlantSlot[] = [1, 2, 3].map(makeEmptySlot);
 
-// Starter pack: 3 water drops + 1 basic seed (Kangkung)
 const initialInventory: InventoryItem[] = [
   { id: 'seed-kangkung', name: 'Kangkung Seed', emoji: '🥬', category: 'seeds', quantity: 1, description: 'Grows into kangkung in 3 minutes' },
 ];
@@ -191,14 +218,32 @@ export const useGameStore = create<GameState>((set, get) => ({
       ? s.inventory.map((i) => i.id === seedInv.id ? { ...i, quantity: i.quantity - 1 } : i).filter((i) => i.quantity > 0)
       : s.inventory;
 
-    // Calculate waterings needed based on growth duration
-    // Roughly 1 watering per minute of grow time, minimum 3
-    const wateringsNeeded = Math.max(3, Math.ceil(durationMs / 60000));
+    const wateringsNeeded = calcWateringsNeeded(durationMs);
+    const wateringIntervalMs = calcWateringInterval(durationMs);
+    const now = Date.now();
 
     return {
       plants: s.plants.map((p) =>
         p.id === slotId
-          ? { ...p, status: 'growing' as PlantStatus, plantName: seedName, plantEmoji: emoji, plantedAt: Date.now(), growthDurationMs: durationMs, progress: 0, yieldCoins, health: 100, lastWateredAt: Date.now(), neglectPenalty: 0, wateredThisCycle: true, totalWaterings: 0, wateringsNeeded }
+          ? {
+              ...p,
+              status: 'growing' as PlantStatus,
+              plantName: seedName,
+              plantEmoji: emoji,
+              plantedAt: now,
+              growthDurationMs: durationMs,
+              progress: 0,
+              yieldCoins,
+              health: 100,
+              lastWateredAt: now,
+              neglectPenalty: 0,
+              wateredThisCycle: false,
+              totalWaterings: 0,
+              wateringsNeeded,
+              wateringIntervalMs,
+              lastHealthDecayAt: now,
+              fertilizedUntil: 0,
+            }
           : p
       ),
       inventory: newInventory,
@@ -211,10 +256,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const plant = s.plants.find(p => p.id === slotId);
     if (!plant || plant.status !== 'growing') return;
 
+    const now = Date.now();
     const newTotalWaterings = (plant.totalWaterings || 0) + 1;
-    const needed = plant.wateringsNeeded || 5;
-    const newProgress = Math.min(100, (newTotalWaterings / needed) * 100);
-    const isReady = newProgress >= 100;
 
     set({
       waterDrops: s.waterDrops - 1,
@@ -222,12 +265,11 @@ export const useGameStore = create<GameState>((set, get) => ({
         p.id === slotId && p.status === 'growing'
           ? {
               ...p,
-              health: Math.min(100, (p.health ?? 100) + 20),
-              lastWateredAt: Date.now(),
+              health: Math.min(100, (p.health ?? 100) + WATER_HEALTH_RESTORE),
+              lastWateredAt: now,
               wateredThisCycle: true,
               totalWaterings: newTotalWaterings,
-              progress: newProgress,
-              status: isReady ? 'ready' as PlantStatus : 'growing' as PlantStatus,
+              lastHealthDecayAt: now,
             }
           : p
       ),
@@ -237,13 +279,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   fertilizePlant: (slotId) => set((s) => {
     const fertItem = s.inventory.find((i) => i.category === 'fertilizers' && i.quantity > 0);
     if (!fertItem) return s;
+    const now = Date.now();
     return {
       inventory: s.inventory.map((i) =>
         i.id === fertItem.id ? { ...i, quantity: i.quantity - 1 } : i
       ).filter((i) => i.quantity > 0),
       plants: s.plants.map((p) =>
         p.id === slotId && p.status === 'growing'
-          ? { ...p, plantedAt: (p.plantedAt || Date.now()) - 24 * 60 * 60 * 1000 }
+          ? { ...p, fertilizedUntil: now + FERTILIZER_BOOST_DURATION_MS }
           : p
       ),
     };
@@ -254,10 +297,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const plant = s.plants.find((p) => p.id === slotId);
     if (!plant || plant.status !== 'ready') return { coins: 0, plantName: '', emoji: '', quantity: 0 };
 
-    // Calculate final yield with penalties
     const baseYield = plant.yieldCoins;
     const neglectLoss = plant.neglectPenalty;
-    // Monsoon penalty is already applied via health
     const healthFactor = Math.max(0.3, (plant.health ?? 100) / 100);
     const adjustedYield = Math.max(0, Math.floor((baseYield - neglectLoss) * healthFactor));
 
@@ -265,12 +306,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     const finalQty = adjustedYield <= 0 ? 0 : Math.max(1, Math.floor(harvestQty * healthFactor));
 
     const resetPlant = s.plants.map((p) =>
-      p.id === slotId
-        ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0, health: 100, lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false, totalWaterings: 0, wateringsNeeded: 0 }
-        : p
+      p.id === slotId ? makeEmptySlot(slotId) : p
     );
 
-    // Level up logic
     const newTotalHarvests = s.totalHarvests + 1;
     let newLevel = s.farmerLevel;
     for (const cfg of LEVEL_CONFIG) {
@@ -284,13 +322,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    // Plant death: yield dropped to 0
     if (adjustedYield <= 0) {
-      set({
-        plants: newPlants,
-        totalHarvests: newTotalHarvests,
-        farmerLevel: newLevel,
-      });
+      set({ plants: newPlants, totalHarvests: newTotalHarvests, farmerLevel: newLevel });
       return { coins: 0, plantName: plant.plantName || '', emoji: plant.plantEmoji || '', quantity: 0 };
     }
 
@@ -322,62 +355,86 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   updateProgress: () => set((s) => {
     const now = Date.now();
+    const isRainy = s.weather === 'rainy';
+    const isMonsoon = s.weather === 'monsoon';
+    const isHeatwave = s.weather === 'heatwave';
+    const autoWatered = isRainy || isMonsoon; // rain/monsoon auto-water
 
     const updatedPlants = s.plants.map((p) => {
       if (p.status !== 'growing' || !p.plantedAt) return p;
 
       let newHealth = p.health ?? 100;
       let newNeglectPenalty = p.neglectPenalty ?? 0;
+      const lastDecay = p.lastHealthDecayAt || p.plantedAt;
+      const secsSinceDecay = (now - lastDecay) / 1000;
 
-      // Gradual health decay if not watered recently (every 30s without water = -3 health)
-      if (p.lastWateredAt) {
-        const sinceWatered = now - p.lastWateredAt;
-        // Decay starts after 60 seconds of no watering
-        if (sinceWatered > 60000) {
-          const decayPeriods = Math.floor((sinceWatered - 60000) / 30000);
-          const decayAmount = decayPeriods * 3;
-          newHealth = Math.max(0, (p.health ?? 100) - decayAmount);
-        }
-      } else {
-        // Never watered after planting — decay faster
-        const sincePlanted = now - p.plantedAt;
-        if (sincePlanted > 30000) {
-          const decayAmount = Math.floor(sincePlanted / 30000) * 5;
-          newHealth = Math.max(0, 100 - decayAmount);
-        }
+      // --- Health Decay ---
+      const sinceWatered = now - (p.lastWateredAt || p.plantedAt);
+      const overdueMs = sinceWatered - (p.wateringIntervalMs || 45000);
+
+      if (overdueMs > 0 && !autoWatered) {
+        // Plant is overdue for watering — health decays
+        let decayRate = HEALTH_DECAY_PER_SEC;
+        if (isHeatwave) decayRate *= HEATWAVE_DECAY_MULTIPLIER;
+        const decayAmount = decayRate * secsSinceDecay;
+        newHealth = Math.max(0, newHealth - decayAmount);
       }
 
-      // Weather effects on health
-      if (s.weather === 'heatwave') {
-        // Heatwave drains health faster
-        newHealth = Math.max(0, newHealth - 1);
-      }
-      if (s.weather === 'monsoon') {
-        // Monsoon causes root rot
-        newHealth = Math.max(0, newHealth - 0.5);
+      // Monsoon: root rot passive damage even though auto-watered
+      if (isMonsoon) {
+        newHealth = Math.max(0, newHealth - MONSOON_ROT_PER_SEC * secsSinceDecay);
       }
 
-      // Neglect penalty increases when health drops below 40
-      if (newHealth < 40 && newHealth > 0) {
-        const timeSinceWater = p.lastWateredAt ? now - p.lastWateredAt : now - p.plantedAt;
-        if (timeSinceWater > 120000) { // 2 min without water
-          newNeglectPenalty = Math.min(p.yieldCoins, newNeglectPenalty + 1);
-        }
+      // Rain: slowly restore health
+      if (isRainy && newHealth < 100) {
+        newHealth = Math.min(100, newHealth + RAIN_HEALTH_RESTORE * secsSinceDecay / 10);
       }
 
-      // Plant death: health reaches 0
+      // Neglect penalty accumulates when health < 40
+      if (newHealth < 40 && newHealth > 0 && overdueMs > 0) {
+        newNeglectPenalty = Math.min(p.yieldCoins, newNeglectPenalty + Math.floor(secsSinceDecay * 0.2));
+      }
+
+      // Plant dies at 0 health
       if (newHealth <= 0) {
-        return { ...p, status: 'dead' as PlantStatus, progress: p.progress, health: 0, neglectPenalty: newNeglectPenalty };
+        return { ...p, status: 'dead' as PlantStatus, health: 0, neglectPenalty: newNeglectPenalty, lastHealthDecayAt: now };
       }
 
-      // Progress is only advanced by watering (handled in waterPlant action)
-      // Here we just update health
-      return { ...p, health: newHealth, neglectPenalty: newNeglectPenalty };
+      // --- Growth Progress ---
+      // Time-based growth, but rate depends on health
+      const healthRate = Math.max(0.1, newHealth / 100); // min 10% speed at low health
+      const isFertilized = (p.fertilizedUntil || 0) > now;
+      const fertMultiplier = isFertilized ? FERTILIZER_GROWTH_MULTIPLIER : 1.0;
+
+      const elapsedSincePlant = now - p.plantedAt;
+      // Base progress = time elapsed / total duration
+      // But we scale by average health over time (approximated by current health)
+      const rawProgress = (elapsedSincePlant / p.growthDurationMs) * 100;
+      // Apply health factor and fertilizer to the growth rate
+      // Use incremental approach: advance from current progress
+      const timeDelta = secsSinceDecay; // seconds since last update
+      const growthPerSec = (100 / (p.growthDurationMs / 1000)) * healthRate * fertMultiplier;
+      let newProgress = Math.min(100, p.progress + growthPerSec * timeDelta);
+
+      // Auto-water from rain refreshes the watered state
+      const newWateredThisCycle = autoWatered ? true : p.wateredThisCycle;
+      const newLastWateredAt = autoWatered && overdueMs > 0 ? now : p.lastWateredAt;
+
+      const isReady = newProgress >= 100;
+
+      return {
+        ...p,
+        progress: newProgress,
+        health: newHealth,
+        neglectPenalty: newNeglectPenalty,
+        lastHealthDecayAt: now,
+        wateredThisCycle: newWateredThisCycle,
+        lastWateredAt: newLastWateredAt,
+        status: isReady ? 'ready' as PlantStatus : 'growing' as PlantStatus,
+      };
     });
 
-    return {
-      plants: updatedPlants,
-    };
+    return { plants: updatedPlants };
   }),
 
   addToInventory: (item) => set((s) => {
