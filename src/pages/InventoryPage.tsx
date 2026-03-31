@@ -14,6 +14,7 @@ const categories = [
   { key: 'seeds', label: 'Seeds' },
   { key: 'fruits', label: 'Fruits' },
   { key: 'vegetables', label: 'Vegetables' },
+  { key: 'fertilizers', label: 'Fertilizers' },
 ] as const;
 
 export default function InventoryPage() {
