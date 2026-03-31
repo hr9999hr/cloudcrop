@@ -245,6 +245,11 @@ export const useGameStore = create<GameState>((set, get) => ({
               wateringIntervalMs,
               lastHealthDecayAt: now,
               fertilizedUntil: 0,
+              missedWaterings: 0,
+              heatwaveFailures: 0,
+              monsoonDays: 0,
+              currentCycleStart: now,
+              heatwaveWateredTwice: false,
             }
           : p
       ),
