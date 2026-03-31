@@ -17,7 +17,11 @@ export type Database = {
       game_states: {
         Row: {
           cart: Json
+          checkin_last_date: string | null
+          checkin_streak: number
           coins: number
+          completed_missions: Json
+          completed_missions_date: string | null
           created_at: string
           daily_login_claimed: boolean
           deliveries: Json
@@ -36,7 +40,11 @@ export type Database = {
         }
         Insert: {
           cart?: Json
+          checkin_last_date?: string | null
+          checkin_streak?: number
           coins?: number
+          completed_missions?: Json
+          completed_missions_date?: string | null
           created_at?: string
           daily_login_claimed?: boolean
           deliveries?: Json
@@ -55,7 +63,11 @@ export type Database = {
         }
         Update: {
           cart?: Json
+          checkin_last_date?: string | null
+          checkin_streak?: number
           coins?: number
+          completed_missions?: Json
+          completed_missions_date?: string | null
           created_at?: string
           daily_login_claimed?: boolean
           deliveries?: Json
