@@ -121,7 +121,11 @@ export function useGameSync() {
               cart: state.cart as any,
               has_seen_welcome: state.hasSeenWelcome,
               daily_login_claimed: state.dailyLoginClaimed,
-            })
+              checkin_streak: state.checkinStreak,
+              checkin_last_date: state.checkinLastDate,
+              completed_missions: state.completedMissions,
+              completed_missions_date: state.completedMissionsDate,
+            } as any)
             .eq("user_id", user.id);
 
           if (error) console.error("Save failed:", error);
