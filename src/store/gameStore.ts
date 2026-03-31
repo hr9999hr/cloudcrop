@@ -266,7 +266,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     const resetPlant = s.plants.map((p) =>
       p.id === slotId
-        ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0, health: 100, lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false }
+        ? { ...p, status: 'empty' as PlantStatus, plantName: null, plantEmoji: null, plantedAt: null, progress: 0, yieldCoins: 0, health: 100, lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false, totalWaterings: 0, wateringsNeeded: 0 }
         : p
     );
 
