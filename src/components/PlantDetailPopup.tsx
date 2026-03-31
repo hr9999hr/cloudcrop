@@ -316,7 +316,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 </p>
                 {!isReady && !isDead && (
                   <p className="text-[10px] text-muted-foreground">
-                    💧 Cycle: {cycleLabel}
+                    💧 Cycle: 8-12 hours
                     {plant.wateredThisCycle ? ` · ✅ Watered · ${cycleRemainingLabel} left` : isOverdue ? ' · ⚠️ OVERDUE' : ` · Water now! ${cycleRemainingLabel} left`}
                     {(weather === 'rainy' || weather === 'monsoon') && ' · ☔ Auto-watered'}
                   </p>
