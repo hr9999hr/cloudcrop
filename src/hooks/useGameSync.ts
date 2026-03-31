@@ -59,6 +59,10 @@ export function useGameSync() {
             cart: (data.cart as any[]) || [],
             hasSeenWelcome: data.has_seen_welcome ?? false,
             dailyLoginClaimed: data.daily_login_claimed ?? false,
+            checkinStreak: (data as any).checkin_streak ?? 0,
+            checkinLastDate: (data as any).checkin_last_date ?? null,
+            completedMissions: (data as any).completed_missions ?? [],
+            completedMissionsDate: (data as any).completed_missions_date ?? null,
             weatherChangedAt: Date.now(),
           });
         } else {
@@ -117,7 +121,11 @@ export function useGameSync() {
               cart: state.cart as any,
               has_seen_welcome: state.hasSeenWelcome,
               daily_login_claimed: state.dailyLoginClaimed,
-            })
+              checkin_streak: state.checkinStreak,
+              checkin_last_date: state.checkinLastDate,
+              completed_missions: state.completedMissions,
+              completed_missions_date: state.completedMissionsDate,
+            } as any)
             .eq("user_id", user.id);
 
           if (error) console.error("Save failed:", error);

@@ -88,6 +88,10 @@ interface GameState {
   dailyLoginClaimed: boolean;
   farmerLevel: number;
   totalHarvests: number;
+  checkinStreak: number;
+  checkinLastDate: string | null;
+  completedMissions: string[];
+  completedMissionsDate: string | null;
 
   // Actions
   setHasSeenWelcome: (v: boolean) => void;
@@ -113,6 +117,8 @@ interface GameState {
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   setWeather: (weather: WeatherType) => void;
+  setCheckin: (streak: number, date: string) => void;
+  setCompletedMissions: (missions: string[], date: string) => void;
 }
 
 // 10 Malaysian crops — real-life growth times
@@ -209,6 +215,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   dailyLoginClaimed: false,
   farmerLevel: 1,
   totalHarvests: 0,
+  checkinStreak: 0,
+  checkinLastDate: null,
+  completedMissions: [],
+  completedMissionsDate: null,
 
   setHasSeenWelcome: (v) => set({ hasSeenWelcome: v }),
 
@@ -574,4 +584,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     weather,
     weatherChangedAt: Date.now(),
   }),
+
+  setCheckin: (streak, date) => set({ checkinStreak: streak, checkinLastDate: date }),
+
+  setCompletedMissions: (missions, date) => set({ completedMissions: missions, completedMissionsDate: date }),
 }));

@@ -1,12 +1,9 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { CalendarCheck, Gift, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGameStore, SEED_OPTIONS } from "@/store/gameStore";
 import { toast } from "sonner";
-
-const STREAK_KEY = "cloudcrop_checkin_streak";
-const LAST_CHECKIN_KEY = "cloudcrop_last_checkin";
 
 function getTodayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -18,23 +15,10 @@ function getYesterdayStr() {
   return d.toISOString().slice(0, 10);
 }
 
-function loadStreak(): { streak: number; lastDate: string | null } {
-  try {
-    const streak = parseInt(localStorage.getItem(STREAK_KEY) || "0", 10);
-    const lastDate = localStorage.getItem(LAST_CHECKIN_KEY);
-    return { streak, lastDate };
-  } catch {
-    return { streak: 0, lastDate: null };
-  }
-}
-
-function saveStreak(streak: number, date: string) {
-  localStorage.setItem(STREAK_KEY, String(streak));
-  localStorage.setItem(LAST_CHECKIN_KEY, date);
-}
-
 export default function CheckInStreak() {
-  const [streakData, setStreakData] = useState(loadStreak);
+  const checkinStreak = useGameStore((s) => s.checkinStreak);
+  const checkinLastDate = useGameStore((s) => s.checkinLastDate);
+  const setCheckin = useGameStore((s) => s.setCheckin);
   const plants = useGameStore((s) => s.plants);
   const coins = useGameStore((s) => s.coins);
   const addToInventory = useGameStore((s) => s.addToInventory);
@@ -42,13 +26,13 @@ export default function CheckInStreak() {
   const today = getTodayStr();
   const yesterday = getYesterdayStr();
 
-  const alreadyCheckedIn = streakData.lastDate === today;
+  const alreadyCheckedIn = checkinLastDate === today;
 
   const currentStreak = useMemo(() => {
-    if (streakData.lastDate === today) return streakData.streak;
-    if (streakData.lastDate === yesterday) return streakData.streak;
+    if (checkinLastDate === today) return checkinStreak;
+    if (checkinLastDate === yesterday) return checkinStreak;
     return 0;
-  }, [streakData, today, yesterday]);
+  }, [checkinStreak, checkinLastDate, today, yesterday]);
 
   const hasDeadPlant = plants.some((p) => p.status === "dead");
   const cheapestSeedCost = Math.min(...SEED_OPTIONS.map((s) => s.costCC));
@@ -59,14 +43,13 @@ export default function CheckInStreak() {
     if (alreadyCheckedIn) return;
 
     let newStreak: number;
-    if (streakData.lastDate === yesterday) {
-      newStreak = streakData.streak + 1;
+    if (checkinLastDate === yesterday) {
+      newStreak = checkinStreak + 1;
     } else {
       newStreak = 1;
     }
 
-    saveStreak(newStreak, today);
-    setStreakData({ streak: newStreak, lastDate: today });
+    setCheckin(newStreak, today);
 
     if (newStreak >= 7 && eligibleForFreeSeed) {
       const randomSeed = SEED_OPTIONS[Math.floor(Math.random() * SEED_OPTIONS.length)];
@@ -77,8 +60,7 @@ export default function CheckInStreak() {
         quantity: 1,
         description: randomSeed.description,
       });
-      saveStreak(0, today);
-      setStreakData({ streak: 0, lastDate: today });
+      setCheckin(0, today);
       toast.success(`🎁 7-Day Streak! You got a free ${randomSeed.emoji} ${randomSeed.name} Seed!`);
     } else {
       toast.success(`📅 Day ${newStreak} check-in! ${newStreak >= 7 ? "Streak complete!" : `${7 - newStreak} days to go!`}`);

@@ -58,38 +58,23 @@ const MISSIONS: Mission[] = [
   },
 ];
 
-const COMPLETED_KEY = "cloudcrop_completed_missions";
-const COMPLETED_DATE_KEY = "cloudcrop_missions_date";
-
 function getTodayStr(): string {
-  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-}
-
-function getCompletedMissions(): string[] {
-  try {
-    const savedDate = localStorage.getItem(COMPLETED_DATE_KEY);
-    if (savedDate !== getTodayStr()) {
-      // New day — reset missions
-      localStorage.removeItem(COMPLETED_KEY);
-      localStorage.setItem(COMPLETED_DATE_KEY, getTodayStr());
-      return [];
-    }
-    return JSON.parse(localStorage.getItem(COMPLETED_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function saveCompletedMissions(ids: string[]) {
-  localStorage.setItem(COMPLETED_KEY, JSON.stringify(ids));
-  localStorage.setItem(COMPLETED_DATE_KEY, getTodayStr());
+  return new Date().toISOString().slice(0, 10);
 }
 
 export default function MissionsPage() {
-  const [completed, setCompleted] = useState<string[]>(getCompletedMissions);
+  const completedMissions = useGameStore((s) => s.completedMissions);
+  const completedMissionsDate = useGameStore((s) => s.completedMissionsDate);
+  const setCompletedMissions = useGameStore((s) => s.setCompletedMissions);
+  const addWaterDrops = useGameStore((s) => s.addWaterDrops);
+
+  const today = getTodayStr();
+
+  // Reset missions if it's a new day
+  const completed = completedMissionsDate === today ? completedMissions : [];
+
   const [watchingId, setWatchingId] = useState<string | null>(null);
   const [watchTimers, setWatchTimers] = useState<Record<string, number>>({});
-  const addWaterDrops = useGameStore((s) => s.addWaterDrops);
 
   const watchingMission = MISSIONS.find((m) => m.id === watchingId);
   const totalEarned = completed.length * 3;
@@ -110,8 +95,7 @@ export default function MissionsPage() {
   const handleClaim = (missionId: string) => {
     if (completed.includes(missionId)) return;
     const newCompleted = [...completed, missionId];
-    setCompleted(newCompleted);
-    saveCompletedMissions(newCompleted);
+    setCompletedMissions(newCompleted, today);
     addWaterDrops(3);
     toast.success("🎉 Mission Complete! +3 💧 Water Drops earned!");
     setWatchingId(null);
