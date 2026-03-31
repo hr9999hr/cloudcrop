@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { Star, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
 import soilPlot from "@/assets/farm/soil-plot.png";
-import farmBg from "@/assets/farm/farm-bg.jpg";
+import farmBgIso from "@/assets/farm/farm-bg-iso.jpg";
 import { WeatherEffects } from "@/components/farm/WeatherEffects";
 import { FarmDecorations } from "@/components/farm/FarmDecorations";
 
@@ -128,40 +128,69 @@ export default function GardenDashboard() {
         </div>
       </motion.div>
 
-      {/* Hay Day-style Isometric Farm */}
+      {/* Isometric Farm with diamond background */}
       <div
-        className="relative rounded-2xl overflow-hidden"
+        className="relative overflow-visible"
         style={{
-          boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
           padding: '2rem 1rem 2.5rem',
         }}
       >
-        {/* Farm background image */}
-        <img
-          src={farmBg}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          draggable={false}
-        />
-        {/* Weather tint overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: weather === 'rainy'
-              ? 'rgba(50, 70, 80, 0.35)'
-              : weather === 'monsoon'
-              ? 'rgba(30, 50, 60, 0.5)'
-              : weather === 'heatwave'
-              ? 'rgba(120, 90, 20, 0.2)'
-              : 'rgba(0,0,0,0)',
-          }}
-        />
+        {/* Diamond-shaped farm background */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ top: '-10%', bottom: '-10%' }}>
+          <div
+            style={{
+              width: '110%',
+              paddingBottom: '70%',
+              position: 'relative',
+              transform: 'rotate(45deg)',
+              overflow: 'hidden',
+              borderRadius: '12px',
+              border: '6px solid hsl(30 50% 35%)',
+              boxShadow: '0 0 0 3px hsl(30 40% 25%), 0 0 0 8px hsl(30 30% 20%), 0 12px 40px rgba(0,0,0,0.3)',
+            }}
+          >
+            <img
+              src={farmBgIso}
+              alt=""
+              className="absolute w-full h-full object-cover"
+              style={{ transform: 'rotate(-45deg) scale(2)', top: '-25%', left: '-25%', width: '150%', height: '150%', position: 'absolute' }}
+              draggable={false}
+            />
+            {/* Weather tint */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: weather === 'rainy'
+                  ? 'rgba(50, 70, 80, 0.35)'
+                  : weather === 'monsoon'
+                  ? 'rgba(30, 50, 60, 0.5)'
+                  : weather === 'heatwave'
+                  ? 'rgba(120, 90, 20, 0.2)'
+                  : 'rgba(0,0,0,0.05)',
+              }}
+            />
+            {/* Fence post dots along border */}
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={`fp-${i}`}
+                className="absolute rounded-full"
+                style={{
+                  width: 6,
+                  height: 6,
+                  background: 'hsl(30 40% 30%)',
+                  top: i < 3 ? 0 : i < 6 ? `${((i - 3) + 1) * 25}%` : i < 9 ? '100%' : `${((i - 9) + 1) * 25}%`,
+                  left: i < 3 ? `${(i + 1) * 25}%` : i < 6 ? '100%' : i < 9 ? `${(3 - (i - 6)) * 25}%` : 0,
+                  transform: 'translate(-50%, -50%)',
+                }}
+              />
+            ))}
+          </div>
+        </div>
 
         {/* Weather effects overlay */}
-        <WeatherEffects weather={weather} />
-
-        {/* Farm decorations */}
-        <FarmDecorations weather={weather} />
+        <div className="relative z-[2]">
+          <WeatherEffects weather={weather} />
+        </div>
 
         {/* Farm label */}
         <div className="relative z-10 flex justify-center mb-6">
