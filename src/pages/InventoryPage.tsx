@@ -230,6 +230,26 @@ export default function InventoryPage() {
                 </>
               )}
 
+              {isFertilizer && (
+                <>
+                  <p className="text-sm text-muted-foreground text-center mb-2">
+                    {selectedItem.description}
+                  </p>
+                  <p className="text-xs text-muted-foreground text-center mb-4">
+                    You have <span className="font-bold text-foreground">{selectedItem.quantity}</span> bag{selectedItem.quantity > 1 ? 's' : ''}
+                  </p>
+                  <Button
+                    onClick={() => { setSelectedItem(null); navigate('/'); }}
+                    className="w-full rounded-xl gradient-farm text-primary-foreground font-bold"
+                  >
+                    Use on Plant 🌱
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground text-center mt-2">
+                    Go to your garden and tap a growing plant to apply fertilizer
+                  </p>
+                </>
+              )}
+
               {isSellable && (
                 <>
                   <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mb-4">
