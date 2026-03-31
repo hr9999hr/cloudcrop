@@ -128,7 +128,8 @@ export default function MarketplacePage() {
   const handleCheckout = () => {
     if (cart.length === 0) return;
 
-    if (!deliveryAddress) {
+    const hasNonSeedItems = cart.some((i) => i.category !== 'seeds');
+    if (hasNonSeedItems && !deliveryAddress) {
       toast.error("Please set your delivery address on the Delivery page first!");
       return;
     }
