@@ -59,6 +59,10 @@ export function useGameSync() {
             cart: (data.cart as any[]) || [],
             hasSeenWelcome: data.has_seen_welcome ?? false,
             dailyLoginClaimed: data.daily_login_claimed ?? false,
+            checkinStreak: (data as any).checkin_streak ?? 0,
+            checkinLastDate: (data as any).checkin_last_date ?? null,
+            completedMissions: (data as any).completed_missions ?? [],
+            completedMissionsDate: (data as any).completed_missions_date ?? null,
             weatherChangedAt: Date.now(),
           });
         } else {
