@@ -190,10 +190,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
           playAnimation('fertilizer', () => fertilizePlant(plant.id));
         }
       },
-      subtitle: isFertilized
-        ? `⚡ Boosted! ${fertTimeLeft}s left`
-        : hasFertilizer
-        ? `${fertilizerCount} bags · +50% speed`
+      subtitle: hasFertilizer
+        ? `${fertilizerCount} bags · Skip 60s growth`
         : 'Buy fertilizer →',
     },
     {
