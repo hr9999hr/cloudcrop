@@ -89,7 +89,7 @@ export function PlantSelectionDialog({ open, slotId, onClose }: PlantSelectionDi
                         <p className="font-bold text-sm text-foreground">{seed.name}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           {opt ? (
-                            <><span>⏱ {(opt.durationMs / 60000).toFixed(1)} min ·</span> <span>→ {opt.yieldCoins} CC</span></>
+                            <><span>⏱ {opt.durationMs >= 86400000 ? `${(opt.durationMs / 86400000).toFixed(0)} day${opt.durationMs >= 172800000 ? 's' : ''}` : `${(opt.durationMs / 3600000).toFixed(0)}h`} ·</span> <span>→ {opt.yieldCoins} CC</span></>
                           ) : null}
                         </p>
                       </div>
