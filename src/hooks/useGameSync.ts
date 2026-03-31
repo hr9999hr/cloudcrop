@@ -4,7 +4,7 @@ import { useGameStore } from "@/store/gameStore";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const SAVE_DEBOUNCE_MS = 2000;
+const SAVE_DEBOUNCE_MS = 500;
 
 export function useGameSync() {
   const { user } = useAuth();
