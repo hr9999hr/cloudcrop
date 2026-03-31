@@ -144,8 +144,11 @@ export { LEVEL_CONFIG };
 // ---- Real-Life Watering ----
 // Water 2-3 times per day → cycle every 8-12 hours
 function calcWateringInterval(_durationMs: number): number {
-  // 8 hours = 28800000 ms (water ~3x per day)
-  return 8 * HOUR;
+  // Random interval between 8-12 hours (water 2-3x per day)
+  const minHours = 8;
+  const maxHours = 12;
+  const hours = minHours + Math.random() * (maxHours - minHours);
+  return Math.round(hours * HOUR);
 }
 
 function calcWateringsNeeded(durationMs: number): number {
