@@ -88,6 +88,10 @@ interface GameState {
   dailyLoginClaimed: boolean;
   farmerLevel: number;
   totalHarvests: number;
+  checkinStreak: number;
+  checkinLastDate: string | null;
+  completedMissions: string[];
+  completedMissionsDate: string | null;
 
   // Actions
   setHasSeenWelcome: (v: boolean) => void;
