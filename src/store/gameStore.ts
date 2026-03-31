@@ -146,7 +146,7 @@ export function getWeatherInfo(weather: WeatherType) {
 
 const makeEmptySlot = (id: number): PlantSlot => ({
   id, status: 'empty', plantName: null, plantEmoji: null, plantedAt: null, growthDurationMs: 0, progress: 0, yieldCoins: 0,
-  health: 100, lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false,
+  health: 100, lastWateredAt: null, neglectPenalty: 0, wateredThisCycle: false, totalWaterings: 0, wateringsNeeded: 0,
 });
 
 const getSlotsForLevel = (level: number): number => {
