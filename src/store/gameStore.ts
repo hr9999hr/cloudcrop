@@ -115,18 +115,20 @@ interface GameState {
   setWeather: (weather: WeatherType) => void;
 }
 
-// 10 Malaysian crops — demo-scaled times
+// 10 Malaysian crops — real-life growth times
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
 const SEED_OPTIONS = [
-  { id: 1, name: 'Kangkung', emoji: '🥬', costCC: 10, durationMs: 3 * 60 * 1000, yieldCoins: 30, description: 'The ultimate beginner crop. Fast and cheap.' },
-  { id: 2, name: 'Sawi', emoji: '🥗', costCC: 15, durationMs: 4 * 60 * 1000, yieldCoins: 40, description: 'Low risk, steady income for casual players.' },
-  { id: 3, name: 'Bayam', emoji: '🌿', costCC: 15, durationMs: 4 * 60 * 1000, yieldCoins: 40, description: 'Similar to Sawi, adds visual variety to your bag.' },
-  { id: 4, name: 'Timun', emoji: '🥒', costCC: 20, durationMs: 5 * 60 * 1000, yieldCoins: 55, description: 'Mid-tier crop. Good balance of time and profit.' },
-  { id: 5, name: 'Bendi', emoji: '🫛', costCC: 25, durationMs: 5 * 60 * 1000, yieldCoins: 65, description: 'Mid-tier crop with solid returns.' },
-  { id: 6, name: 'Tomato', emoji: '🍅', costCC: 30, durationMs: 6 * 60 * 1000, yieldCoins: 80, description: 'Kids love growing these — they turn bright red at 100%!' },
-  { id: 7, name: 'Kacang Panjang', emoji: '🫘', costCC: 35, durationMs: 7 * 60 * 1000, yieldCoins: 90, description: 'Takes a full week. Good for daily log-in players.' },
-  { id: 8, name: 'Cili Padi', emoji: '🌶️', costCC: 40, durationMs: 7 * 60 * 1000, yieldCoins: 100, description: 'High-value, iconic Malaysian crop.' },
-  { id: 9, name: 'Terung', emoji: '🍆', costCC: 50, durationMs: 10 * 60 * 1000, yieldCoins: 130, description: 'Premium crop. Requires patience but pays out heavily.' },
-  { id: 10, name: 'Labu', emoji: '🎃', costCC: 80, durationMs: 14 * 60 * 1000, yieldCoins: 250, description: 'The "Boss" crop! Takes two weeks but massive payout.' },
+  { id: 1, name: 'Kangkung', emoji: '🥬', costCC: 10, durationMs: 1 * DAY, yieldCoins: 30, description: 'Fast grower. Harvest in ~1 day!' },
+  { id: 2, name: 'Sawi', emoji: '🥗', costCC: 15, durationMs: 2 * DAY, yieldCoins: 40, description: 'Low risk. Ready in ~2 days.' },
+  { id: 3, name: 'Bayam', emoji: '🌿', costCC: 15, durationMs: 2 * DAY, yieldCoins: 40, description: 'Quick leafy green. ~2 days to harvest.' },
+  { id: 4, name: 'Timun', emoji: '🥒', costCC: 20, durationMs: 3 * DAY, yieldCoins: 55, description: 'Mid-tier crop. Ready in ~3 days.' },
+  { id: 5, name: 'Bendi', emoji: '🫛', costCC: 25, durationMs: 4 * DAY, yieldCoins: 65, description: 'Solid returns in ~4 days.' },
+  { id: 6, name: 'Tomato', emoji: '🍅', costCC: 30, durationMs: 5 * DAY, yieldCoins: 80, description: 'Turns bright red at 100%! ~5 days.' },
+  { id: 7, name: 'Kacang Panjang', emoji: '🫘', costCC: 35, durationMs: 7 * DAY, yieldCoins: 90, description: 'Takes a full week. Good for daily log-in.' },
+  { id: 8, name: 'Cili Padi', emoji: '🌶️', costCC: 40, durationMs: 7 * DAY, yieldCoins: 100, description: 'High-value Malaysian icon. ~1 week.' },
+  { id: 9, name: 'Terung', emoji: '🍆', costCC: 50, durationMs: 10 * DAY, yieldCoins: 130, description: 'Premium crop. ~10 days patience.' },
+  { id: 10, name: 'Labu', emoji: '🎃', costCC: 80, durationMs: 14 * DAY, yieldCoins: 250, description: 'The Boss crop! ~2 weeks, massive payout.' },
 ];
 
 export { SEED_OPTIONS };
@@ -139,26 +141,24 @@ const LEVEL_CONFIG = [
 
 export { LEVEL_CONFIG };
 
-// ---- SRS-Aligned Growth Constants ----
-// Watering cycle = scaled "day" for demo (1 real day → ~60s demo cycle)
-function calcWateringInterval(durationMs: number): number {
-  // Each "day" in demo = durationMs / number_of_cycles
-  // Aim for ~4-8 cycles per crop growth
-  const totalMin = durationMs / 60000;
-  return Math.round((35 + totalMin * 3) * 1000); // 38s–77s per cycle
+// ---- Real-Life Watering ----
+// Water 2-3 times per day → cycle every 8-12 hours
+function calcWateringInterval(_durationMs: number): number {
+  // 8 hours = 28800000 ms (water ~3x per day)
+  return 8 * HOUR;
 }
 
 function calcWateringsNeeded(durationMs: number): number {
   const interval = calcWateringInterval(durationMs);
-  return Math.max(3, Math.ceil(durationMs / interval));
+  return Math.max(2, Math.ceil(durationMs / interval));
 }
 
 // SRS FUN-007 penalty constants
 const NEGLECT_PENALTY_CC = 15;           // missed_water_penalty = missed × 15 CC
 const HEATWAVE_YIELD_PENALTY = 0.30;     // 30% yield loss per heatwave failure
 const MONSOON_YIELD_PENALTY = 0.30;      // 20-40% (we use 30%) per monsoon day
-// FUN-014: Fertilizer skips time
-const FERTILIZER_TIME_SKIP_MS = 60_000;  // skip 60s of growth (≈1 demo day)
+// FUN-014: Fertilizer skips time (24 hours)
+const FERTILIZER_TIME_SKIP_MS = 24 * HOUR;
 
 export function getWeatherInfo(weather: WeatherType) {
   switch (weather) {
