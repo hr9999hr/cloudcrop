@@ -142,6 +142,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   const cycleElapsed = now - cycleStart;
   const cycleRemaining = Math.max(0, intervalMs - cycleElapsed);
   const cycleRemainingSec = Math.ceil(cycleRemaining / 1000);
+  const cycleRemainingLabel = formatDuration(cycleRemaining);
+  const cycleLabel = formatDuration(intervalMs);
   const isOverdue = cycleElapsed > intervalMs && !plant.wateredThisCycle;
 
   // Fertilizer: shifts time (SRS FUN-014)
