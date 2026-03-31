@@ -63,15 +63,14 @@ export default function SettingsPage() {
     setSaving(true);
 
     // Try update first
-    const { error: updateError, count } = await supabase
+    const { error: updateError } = await supabase
       .from("profiles")
       .update({
         username: profile.username,
         full_name: profile.full_name,
         date_of_birth: profile.date_of_birth || null,
       })
-      .eq("user_id", user.id)
-      .select("*", { count: "exact" });
+      .eq("user_id", user.id);
 
     setSaving(false);
 
