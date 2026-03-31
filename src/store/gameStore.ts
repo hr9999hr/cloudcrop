@@ -100,6 +100,7 @@ interface GameState {
   updateCartQty: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  setWeather: (weather: WeatherType) => void;
 }
 
 // 10 Malaysian crops from the seed catalog
