@@ -100,6 +100,7 @@ interface GameState {
   updateCartQty: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  setWeather: (weather: WeatherType) => void;
 }
 
 // 10 Malaysian crops from the seed catalog
@@ -127,17 +128,10 @@ const LEVEL_CONFIG = [
 
 export { LEVEL_CONFIG };
 
-// Weather probabilities: Sunny 50%, Light Rain 20%, Heatwave 20%, Monsoon 10%
-const WEATHER_CYCLE_MS = 60 * 1000; // 1 minute = 1 "day" in demo
+// Weather is now fetched from real weather API — see useRealWeather hook
+// Keep cycle interval for penalty calculations (8 hours = 2-3 changes per day)
+const WEATHER_CYCLE_MS = 8 * 60 * 60 * 1000; // 8 hours
 const NEGLECT_PENALTY_CC = 15; // CC lost per missed watering day
-
-function rollWeather(): WeatherType {
-  const roll = Math.random() * 100;
-  if (roll < 50) return 'sunny';
-  if (roll < 70) return 'rainy';
-  if (roll < 90) return 'heatwave';
-  return 'monsoon';
-}
 
 export function getWeatherInfo(weather: WeatherType) {
   switch (weather) {
@@ -307,14 +301,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   updateProgress: () => set((s) => {
     const now = Date.now();
 
-    // Weather cycling: change every WEATHER_CYCLE_MS
-    let newWeather = s.weather;
-    let newWeatherChangedAt = s.weatherChangedAt;
+    // Weather is now managed by useRealWeather hook via setWeather
+    // Check if weather changed since last update by comparing weatherChangedAt
     let weatherJustChanged = false;
-
-    if (now - s.weatherChangedAt >= WEATHER_CYCLE_MS) {
-      newWeather = rollWeather();
-      newWeatherChangedAt = now;
+    const weatherAge = now - s.weatherChangedAt;
+    
+    // Detect if weather changed recently (within last 5 seconds = just set by hook)
+    if (weatherAge < 5000 && s.plants.some(p => p.status === 'growing' && !p.wateredThisCycle)) {
       weatherJustChanged = true;
     }
 
@@ -340,11 +333,11 @@ export const useGameStore = create<GameState>((set, get) => ({
           newHealth = Math.max(0, newHealth - 15);
         }
         // Monsoon automatic penalty (root rot)
-        if (newWeather === 'monsoon') {
+        if (s.weather === 'monsoon') {
           newHealth = Math.max(0, newHealth - 20);
         }
         // Rainy day auto-waters
-        if (newWeather === 'rainy') {
+        if (s.weather === 'rainy') {
           newHealth = Math.min(100, newHealth + 15);
           newWateredThisCycle = true;
         } else {
@@ -378,8 +371,6 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     return {
       plants: updatedPlants,
-      weather: newWeather,
-      weatherChangedAt: newWeatherChangedAt,
     };
   }),
 
@@ -476,4 +467,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   })),
 
   clearCart: () => set({ cart: [] }),
+
+  setWeather: (weather) => set({
+    weather,
+    weatherChangedAt: Date.now(),
+  }),
 }));
