@@ -139,14 +139,13 @@ const LEVEL_CONFIG = [
 
 export { LEVEL_CONFIG };
 
-// ---- Realistic Growth Constants ----
-// Plants need watering every N seconds (scaled for demo)
-// Fast crops (3min): water every ~45s → ~4 waterings
-// Slow crops (14min): water every ~60s → ~14 waterings
+// ---- SRS-Aligned Growth Constants ----
+// Watering cycle = scaled "day" for demo (1 real day → ~60s demo cycle)
 function calcWateringInterval(durationMs: number): number {
-  // ~45s for short crops, up to ~70s for long crops
+  // Each "day" in demo = durationMs / number_of_cycles
+  // Aim for ~4-8 cycles per crop growth
   const totalMin = durationMs / 60000;
-  return Math.round((35 + totalMin * 3) * 1000); // 38s–77s
+  return Math.round((35 + totalMin * 3) * 1000); // 38s–77s per cycle
 }
 
 function calcWateringsNeeded(durationMs: number): number {
@@ -154,16 +153,12 @@ function calcWateringsNeeded(durationMs: number): number {
   return Math.max(3, Math.ceil(durationMs / interval));
 }
 
-// Health decay rate: how much health to lose per second when overdue
-const HEALTH_DECAY_PER_SEC = 1.5;        // lose 1.5 HP/s when overdue
-const HEATWAVE_DECAY_MULTIPLIER = 2.0;   // heatwave doubles decay
-const MONSOON_ROT_PER_SEC = 0.8;         // monsoon root rot passive damage
-const WATER_HEALTH_RESTORE = 25;         // each watering restores 25 HP
-const FERTILIZER_BOOST_DURATION_MS = 120_000; // 2 min boost
-const FERTILIZER_GROWTH_MULTIPLIER = 1.5;     // 50% faster growth
-const RAIN_HEALTH_RESTORE = 10;          // rain restores 10 HP per cycle
-
-const NEGLECT_PENALTY_CC = 15;
+// SRS FUN-007 penalty constants
+const NEGLECT_PENALTY_CC = 15;           // missed_water_penalty = missed × 15 CC
+const HEATWAVE_YIELD_PENALTY = 0.30;     // 30% yield loss per heatwave failure
+const MONSOON_YIELD_PENALTY = 0.30;      // 20-40% (we use 30%) per monsoon day
+// FUN-014: Fertilizer skips time
+const FERTILIZER_TIME_SKIP_MS = 60_000;  // skip 60s of growth (≈1 demo day)
 
 export function getWeatherInfo(weather: WeatherType) {
   switch (weather) {
