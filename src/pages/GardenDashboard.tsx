@@ -152,8 +152,8 @@ export default function GardenDashboard() {
             <img
               src={farmBgIso}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ transform: 'rotate(-45deg) scale(1.5)' }}
+              className="absolute w-full h-full object-cover"
+              style={{ transform: 'rotate(-45deg) scale(2)', top: '-25%', left: '-25%', width: '150%', height: '150%', position: 'absolute' }}
               draggable={false}
             />
             {/* Weather tint */}
