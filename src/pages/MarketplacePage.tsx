@@ -484,7 +484,7 @@ export default function MarketplacePage() {
                       );
                     })()}
                     {selectedProduct.category !== 'seeds' && (
-                      <p className="text-xs text-muted-foreground">📦 This item will be delivered to your address after purchase.</p>
+                      <p className="text-xs text-muted-foreground">📦 This item will be sent to your collection point after purchase.</p>
                     )}
                   </div>
                 </AlertDialogDescription>
