@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SEED_OPTIONS, useGameStore } from "@/store/gameStore";
 import { SeedDetailPopup } from "@/components/SeedDetailPopup";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface PlantSelectionDialogProps {
