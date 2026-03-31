@@ -266,6 +266,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     const now = Date.now();
     const newTotalWaterings = (plant.totalWaterings || 0) + 1;
 
+    // Overwatering penalty: if already watered this cycle, extra watering hurts health
+    const isOverwatering = plant.wateredThisCycle && !(s.weather === 'heatwave' && !plant.heatwaveWateredTwice);
+    const OVERWATER_HEALTH_PENALTY = 10; // lose 10% health per extra watering
+
     set({
       waterDrops: s.waterDrops - 1,
       plants: s.plants.map((p) =>
@@ -276,6 +280,10 @@ export const useGameStore = create<GameState>((set, get) => ({
               wateredThisCycle: true,
               totalWaterings: newTotalWaterings,
               lastHealthDecayAt: now,
+              // Overwatering reduces health (root rot from too much water)
+              health: isOverwatering
+                ? Math.max(0, (p.health ?? 100) - OVERWATER_HEALTH_PENALTY)
+                : p.health,
               // In heatwave, track if this is the 2nd watering
               heatwaveWateredTwice: p.wateredThisCycle && s.weather === 'heatwave' ? true : p.heatwaveWateredTwice,
             }
