@@ -37,7 +37,7 @@ export default function FertilizerPage() {
     }
     addToInventory({
       name: 'Fertilizer',
-      emoji: '💊',
+      emoji: '🧪',
       category: 'fertilizers',
       quantity: qty,
       description: 'Skip 24 hours of growth time',
