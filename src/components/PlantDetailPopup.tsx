@@ -180,8 +180,8 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
       label: 'Fertilizer',
       icon: <Beaker className="w-5 h-5" />,
       color: 'text-primary',
-      bg: isFertilized ? 'bg-green-500/15' : 'bg-primary/10',
-      disabled: isReady || isDead || isFertilized,
+      bg: 'bg-primary/10',
+      disabled: isReady || isDead,
       onClick: () => {
         if (!hasFertilizer) {
           onClose();
