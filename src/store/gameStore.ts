@@ -215,6 +215,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   dailyLoginClaimed: false,
   farmerLevel: 1,
   totalHarvests: 0,
+  checkinStreak: 0,
+  checkinLastDate: null,
+  completedMissions: [],
+  completedMissionsDate: null,
 
   setHasSeenWelcome: (v) => set({ hasSeenWelcome: v }),
 
