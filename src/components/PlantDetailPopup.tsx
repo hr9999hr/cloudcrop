@@ -333,7 +333,7 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
                 variant="outline"
                 disabled={act.disabled}
                 onClick={act.onClick}
-                className={`flex flex-col items-center gap-1 h-auto py-3 px-2 rounded-xl ${act.bg} border-transparent hover:border-border overflow-hidden`}
+                className={`flex flex-col items-center gap-1 h-auto py-3 px-2 rounded-xl whitespace-normal ${act.bg} border-transparent hover:border-border`}
               >
                 <span className={act.color}>{act.icon}</span>
                 <span className="text-xs font-bold">{act.label}</span>
