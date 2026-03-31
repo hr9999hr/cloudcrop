@@ -14,8 +14,10 @@ export interface PlantSlot {
   yieldCoins: number;
   health: number;
   lastWateredAt: number | null;
-  neglectPenalty: number; // CC lost from missed watering days
-  wateredThisCycle: boolean; // whether watered in current weather cycle
+  neglectPenalty: number;
+  wateredThisCycle: boolean;
+  totalWaterings: number; // how many times the plant has been watered
+  wateringsNeeded: number; // total waterings needed to reach 100%
 }
 
 export interface InventoryItem {
