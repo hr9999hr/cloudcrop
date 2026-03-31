@@ -449,10 +449,17 @@ export default function MarketplacePage() {
                               <p className="text-xs text-muted-foreground italic">"{seedInfo.description}"</p>
                               <div className="grid grid-cols-2 gap-2 pt-1">
                                 <div className="flex items-center gap-1.5">
+                                  <span className="text-sm">⏱️</span>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground">Grow Time</p>
+                                    <p className="text-xs font-bold">{Math.round(seedInfo.durationMs / 60000)} min</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
                                   <span className="text-sm">💧</span>
                                   <div>
-                                    <p className="text-[10px] text-muted-foreground">Waterings Needed</p>
-                                    <p className="text-xs font-bold text-water">{Math.max(3, Math.ceil(seedInfo.durationMs / 60000))} times</p>
+                                    <p className="text-[10px] text-muted-foreground">Water Every</p>
+                                    <p className="text-xs font-bold text-water">{Math.round((35 + (seedInfo.durationMs / 60000) * 3))}s</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
@@ -470,10 +477,17 @@ export default function MarketplacePage() {
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
+                                  <span className="text-sm">🌧️</span>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground">Rain Bonus</p>
+                                    <p className="text-xs font-bold text-water">Auto-waters</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5">
                                   <span className="text-sm">⚠️</span>
                                   <div>
                                     <p className="text-[10px] text-muted-foreground">If Neglected</p>
-                                    <p className="text-xs font-bold text-destructive">Health drops</p>
+                                    <p className="text-xs font-bold text-destructive">Slow growth & death</p>
                                   </div>
                                 </div>
                               </div>
