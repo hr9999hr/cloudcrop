@@ -134,18 +134,18 @@ export function PlantDetailPopup({ open, plant, onClose }: PlantDetailPopupProps
   const growthPercent = Math.round(plant.progress);
   const healthPercent = Math.round(plant.health ?? 100);
 
-  // Watering timer info
+  // Watering cycle info (SRS-aligned)
   const now = Date.now();
-  const sinceWatered = now - (plant.lastWateredAt || plant.plantedAt || now);
   const intervalMs = plant.wateringIntervalMs || 45000;
-  const overdueMs = Math.max(0, sinceWatered - intervalMs);
-  const isOverdue = overdueMs > 0 && !isReady && !isDead;
-  const nextWaterIn = Math.max(0, intervalMs - sinceWatered);
-  const nextWaterSec = Math.ceil(nextWaterIn / 1000);
+  const cycleStart = plant.currentCycleStart || plant.plantedAt || now;
+  const cycleElapsed = now - cycleStart;
+  const cycleRemaining = Math.max(0, intervalMs - cycleElapsed);
+  const cycleRemainingSec = Math.ceil(cycleRemaining / 1000);
+  const isOverdue = cycleElapsed > intervalMs && !plant.wateredThisCycle;
 
-  // Fertilizer boost
-  const isFertilized = (plant.fertilizedUntil || 0) > now;
-  const fertTimeLeft = isFertilized ? Math.ceil(((plant.fertilizedUntil || 0) - now) / 1000) : 0;
+  // Fertilizer: shifts time (SRS FUN-014)
+  const isFertilized = false; // no longer time-boost based
+  const fertTimeLeft = 0;
 
   const playAnimation = (type: ActionAnimation, callback: () => void) => {
     setActionAnim(type);
