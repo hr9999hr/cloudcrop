@@ -177,22 +177,21 @@ export default function GardenDashboard() {
           const slots = allSlots.slice(0, 9);
 
           // Manually mapped positions (% of image) for each of the 9 soil pits
-          // Row 0 (top): slots 0,1,2
-          // Row 1 (mid): slots 3,4,5
-          // Row 2 (bot): slots 6,7,8
+          // The soil grid in the bg image is an isometric diamond rotated 45°
+          // Columns go top-right to bottom-right, rows go top-left to bottom-left
           const slotPositions = [
-            // row 0
-            { left: 37, top: 18, w: 18, h: 16 }, // slot 0 - top center
-            { left: 50, top: 25, w: 18, h: 16 }, // slot 1 - top right
-            { left: 63, top: 32, w: 18, h: 16 }, // slot 2 - right
-            // row 1
-            { left: 24, top: 25, w: 18, h: 16 }, // slot 3 - left
-            { left: 37, top: 32, w: 18, h: 16 }, // slot 4 - center
-            { left: 50, top: 39, w: 18, h: 16 }, // slot 5 - mid right
-            // row 2
-            { left: 11, top: 32, w: 18, h: 16 }, // slot 6 - bottom left
-            { left: 24, top: 39, w: 18, h: 16 }, // slot 7 - bottom center
-            { left: 37, top: 46, w: 18, h: 16 }, // slot 8 - bottom right
+            // row 0: top diagonal (slots 0, 1, 2 going top→right)
+            { left: 34, top: 20, w: 19, h: 14 }, // slot 0 - top
+            { left: 48, top: 27, w: 19, h: 14 }, // slot 1 - top-right
+            { left: 62, top: 34, w: 19, h: 14 }, // slot 2 - right
+            // row 1: middle diagonal
+            { left: 20, top: 27, w: 19, h: 14 }, // slot 3 - top-left
+            { left: 34, top: 34, w: 19, h: 14 }, // slot 4 - center
+            { left: 48, top: 41, w: 19, h: 14 }, // slot 5 - center-right
+            // row 2: bottom diagonal
+            { left: 6,  top: 34, w: 19, h: 14 }, // slot 6 - left
+            { left: 20, top: 41, w: 19, h: 14 }, // slot 7 - bottom-center
+            { left: 34, top: 48, w: 19, h: 14 }, // slot 8 - bottom
           ];
 
           return slots.map((slot, idx) => {
