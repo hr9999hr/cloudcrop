@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { PlantSlot } from "@/store/gameStore";
 
-import soilPlot from "@/assets/farm/soil-plot.png";
+
 import stageSeedling from "@/assets/farm/stage-seedling.png";
 import stageGrowing from "@/assets/farm/stage-growing.png";
 import cropKangkung from "@/assets/farm/crop-kangkung.png";
@@ -47,17 +47,14 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
   if (plant.status === 'dead') {
     return (
       <motion.div
-        whileHover={{ scale: 1.06, y: -3 }}
-        whileTap={{ scale: 0.96 }}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.95 }}
         className="cursor-pointer relative w-full h-full flex items-center justify-center"
         onClick={() => onPlant(plant.id)}
       >
-        <img src={soilPlot} alt="Dead plot" className="w-full h-auto drop-shadow-md opacity-60" draggable={false} loading="lazy" width={512} height={512} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md text-center">
-            <p className="text-[10px] font-extrabold text-red-300">☠️ Dead</p>
-            <p className="text-[8px] text-white/60">Tap to replant</p>
-          </div>
+        <div className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md text-center">
+          <p className="text-[10px] font-extrabold text-red-300">☠️ Dead</p>
+          <p className="text-[8px] text-white/60">Tap to replant</p>
         </div>
       </motion.div>
     );
@@ -67,21 +64,18 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
   if (plant.status === 'empty') {
     return (
       <motion.div
-        whileHover={{ scale: 1.06, y: -3 }}
-        whileTap={{ scale: 0.96 }}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.95 }}
         className="cursor-pointer relative w-full h-full flex items-center justify-center"
         onClick={() => onPlant(plant.id)}
       >
-        <img src={soilPlot} alt="Empty plot" className="w-full h-auto drop-shadow-md" draggable={false} loading="lazy" width={512} height={512} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            animate={{ scale: [1, 1.06, 1], opacity: [0.8, 1, 0.8] }}
-            transition={{ repeat: Infinity, duration: 2.5 }}
-            className="bg-white/25 backdrop-blur-sm rounded-lg px-3 py-1 shadow-md"
-          >
-            <p className="text-[10px] font-extrabold text-white drop-shadow-md">+ Plant</p>
-          </motion.div>
-        </div>
+        <motion.div
+          animate={{ scale: [1, 1.06, 1], opacity: [0.85, 1, 0.85] }}
+          transition={{ repeat: Infinity, duration: 2.5 }}
+          className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1 shadow-md"
+        >
+          <p className="text-[10px] font-extrabold text-white drop-shadow-md">+ Plant</p>
+        </motion.div>
       </motion.div>
     );
   }
@@ -94,32 +88,22 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
   return (
     <motion.div
       layout
-      whileHover={{ scale: 1.06, y: -3 }}
-      whileTap={{ scale: 0.96 }}
-      className="cursor-pointer relative w-full h-full flex items-center justify-center"
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.95 }}
+      className="cursor-pointer relative w-full h-full flex flex-col items-center justify-end"
       style={{ overflow: 'visible' }}
       onClick={() => isReady ? onHarvest(plant.id) : onPlantClick?.(plant)}
     >
-      <img
-        src={soilPlot}
-        alt=""
-        className="w-full h-auto drop-shadow-md"
-        draggable={false}
-        loading="lazy"
-        width={512}
-        height={512}
-        style={{ filter: isReady ? 'brightness(1.05)' : undefined }}
-      />
-
+      {/* Crop sprite */}
       <motion.img
         src={cropImage}
         alt={plant.plantName || 'Growing crop'}
-        className="absolute drop-shadow-lg pointer-events-none"
+        className="drop-shadow-lg pointer-events-none"
         style={{
-          width: '75%',
-          bottom: '25%',
-          left: '12.5%',
-          filter: isReady ? 'drop-shadow(0 0 6px hsla(45 90% 55% / 0.5))' : undefined,
+          width: '70%',
+          maxHeight: '65%',
+          objectFit: 'contain',
+          filter: isReady ? 'drop-shadow(0 0 8px hsla(45 90% 55% / 0.6))' : undefined,
           transform: `scale(${cropScale})`,
           transformOrigin: 'bottom center',
         }}
@@ -130,14 +114,14 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{
           opacity: 1,
-          scale: isReady ? [cropScale, cropScale * 1.04, cropScale] : cropScale,
+          scale: isReady ? [cropScale, cropScale * 1.05, cropScale] : cropScale,
         }}
         transition={isReady ? { repeat: Infinity, duration: 2 } : { duration: 0.4 }}
       />
 
-      {/* Progress bar */}
+      {/* Progress bars */}
       {!isReady && (
-        <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
+        <div className="w-[80%] mt-0.5" style={{ zIndex: 50 }}>
           {/* Health bar */}
           <div className="h-1 rounded-full overflow-hidden mb-0.5" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
             <motion.div
@@ -160,39 +144,35 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         </div>
       )}
 
-      {/* Harvest effects */}
+      {/* Harvest sparkles */}
       {isReady && (
         <>
-          {[...Array(4)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <motion.span
               key={i}
               className="absolute text-[10px] pointer-events-none z-10"
-              style={{ left: `${15 + i * 20}%`, top: `${5 + (i % 2) * 12}%` }}
+              style={{ left: `${20 + i * 25}%`, top: `${5 + (i % 2) * 10}%` }}
               animate={{ opacity: [0, 1, 0], y: [0, -8, -16], scale: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
             >
               ✨
             </motion.span>
           ))}
-          <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
-            <motion.div
-              className="rounded-md px-1 py-0.5 text-center"
-              style={{ background: 'linear-gradient(135deg, hsla(45 90% 55% / 0.9), hsla(35 85% 45% / 0.9))' }}
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ repeat: Infinity, duration: 1.2 }}
-            >
-              <p className="text-[8px] font-extrabold text-amber-900">Harvest!</p>
-            </motion.div>
-          </div>
+          <motion.div
+            className="rounded-md px-1.5 py-0.5 text-center mt-0.5"
+            style={{ background: 'linear-gradient(135deg, hsla(45 90% 55% / 0.9), hsla(35 85% 45% / 0.9))' }}
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ repeat: Infinity, duration: 1.2 }}
+          >
+            <p className="text-[8px] font-extrabold text-amber-900">Harvest!</p>
+          </motion.div>
         </>
       )}
 
-      {/* Plant name + emoji below */}
-      <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 50 }}>
-        <p className="text-[8px] font-extrabold text-white drop-shadow-md">
-          {plant.plantEmoji} {plant.plantName}
-        </p>
-      </div>
+      {/* Plant name */}
+      <p className="text-[7px] font-extrabold text-white drop-shadow-md text-center mt-0.5">
+        {plant.plantEmoji} {plant.plantName}
+      </p>
     </motion.div>
   );
 }
