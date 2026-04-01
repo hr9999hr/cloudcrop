@@ -136,36 +136,13 @@ export default function GardenDashboard() {
           padding: '2rem 1rem 2.5rem',
         }}
       >
-        {/* Farm background - transformed to match isometric diamond angle */}
-        <div
-          className="absolute inset-0"
-          style={{
-            overflow: 'hidden',
-          }}
-        >
-          <img
-            src={farmBg}
-            alt=""
-            style={{
-              position: 'absolute',
-              top: '-30%',
-              left: '-30%',
-              width: '160%',
-              height: '160%',
-              objectFit: 'cover',
-              transform: 'rotate(45deg) scaleY(0.6)',
-              transformOrigin: 'center center',
-            }}
-            draggable={false}
-          />
-          {/* Blend overlay to soften edges */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'radial-gradient(ellipse at center, transparent 40%, hsl(var(--background) / 0.3) 100%)',
-            }}
-          />
-        </div>
+        {/* Farm background image */}
+        <img
+          src={farmBg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          draggable={false}
+        />
         {/* Weather tint overlay */}
         <div
           className="absolute inset-0"
