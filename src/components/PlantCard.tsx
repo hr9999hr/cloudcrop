@@ -52,7 +52,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         className="cursor-pointer relative w-full h-full flex items-center justify-center"
         onClick={() => onPlant(plant.id)}
       >
-        <img src={soilPlot} alt="Dead plot" className="w-full h-auto drop-shadow-md opacity-60" draggable={false} loading="lazy" width={512} height={512} />
+        <img src={soilPlot} alt="Dead plot" className="w-full h-auto drop-shadow-md opacity-60" draggable={false} loading="lazy" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md text-center">
             <p className="text-[10px] font-extrabold text-red-300">☠️ Dead</p>
@@ -72,7 +72,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         className="cursor-pointer relative w-full h-full flex items-center justify-center"
         onClick={() => onPlant(plant.id)}
       >
-        <img src={soilPlot} alt="Empty plot" className="w-full h-auto drop-shadow-md" draggable={false} loading="lazy" width={512} height={512} />
+        <img src={soilPlot} alt="Empty plot" className="w-full h-auto drop-shadow-md" draggable={false} loading="lazy" />
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.8, 1, 0.8] }}
@@ -106,8 +106,6 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
         className="w-full h-auto drop-shadow-md"
         draggable={false}
         loading="lazy"
-        width={512}
-        height={512}
         style={{ filter: isReady ? 'brightness(1.05)' : undefined }}
       />
 
