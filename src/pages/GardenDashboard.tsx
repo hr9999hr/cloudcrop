@@ -174,18 +174,18 @@ export default function GardenDashboard() {
         {(() => {
           // Diamond layout: 9 slots mapped to bg soil pits (% of container)
           const SLOT_POSITIONS = [
-            { left: 50, top: 18 },   // 0: top center
-            { left: 36, top: 28 },   // 1: row 2 left
-            { left: 64, top: 28 },   // 2: row 2 right
-            { left: 22, top: 38 },   // 3: row 3 far left
-            { left: 50, top: 38 },   // 4: row 3 center
-            { left: 78, top: 38 },   // 5: row 3 far right
-            { left: 36, top: 48 },   // 6: row 4 left
-            { left: 64, top: 48 },   // 7: row 4 right
-            { left: 50, top: 58 },   // 8: bottom center
+            { left: 50, top: 22 },   // 0: top center
+            { left: 36, top: 32 },   // 1: row 2 left
+            { left: 64, top: 32 },   // 2: row 2 right
+            { left: 22, top: 42 },   // 3: row 3 far left
+            { left: 50, top: 42 },   // 4: row 3 center
+            { left: 78, top: 42 },   // 5: row 3 far right
+            { left: 36, top: 52 },   // 6: row 4 left
+            { left: 64, top: 52 },   // 7: row 4 right
+            { left: 50, top: 62 },   // 8: bottom center
           ];
-          const slotW = 18; // % of container width
-          const slotH = 16; // % of container height
+          const slotW = 28; // % of container width
+          const slotH = 22; // % of container height
 
           const allSlots = [
             ...plants.map((p) => ({ type: 'active' as const, plant: p })),
