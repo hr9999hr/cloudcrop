@@ -98,16 +98,6 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       style={{ overflow: 'visible' }}
       onClick={() => isReady ? onHarvest(plant.id) : onPlantClick?.(plant)}
     >
-      <img
-        src={soilPlot}
-        alt=""
-        className="w-full h-auto drop-shadow-md"
-        draggable={false}
-        loading="lazy"
-        width={512}
-        height={512}
-        style={{ filter: isReady ? 'brightness(1.05)' : undefined }}
-      />
 
       <motion.img
         src={cropImage}
