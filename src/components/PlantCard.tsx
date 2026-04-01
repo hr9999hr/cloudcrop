@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { PlantSlot } from "@/store/gameStore";
 
-
+import soilPlot from "@/assets/farm/soil-plot.png";
 import stageSeedling from "@/assets/farm/stage-seedling.png";
 import stageGrowing from "@/assets/farm/stage-growing.png";
 import cropKangkung from "@/assets/farm/crop-kangkung.png";
