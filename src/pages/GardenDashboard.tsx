@@ -12,7 +12,7 @@ import logo from "@/assets/logo.png";
 import soilPlot from "@/assets/farm/soil-plot.png";
 import farmBg from "@/assets/farm/farm-bg.jpg";
 import { WeatherEffects } from "@/components/farm/WeatherEffects";
-import { FarmDecorations } from "@/components/farm/FarmDecorations";
+
 
 export default function GardenDashboard() {
   const { plants, updateProgress, farmerLevel, totalHarvests, weather } = useGameStore();
