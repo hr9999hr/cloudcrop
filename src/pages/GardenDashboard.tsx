@@ -12,7 +12,7 @@ import logo from "@/assets/logo.png";
 import soilPlot from "@/assets/farm/soil-plot.png";
 import farmBg from "@/assets/farm/farm-bg.jpg";
 import { WeatherEffects } from "@/components/farm/WeatherEffects";
-import { FarmDecorations } from "@/components/farm/FarmDecorations";
+
 
 export default function GardenDashboard() {
   const { plants, updateProgress, farmerLevel, totalHarvests, weather } = useGameStore();
@@ -128,12 +128,13 @@ export default function GardenDashboard() {
         </div>
       </motion.div>
 
-      {/* Hay Day-style Isometric Farm */}
+      {/* Isometric 3D Farm Scene */}
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
-          boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
-          padding: '2rem 1rem 2.5rem',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
+          padding: '2.5rem 1rem 3rem',
+          minHeight: 420,
         }}
       >
         {/* Farm background image */}
@@ -142,6 +143,8 @@ export default function GardenDashboard() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
+          width={1920}
+          height={1280}
         />
         {/* Weather tint overlay */}
         <div
@@ -152,7 +155,7 @@ export default function GardenDashboard() {
               : weather === 'monsoon'
               ? 'rgba(30, 50, 60, 0.5)'
               : weather === 'heatwave'
-              ? 'rgba(120, 90, 20, 0.2)'
+              ? 'rgba(120, 90, 20, 0.18)'
               : 'rgba(0,0,0,0)',
           }}
         />
@@ -160,39 +163,34 @@ export default function GardenDashboard() {
         {/* Weather effects overlay */}
         <WeatherEffects weather={weather} />
 
-        {/* Farm decorations */}
-        <FarmDecorations weather={weather} />
-
         {/* Farm label */}
-        <div className="relative z-10 flex justify-center mb-6">
-          <span className="text-xs font-extrabold text-white/90 bg-black/20 px-4 py-1.5 rounded-full backdrop-blur-sm shadow-sm">
+        <div className="relative z-10 flex justify-center mb-5">
+          <span className="text-xs font-extrabold text-white bg-black/30 px-5 py-1.5 rounded-full backdrop-blur-md shadow-lg border border-white/10">
             🌾 Farm Plots — Level {farmerLevel}
           </span>
         </div>
 
-        {/* Isometric diamond grid container */}
+        {/* Isometric diamond grid */}
         <div className="relative z-10 flex justify-center">
           <div style={{ position: 'relative' }}>
-            {/* Render all slots (active + locked) in an isometric diamond layout */}
             {(() => {
               const allSlots = [
                 ...plants.map((p, i) => ({ type: 'active' as const, plant: p, index: i })),
                 ...Array.from({ length: maxSlots - plants.length }, (_, i) => ({ type: 'locked' as const, plant: null, index: plants.length + i })),
               ];
               const cols = 3;
-              const tileW = 150;
-              const tileH = 88;
+              const tileW = 140;
+              const tileH = 82;
               const rows = Math.ceil(allSlots.length / cols);
               const containerW = (cols + 1) * tileW * 0.5 + tileW * 0.5;
-              const slotFrameHeight = tileH + 44;
+              const slotFrameHeight = tileH + 50;
               const containerH = rows * tileH + slotFrameHeight;
 
               return (
-                <div style={{ width: containerW, height: containerH + 50, position: 'relative' }}>
+                <div style={{ width: containerW, height: containerH + 40, position: 'relative' }}>
                   {allSlots.map((slot, idx) => {
                     const row = Math.floor(idx / cols);
                     const col = idx % cols;
-                    // Isometric position: convert grid (row, col) to screen (x, y)
                     const isoX = (col - row) * (tileW * 0.5) + containerW * 0.5 - tileW * 0.5;
                     const isoY = (col + row) * (tileH * 0.5) + 10;
 
@@ -210,7 +208,6 @@ export default function GardenDashboard() {
                             width: tileW,
                             height: slotFrameHeight,
                             zIndex: (row + col) * 2 + 1,
-                            clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
                           }}
                         >
                           <PlantCard
@@ -226,7 +223,7 @@ export default function GardenDashboard() {
                       <motion.div
                         key={`locked-${idx}`}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.5 }}
+                        animate={{ opacity: 0.6 }}
                         transition={{ delay: 0.4 + idx * 0.06 }}
                         style={{
                           position: 'absolute',
@@ -235,14 +232,15 @@ export default function GardenDashboard() {
                           width: tileW,
                           height: slotFrameHeight,
                           zIndex: (row + col) * 2,
-                          clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
                         }}
                       >
-                      <div className="w-full h-full relative">
-                          <img src={soilPlot} alt="" className="w-full h-auto object-contain opacity-30" draggable={false} />
+                        <div className="w-full h-full relative flex items-center justify-center">
+                          <img src={soilPlot} alt="" className="w-full h-auto object-contain opacity-40 drop-shadow-md" draggable={false} loading="lazy" width={512} height={512} />
                           <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <Lock className="w-5 h-5 text-white/40" />
-                            <p className="text-[8px] font-bold text-white/40 mt-0.5">Lv.{farmerLevel + 1}</p>
+                            <div className="bg-black/30 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-md">
+                              <Lock className="w-4 h-4 text-white/60 mx-auto" />
+                              <p className="text-[8px] font-bold text-white/60 mt-0.5">Lv.{farmerLevel + 1}</p>
+                            </div>
                           </div>
                         </div>
                       </motion.div>
@@ -253,7 +251,6 @@ export default function GardenDashboard() {
             })()}
           </div>
         </div>
-
       </div>
 
       <PlantSelectionDialog open={plantDialogSlot !== null} slotId={plantDialogSlot || 0} onClose={() => setPlantDialogSlot(null)} />
