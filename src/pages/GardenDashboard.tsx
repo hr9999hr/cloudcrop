@@ -168,77 +168,85 @@ export default function GardenDashboard() {
           </span>
         </div>
 
-        {/* Interactive grid overlay — positioned over the soil area in the image */}
+        {/* Interactive isometric grid overlay — positioned over the soil plots */}
         <div
           className="absolute z-10"
           style={{
-            top: '22%',
-            left: '18%',
-            width: '55%',
-            height: '48%',
+            top: '15%',
+            left: '10%',
+            width: '72%',
+            height: '58%',
           }}
         >
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gridTemplateRows: 'repeat(3, 1fr)',
-              width: '100%',
-              height: '100%',
-              gap: 2,
-            }}
-          >
-            {(() => {
-              const allSlots = [
-                ...plants.map((p) => ({ type: 'active' as const, plant: p })),
-                ...Array.from({ length: maxSlots - plants.length }, () => ({ type: 'locked' as const, plant: null })),
-              ];
-              // Only show up to 9 slots (3x3)
-              return allSlots.slice(0, 9).map((slot, idx) => {
-                if (slot.type === 'active' && slot.plant) {
-                  return (
-                    <motion.div
-                      key={slot.plant.id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="relative flex items-center justify-center cursor-pointer"
-                      onClick={() =>
-                        slot.plant!.status === 'ready'
-                          ? handleHarvest(slot.plant!.id)
-                          : slot.plant!.status === 'empty' || slot.plant!.status === 'dead'
-                          ? setPlantDialogSlot(slot.plant!.id)
-                          : handlePlantClick(slot.plant!)
-                      }
-                    >
-                      <PlantCard
-                        plant={slot.plant}
-                        onPlant={(id) => setPlantDialogSlot(id)}
-                        onHarvest={handleHarvest}
-                        onPlantClick={handlePlantClick}
-                      />
-                    </motion.div>
-                  );
-                }
+          {(() => {
+            const allSlots = [
+              ...plants.map((p) => ({ type: 'active' as const, plant: p })),
+              ...Array.from({ length: maxSlots - plants.length }, () => ({ type: 'locked' as const, plant: null })),
+            ];
+            const slots = allSlots.slice(0, 9);
+            const cols = 3;
+            // Each tile as percentage of the container
+            const tileWPct = 30;
+            const tileHPct = 28;
+            // Isometric offsets (percentage based)
+            const offsetX = tileWPct * 0.52;
+            const offsetY = tileHPct * 0.52;
+
+            return slots.map((slot, idx) => {
+              const row = Math.floor(idx / cols);
+              const col = idx % cols;
+              // Isometric diamond position
+              const x = 50 + (col - row) * offsetX - tileWPct / 2;
+              const y = (col + row) * offsetY;
+
+              if (slot.type === 'active' && slot.plant) {
                 return (
                   <motion.div
-                    key={`locked-${idx}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 + idx * 0.05 }}
-                    className="relative flex items-center justify-center"
+                    key={slot.plant.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="absolute cursor-pointer"
+                    style={{
+                      left: `${x}%`,
+                      top: `${y}%`,
+                      width: `${tileWPct}%`,
+                      height: `${tileHPct}%`,
+                      zIndex: row + col,
+                    }}
                   >
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="bg-black/25 backdrop-blur-sm rounded-lg px-2 py-1 shadow-md">
-                        <Lock className="w-3.5 h-3.5 text-white/50 mx-auto" />
-                        <p className="text-[7px] font-bold text-white/50 mt-0.5">Lv.{farmerLevel + 1}</p>
-                      </div>
-                    </div>
+                    <PlantCard
+                      plant={slot.plant}
+                      onPlant={(id) => setPlantDialogSlot(id)}
+                      onHarvest={handleHarvest}
+                      onPlantClick={handlePlantClick}
+                    />
                   </motion.div>
                 );
-              });
-            })()}
-          </div>
+              }
+              return (
+                <motion.div
+                  key={`locked-${idx}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 + idx * 0.05 }}
+                  className="absolute flex items-center justify-center"
+                  style={{
+                    left: `${x}%`,
+                    top: `${y}%`,
+                    width: `${tileWPct}%`,
+                    height: `${tileHPct}%`,
+                    zIndex: row + col,
+                  }}
+                >
+                  <div className="bg-black/25 backdrop-blur-sm rounded-lg px-2 py-1 shadow-md">
+                    <Lock className="w-3.5 h-3.5 text-white/50 mx-auto" />
+                    <p className="text-[7px] font-bold text-white/50 mt-0.5">Lv.{farmerLevel + 1}</p>
+                  </div>
+                </motion.div>
+              );
+            });
+          })()}
         </div>
       </div>
 
