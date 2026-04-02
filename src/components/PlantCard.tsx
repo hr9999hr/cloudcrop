@@ -119,6 +119,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
           width: '75%',
           bottom: '25%',
           left: '12.5%',
+          zIndex: 10,
           filter: isReady ? 'drop-shadow(0 0 6px hsla(45 90% 55% / 0.5))' : undefined,
           transform: `scale(${cropScale})`,
           transformOrigin: 'bottom center',
