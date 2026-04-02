@@ -192,9 +192,10 @@ export default function GardenDashboard() {
                   {allSlots.map((slot, idx) => {
                     const row = Math.floor(idx / cols);
                     const col = idx % cols;
-                    // Isometric position: convert grid (row, col) to screen (x, y)
                     const isoX = (col - row) * (tileW * 0.5) + containerW * 0.5 - tileW * 0.5;
                     const isoY = (col + row) * (tileH * 0.5) + 10;
+                    // First row in front, last row behind
+                    const zBase = (rows - 1 - row) * 10 + col;
 
                     if (slot.type === 'active' && slot.plant) {
                       return (
@@ -209,8 +210,7 @@ export default function GardenDashboard() {
                             top: isoY,
                             width: tileW,
                             height: slotFrameHeight,
-                            zIndex: (row + col) * 2 + 1,
-                            clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
+                            zIndex: zBase,
                           }}
                         >
                           <PlantCard
@@ -234,8 +234,7 @@ export default function GardenDashboard() {
                           top: isoY,
                           width: tileW,
                           height: slotFrameHeight,
-                          zIndex: (row + col) * 2,
-                          clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
+                          zIndex: zBase,
                         }}
                       >
                       <div className="w-full h-full relative">
