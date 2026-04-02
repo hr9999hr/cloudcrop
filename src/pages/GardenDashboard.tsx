@@ -235,8 +235,7 @@ export default function GardenDashboard() {
                           width: tileW,
                           height: slotFrameHeight,
                           zIndex: (row + col) * 2,
-                          clipPath: 'polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%)',
-                        }}
+                        }
                       >
                       <div className="w-full h-full relative">
                           <img src={soilPlot} alt="" className="w-full h-auto object-contain opacity-30" draggable={false} />

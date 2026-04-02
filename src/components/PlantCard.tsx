@@ -189,7 +189,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       )}
 
       {/* Plant name + emoji below */}
-      <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 50 }}>
+      <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 20 }}>
         <p className="text-[8px] font-extrabold text-white drop-shadow-md">
           {plant.plantEmoji} {plant.plantName}
         </p>
