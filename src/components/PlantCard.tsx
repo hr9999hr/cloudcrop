@@ -167,15 +167,15 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
           {[...Array(4)].map((_, i) => (
             <motion.span
               key={i}
-              className="absolute text-[10px] pointer-events-none z-10"
-              style={{ left: `${15 + i * 20}%`, top: `${5 + (i % 2) * 12}%` }}
+              className="absolute text-[10px] pointer-events-none"
+              style={{ left: `${15 + i * 20}%`, top: `${5 + (i % 2) * 12}%`, zIndex: 15 }}
               animate={{ opacity: [0, 1, 0], y: [0, -8, -16], scale: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
             >
               ✨
             </motion.span>
           ))}
-          <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
+          <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 20 }}>
             <motion.div
               className="rounded-md px-1 py-0.5 text-center"
               style={{ background: 'linear-gradient(135deg, hsla(45 90% 55% / 0.9), hsla(35 85% 45% / 0.9))' }}
