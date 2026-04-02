@@ -174,6 +174,7 @@ export default function DeliveryPage() {
 
   const handleSelectPoint = (cp: typeof COLLECTION_POINTS[0]) => {
     setDeliveryAddress(cp.address);
+    setShowCollectionPoints(false);
     toast.success(`Collection point set: ${cp.name}`);
   };
 
