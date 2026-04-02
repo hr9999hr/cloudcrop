@@ -165,6 +165,7 @@ export default function DeliveryPage() {
   const { deliveries, deliveryAddress, setDeliveryAddress } = useGameStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [trackingDelivery, setTrackingDelivery] = useState<DeliveryOrder | null>(null);
+  const [showCollectionPoints, setShowCollectionPoints] = useState(!deliveryAddress);
 
   const activeDeliveries = deliveries.filter((d) => d.status !== 'completed');
   const completedDeliveries = deliveries.filter((d) => d.status === 'completed');
