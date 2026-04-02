@@ -119,7 +119,6 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
           width: '75%',
           bottom: '25%',
           left: '12.5%',
-          zIndex: 10,
           filter: isReady ? 'drop-shadow(0 0 6px hsla(45 90% 55% / 0.5))' : undefined,
           transform: `scale(${cropScale})`,
           transformOrigin: 'bottom center',
@@ -138,7 +137,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
 
       {/* Progress bar */}
       {!isReady && (
-        <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 20 }}>
+        <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
           {/* Health bar */}
           <div className="h-1 rounded-full overflow-hidden mb-0.5" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
             <motion.div
@@ -167,15 +166,15 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
           {[...Array(4)].map((_, i) => (
             <motion.span
               key={i}
-              className="absolute text-[10px] pointer-events-none"
-              style={{ left: `${15 + i * 20}%`, top: `${5 + (i % 2) * 12}%`, zIndex: 15 }}
+              className="absolute text-[10px] pointer-events-none z-10"
+              style={{ left: `${15 + i * 20}%`, top: `${5 + (i % 2) * 12}%` }}
               animate={{ opacity: [0, 1, 0], y: [0, -8, -16], scale: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
             >
               ✨
             </motion.span>
           ))}
-          <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 20 }}>
+          <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
             <motion.div
               className="rounded-md px-1 py-0.5 text-center"
               style={{ background: 'linear-gradient(135deg, hsla(45 90% 55% / 0.9), hsla(35 85% 45% / 0.9))' }}
@@ -189,7 +188,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
       )}
 
       {/* Plant name + emoji below */}
-      <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 20 }}>
+      <div className="absolute -bottom-[10%] left-0 right-0 text-center" style={{ zIndex: 50 }}>
         <p className="text-[8px] font-extrabold text-white drop-shadow-md">
           {plant.plantEmoji} {plant.plantName}
         </p>
