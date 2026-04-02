@@ -443,8 +443,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       if (isOverdue && newHealth > 0) {
         const overdueSeconds = (sinceWatered - intervalMs) / 1000;
         newHealth = Math.max(0, 100 - overdueSeconds * 1.5);
-      } else if (newWateredThisCycle && newHealth < 100) {
-        newHealth = Math.min(100, newHealth + 0.5);
       }
 
       // SRS: Check if accumulated penalties would kill the plant
