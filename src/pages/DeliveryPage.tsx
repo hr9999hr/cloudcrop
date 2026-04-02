@@ -188,9 +188,21 @@ export default function DeliveryPage() {
 
       {/* Collection Point Selector */}
       <div className="bg-card border rounded-2xl p-4 mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <MapPin className="w-4 h-4 text-primary" />
-          <h3 className="font-bold text-sm text-foreground">Select Collection Point</h3>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-primary" />
+            <h3 className="font-bold text-sm text-foreground">Select Collection Point</h3>
+          </div>
+          {selectedPoint && !showCollectionPoints && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setShowCollectionPoints(true)}
+              className="text-xs h-7 px-2"
+            >
+              <Pencil className="w-3 h-3 mr-1" /> Edit
+            </Button>
+          )}
         </div>
 
         {selectedPoint && (
@@ -205,41 +217,52 @@ export default function DeliveryPage() {
           </div>
         )}
 
-        <div className="space-y-3">
-          {areas.map((area) => (
-            <div key={area}>
-              <p className="text-xs font-bold text-muted-foreground mb-1.5">{area}</p>
-              <div className="space-y-1.5">
-                {COLLECTION_POINTS.filter((cp) => cp.area === area).map((cp) => {
-                  const isSelected = deliveryAddress === cp.address;
-                  return (
-                    <button
-                      key={cp.id}
-                      onClick={() => handleSelectPoint(cp)}
-                      className={`w-full text-left p-3 rounded-xl border transition-colors ${
-                        isSelected
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:bg-muted/50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                          isSelected ? 'border-primary bg-primary' : 'border-muted-foreground'
-                        }`}>
-                          {isSelected && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
-                        </div>
-                        <div className="min-w-0">
-                          <p className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-foreground'}`}>{cp.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">{cp.address}</p>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
+        <AnimatePresence>
+          {showCollectionPoints && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-3">
+                {areas.map((area) => (
+                  <div key={area}>
+                    <p className="text-xs font-bold text-muted-foreground mb-1.5">{area}</p>
+                    <div className="space-y-1.5">
+                      {COLLECTION_POINTS.filter((cp) => cp.area === area).map((cp) => {
+                        const isSelected = deliveryAddress === cp.address;
+                        return (
+                          <button
+                            key={cp.id}
+                            onClick={() => handleSelectPoint(cp)}
+                            className={`w-full text-left p-3 rounded-xl border transition-colors ${
+                              isSelected
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border hover:bg-muted/50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+                                isSelected ? 'border-primary bg-primary' : 'border-muted-foreground'
+                              }`}>
+                                {isSelected && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                              </div>
+                              <div className="min-w-0">
+                                <p className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-foreground'}`}>{cp.name}</p>
+                                <p className="text-xs text-muted-foreground truncate">{cp.address}</p>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Active Deliveries */}
