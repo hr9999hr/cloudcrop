@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore, DeliveryStatus, DeliveryOrder } from "@/store/gameStore";
 import { Button } from "@/components/ui/button";
