@@ -138,7 +138,7 @@ export function PlantCard({ plant, onPlant, onHarvest, onPlantClick }: PlantCard
 
       {/* Progress bar */}
       {!isReady && (
-        <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 50 }}>
+        <div className="absolute bottom-[2%] left-[15%] right-[15%]" style={{ zIndex: 20 }}>
           {/* Health bar */}
           <div className="h-1 rounded-full overflow-hidden mb-0.5" style={{ background: 'hsla(0 0% 0% / 0.3)' }}>
             <motion.div
