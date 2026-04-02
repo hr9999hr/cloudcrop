@@ -181,10 +181,10 @@ export default function GardenDashboard() {
               ];
               const cols = 3;
               const tileW = 150;
-              const tileH = 88;
+              const tileH = 120;
               const rows = Math.ceil(allSlots.length / cols);
               const containerW = (cols + 1) * tileW * 0.5 + tileW * 0.5;
-              const slotFrameHeight = tileH + 44;
+              const slotFrameHeight = tileH + 50;
               const containerH = rows * tileH + slotFrameHeight;
 
               return (
