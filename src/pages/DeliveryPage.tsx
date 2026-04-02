@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore, DeliveryStatus, DeliveryOrder } from "@/store/gameStore";
 import { Button } from "@/components/ui/button";
-import { MapPin, Package, Truck, CheckCircle2, Clock, ChevronDown, ChevronUp, X, Eye, Check } from "lucide-react";
+import { MapPin, Package, Truck, CheckCircle2, Clock, ChevronDown, ChevronUp, X, Eye, Check, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 const COLLECTION_POINTS = [
