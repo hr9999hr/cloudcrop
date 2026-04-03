@@ -1,65 +1,100 @@
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
+import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Img, staticFile } from "remotion";
 
 const features = [
-  { num: "01", title: "Plant & Grow", desc: "Real-time crop simulation with weather effects", color: "#4ade80" },
-  { num: "02", title: "Water & Nurture", desc: "8-12h realistic watering cycles", color: "#38bdf8" },
-  { num: "03", title: "Learn & Earn", desc: "Watch tutorials, earn CC Coins", color: "#fbbf24" },
-  { num: "04", title: "Shop Real Produce", desc: "Seeds, fruits, fertilizers from vendors", color: "#f472b6" },
-  { num: "05", title: "Collect at Hubs", desc: "8 locations across Malaysia", color: "#a78bfa" },
-  { num: "06", title: "Track Everything", desc: "Wallet, invoices, delivery status", color: "#34d399" },
+  { emoji: "🌱", title: "Plant & Grow", desc: "Real-time crop simulation with weather", color: "#4ade80" },
+  { emoji: "💧", title: "Water & Nurture", desc: "8-12 hour realistic watering cycles", color: "#38bdf8" },
+  { emoji: "🎯", title: "Daily Missions", desc: "Complete tasks, earn CC Coins", color: "#fbbf24" },
+  { emoji: "🛒", title: "Shop Real Produce", desc: "Buy seeds & fruits from local farmers", color: "#f472b6" },
+  { emoji: "📦", title: "Collect at Hubs", desc: "8 locations across Malaysia", color: "#a78bfa" },
+  { emoji: "💰", title: "Track Everything", desc: "Wallet, invoices & delivery tracking", color: "#34d399" },
 ];
 
 export const SolutionScene = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  const imageReveal = interpolate(frame, [0, 40], [0, 1], { extrapolateRight: "clamp" });
+  const imageScale = interpolate(frame, [0, 40], [1.1, 1], { extrapolateRight: "clamp" });
+
   return (
-    <AbsoluteFill style={{
-      background: "linear-gradient(135deg, #0a2e14 0%, #1a5c2e 50%, #0d3b1a 100%)",
-    }}>
-      {/* Header */}
+    <AbsoluteFill>
+      {/* Warm green/cream background like the website */}
+      <AbsoluteFill style={{
+        background: "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 30%, #fef3c7 70%, #fde68a40 100%)",
+      }} />
+
+      {/* Game screenshot on right */}
       <div style={{
-        position: "absolute", left: 80, top: 60,
-        opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
+        position: "absolute", right: 60, top: 80, bottom: 80,
+        width: 700, borderRadius: 30, overflow: "hidden",
+        opacity: imageReveal,
+        boxShadow: "0 20px 60px rgba(0,100,0,0.2)",
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#4ade80", fontFamily: "sans-serif", letterSpacing: 4, textTransform: "uppercase" }}>
-          The Solution
-        </div>
-        <div style={{ fontSize: 48, fontWeight: 900, color: "white", fontFamily: "sans-serif", marginTop: 4 }}>
-          How CloudCrop Works
-        </div>
-        <div style={{ fontSize: 18, color: "#a7f3d0", fontFamily: "sans-serif", marginTop: 8 }}>
-          From virtual seeds to real food on your table
+        <Img src={staticFile("images/game-farm.jpg")} style={{
+          width: "100%", height: "100%", objectFit: "cover",
+          transform: `scale(${imageScale})`,
+        }} />
+        {/* Glass overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(180deg, transparent 60%, rgba(0,50,0,0.6) 100%)",
+        }} />
+        <div style={{
+          position: "absolute", bottom: 20, left: 20, right: 20,
+          fontSize: 18, color: "white", fontFamily: "sans-serif", fontWeight: 700,
+          opacity: interpolate(frame, [30, 50], [0, 1], { extrapolateRight: "clamp" }),
+        }}>
+          🎮 In-game farm view
         </div>
       </div>
 
-      {/* Feature cards - 3x2 grid */}
+      {/* Header */}
       <div style={{
-        position: "absolute", left: 80, right: 80, top: 220,
-        display: "flex", flexWrap: "wrap", gap: 20,
+        position: "absolute", left: 80, top: 80,
+        opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
+      }}>
+        <div style={{
+          fontSize: 16, fontWeight: 800, color: "#16a34a", fontFamily: "sans-serif",
+          letterSpacing: 4, textTransform: "uppercase",
+        }}>
+          ✨ How it works
+        </div>
+        <div style={{
+          fontSize: 48, fontWeight: 900, color: "#1a3a2a", fontFamily: "sans-serif",
+          marginTop: 8, lineHeight: 1.15,
+        }}>
+          Virtual Seeds,<br />Real Food
+        </div>
+      </div>
+
+      {/* Feature list on left */}
+      <div style={{
+        position: "absolute", left: 80, top: 260, width: 520,
+        display: "flex", flexDirection: "column", gap: 14,
       }}>
         {features.map((f, i) => {
-          const delay = 20 + i * 18;
-          const s = spring({ frame: frame - delay, fps, config: { damping: 15 } });
-          const scale = interpolate(s, [0, 1], [0.85, 1]);
+          const delay = 30 + i * 15;
+          const sp = spring({ frame: frame - delay, fps, config: { damping: 15 } });
+          const x = interpolate(sp, [0, 1], [-60, 0]);
           const opacity = interpolate(frame, [delay, delay + 12], [0, 1], { extrapolateRight: "clamp" });
-          const cardW = "calc(33.33% - 14px)";
 
           return (
             <div key={i} style={{
-              width: cardW, padding: "28px 24px",
-              background: "rgba(255,255,255,0.06)", borderRadius: 16,
-              transform: `scale(${scale})`, opacity,
-              borderLeft: `3px solid ${f.color}`,
+              display: "flex", alignItems: "center", gap: 14,
+              padding: "14px 18px", borderRadius: 16,
+              background: "rgba(255,255,255,0.7)",
+              transform: `translateX(${x}px)`, opacity,
+              boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+              borderLeft: `4px solid ${f.color}`,
             }}>
-              <div style={{ fontSize: 28, fontWeight: 900, color: f.color, fontFamily: "monospace", opacity: 0.5 }}>
-                {f.num}
-              </div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: "white", fontFamily: "sans-serif", marginTop: 4 }}>
-                {f.title}
-              </div>
-              <div style={{ fontSize: 14, color: "#a7f3d0", fontFamily: "sans-serif", marginTop: 8 }}>
-                {f.desc}
+              <div style={{ fontSize: 30 }}>{f.emoji}</div>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#1a3a2a", fontFamily: "sans-serif" }}>
+                  {f.title}
+                </div>
+                <div style={{ fontSize: 14, color: "#6b7280", fontFamily: "sans-serif" }}>
+                  {f.desc}
+                </div>
               </div>
             </div>
           );
