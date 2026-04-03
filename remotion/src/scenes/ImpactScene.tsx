@@ -1,101 +1,93 @@
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
-
-const sdgs = [
-  { num: "2", title: "Zero Hunger", color: "#DDA63A" },
-  { num: "4", title: "Quality Education", color: "#C5192D" },
-  { num: "11", title: "Sustainable Cities", color: "#FD9D24" },
-  { num: "12", title: "Responsible Use", color: "#BF8B2E" },
-  { num: "13", title: "Climate Action", color: "#3F7E44" },
-];
-
-const metrics = [
-  { stat: "8.5M", label: "Potential Users", color: "#4ade80" },
-  { stat: "3x", label: "Engagement Boost", color: "#38bdf8" },
-  { stat: "8", label: "Hub Locations", color: "#fbbf24" },
-  { stat: "5", label: "SDGs Aligned", color: "#a78bfa" },
-];
+import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Img, staticFile } from "remotion";
 
 export const ImpactScene = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   return (
-    <AbsoluteFill style={{
-      background: "linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 100%)",
-    }}>
+    <AbsoluteFill>
+      <AbsoluteFill style={{ background: "#000" }}>
+        <Img src={staticFile("images/fresh-produce.jpg")} style={{
+          width: "100%", height: "100%", objectFit: "cover",
+          opacity: 0.35,
+          transform: `scale(${interpolate(frame, [0, 553], [1.1, 1.0], { extrapolateRight: "clamp" })})`,
+        }} />
+      </AbsoluteFill>
+
+      <AbsoluteFill style={{
+        background: "linear-gradient(180deg, rgba(0,40,0,0.7) 0%, rgba(0,20,0,0.85) 100%)",
+      }} />
+
       <div style={{
-        position: "absolute", left: 80, top: 50,
-        opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
+        position: "absolute", inset: 0,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#1a5c2e", fontFamily: "sans-serif", letterSpacing: 4, textTransform: "uppercase" }}>
-          Impact
+        <div style={{
+          opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
+          fontSize: 18, fontWeight: 800, color: "#4ade80", fontFamily: "sans-serif",
+          letterSpacing: 6,
+        }}>
+          🌾 THE VISION
         </div>
-        <div style={{ fontSize: 48, fontWeight: 900, color: "#1a5c2e", fontFamily: "sans-serif", marginTop: 4 }}>
-          Making a Difference
+
+        <div style={{
+          opacity: interpolate(frame, [10, 35], [0, 1], { extrapolateRight: "clamp" }),
+          transform: `scale(${interpolate(spring({ frame: frame - 10, fps, config: { damping: 12 } }), [0, 1], [0.8, 1])})`,
+          fontSize: 64, fontWeight: 900, color: "white", fontFamily: "sans-serif",
+          marginTop: 20, textAlign: "center", lineHeight: 1.2,
+          textShadow: "0 0 60px rgba(74,222,128,0.3)",
+        }}>
+          Every Seed Planted<br />
+          <span style={{ color: "#4ade80" }}>Fights Hunger</span>
         </div>
-      </div>
 
-      {/* SDG badges */}
-      <div style={{ position: "absolute", left: 80, top: 170, display: "flex", gap: 16 }}>
-        {sdgs.map((sdg, i) => {
-          const delay = 10 + i * 8;
-          const s = spring({ frame: frame - delay, fps, config: { damping: 14 } });
-          const scale = interpolate(s, [0, 1], [0.7, 1]);
-          const opacity = interpolate(frame, [delay, delay + 10], [0, 1], { extrapolateRight: "clamp" });
+        <div style={{
+          display: "flex", gap: 60, marginTop: 60,
+        }}>
+          {[
+            { num: "🌱→🍅", label: "Virtual to Real" },
+            { num: "8 Hubs", label: "Across Malaysia" },
+            { num: "0 Waste", label: "Direct to Consumer" },
+          ].map((s, i) => {
+            const delay = 40 + i * 15;
+            const opacity = interpolate(frame, [delay, delay + 20], [0, 1], { extrapolateRight: "clamp" });
+            const y = interpolate(frame, [delay, delay + 20], [20, 0], { extrapolateRight: "clamp" });
 
-          return (
-            <div key={i} style={{
-              padding: "14px 20px", borderRadius: 14,
-              background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-              transform: `scale(${scale})`, opacity,
-              borderTop: `4px solid ${sdg.color}`,
-              textAlign: "center", minWidth: 160,
-            }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: sdg.color, fontFamily: "sans-serif" }}>
-                SDG {sdg.num}
+            return (
+              <div key={i} style={{
+                opacity, transform: `translateY(${y}px)`,
+                textAlign: "center",
+              }}>
+                <div style={{
+                  fontSize: 36, color: "white", fontFamily: "sans-serif", fontWeight: 800,
+                }}>
+                  {s.num}
+                </div>
+                <div style={{
+                  fontSize: 16, color: "#a7f3d0", fontFamily: "sans-serif",
+                  marginTop: 8, fontWeight: 500,
+                }}>
+                  {s.label}
+                </div>
               </div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: "#1a1a2e", fontFamily: "sans-serif", marginTop: 4 }}>
-                {sdg.title}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      {/* Big metrics */}
-      <div style={{
-        position: "absolute", left: 80, right: 80, bottom: 80,
-        display: "flex", gap: 24,
-      }}>
-        {metrics.map((m, i) => {
-          const delay = 60 + i * 15;
-          const s = spring({ frame: frame - delay, fps, config: { damping: 10, stiffness: 80 } });
-          const y = interpolate(s, [0, 1], [60, 0]);
-          const opacity = interpolate(frame, [delay, delay + 12], [0, 1], { extrapolateRight: "clamp" });
-
-          // Count animation
-          const numVal = parseFloat(m.stat.replace(/[^0-9.]/g, ''));
-          const suffix = m.stat.replace(/[0-9.]/g, '');
-          const progress = interpolate(frame, [delay, delay + 40], [0, 1], { extrapolateRight: "clamp" });
-          const displayNum = numVal > 100 ? Math.round(numVal * progress).toString() : (numVal * progress).toFixed(m.stat.includes('.') ? 1 : 0);
-
-          return (
-            <div key={i} style={{
-              flex: 1, padding: "40px 24px",
-              background: "#1a5c2e", borderRadius: 20,
-              transform: `translateY(${y}px)`, opacity,
-              textAlign: "center",
-              boxShadow: "0 20px 60px rgba(26,92,46,0.3)",
-            }}>
-              <div style={{ fontSize: 60, fontWeight: 900, color: m.color, fontFamily: "sans-serif" }}>
-                {displayNum}{suffix}
-              </div>
-              <div style={{ fontSize: 16, color: "#a7f3d0", fontFamily: "sans-serif", marginTop: 8 }}>
-                {m.label}
-              </div>
-            </div>
-          );
-        })}
+        <div style={{
+          position: "absolute", bottom: 60,
+          opacity: interpolate(frame, [200, 230], [0, 1], { extrapolateRight: "clamp" }),
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "12px 30px", borderRadius: 30,
+          background: "rgba(251,191,36,0.15)", border: "2px solid rgba(251,191,36,0.4)",
+        }}>
+          <Img src={staticFile("images/cc-coin.png")} style={{ width: 30, height: 30 }} />
+          <div style={{
+            fontSize: 18, color: "#fde68a", fontFamily: "sans-serif", fontWeight: 700,
+          }}>
+            Every coin spent supports local farmers
+          </div>
+        </div>
       </div>
     </AbsoluteFill>
   );
