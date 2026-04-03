@@ -28,11 +28,11 @@ await renderMedia({
   composition,
   serveUrl: bundled,
   codec: "h264",
-  outputLocation: "/mnt/documents/CloudCrop_PitchVideo.mp4",
+  outputLocation: "/tmp/video_noaudio.mp4",
   puppeteerInstance: browser,
   muted: true,
   concurrency: 1,
 });
 
 await browser.close({ silent: false });
-console.log("Done! Video saved to /mnt/documents/CloudCrop_PitchVideo.mp4");
+console.log("Video rendered (no audio). Now merge with ffmpeg...");

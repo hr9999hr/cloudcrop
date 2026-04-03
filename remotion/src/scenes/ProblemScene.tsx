@@ -1,58 +1,72 @@
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 
 const problems = [
-  { title: "Urban Disconnect", stat: "73%", desc: "of Malaysians have no farming experience" },
-  { title: "Rising Food Costs", stat: "10.4%", desc: "food price increase in 2023" },
-  { title: "Food Waste Crisis", stat: "17K", desc: "tonnes of food wasted daily in Malaysia" },
-  { title: "Low Engagement", stat: "40%+", desc: "income spent on food by low-income families" },
+  { stat: "73%", label: "Urban — No Farming", sub: "experience or access" },
+  { stat: "10.4%", label: "Food Price Increase", sub: "in 2023 alone" },
+  { stat: "17K", label: "Tonnes Wasted Daily", sub: "enough to feed 12M" },
+  { stat: "40%+", label: "Income on Food", sub: "for low-income families" },
 ];
 
 export const ProblemScene = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const headerOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" });
+  const headerX = interpolate(
+    spring({ frame, fps, config: { damping: 20 } }), [0, 1], [-100, 0]
+  );
 
   return (
-    <AbsoluteFill style={{
-      background: "linear-gradient(180deg, #fafafa 0%, #f0fdf4 100%)",
-      padding: 80,
-    }}>
+    <AbsoluteFill style={{ background: "#fafafa" }}>
+      {/* Red accent stripe */}
       <div style={{
-        opacity: headerOpacity,
-        fontSize: 56, fontWeight: 900, color: "#1a5c2e",
-        fontFamily: "sans-serif", marginBottom: 60,
+        position: "absolute", top: 0, left: 0, width: 8, height: "100%",
+        background: "linear-gradient(180deg, #dc2626, #991b1b)",
+      }} />
+
+      <div style={{
+        position: "absolute", left: 80, top: 80,
+        transform: `translateX(${headerX}px)`,
+        opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
       }}>
-        The Problem
+        <div style={{ fontSize: 18, fontWeight: 700, color: "#dc2626", fontFamily: "sans-serif", letterSpacing: 3, textTransform: "uppercase" }}>
+          The Crisis
+        </div>
+        <div style={{ fontSize: 52, fontWeight: 900, color: "#1a1a2e", fontFamily: "sans-serif", marginTop: 8 }}>
+          Malaysia's Food Emergency
+        </div>
       </div>
 
-      <div style={{ display: "flex", gap: 30 }}>
+      {/* Stats grid */}
+      <div style={{ position: "absolute", bottom: 80, left: 80, right: 80, display: "flex", gap: 24 }}>
         {problems.map((p, i) => {
-          const delay = 15 + i * 18;
-          const s = spring({ frame: frame - delay, fps, config: { damping: 15, stiffness: 120 } });
-          const y = interpolate(s, [0, 1], [40, 0]);
+          const delay = 30 + i * 20;
+          const s = spring({ frame: frame - delay, fps, config: { damping: 12, stiffness: 100 } });
+          const y = interpolate(s, [0, 1], [80, 0]);
           const opacity = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateRight: "clamp" });
+
+          // Count up animation
+          const numVal = parseFloat(p.stat.replace(/[^0-9.]/g, ''));
+          const suffix = p.stat.replace(/[0-9.]/g, '');
+          const progress = interpolate(frame, [delay, delay + 40], [0, 1], { extrapolateRight: "clamp" });
+          const displayNum = (numVal * progress).toFixed(p.stat.includes('.') ? 1 : 0);
 
           return (
             <div key={i} style={{
-              flex: 1, background: "white", borderRadius: 20, padding: 36,
-              boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+              flex: 1, background: "white", borderRadius: 20, padding: "40px 30px",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
               transform: `translateY(${y}px)`, opacity,
-              display: "flex", flexDirection: "column", alignItems: "center",
-              borderTop: "4px solid #2d8a4e",
+              textAlign: "center",
+              borderBottom: "4px solid #dc2626",
             }}>
-              <div style={{
-                fontSize: 52, fontWeight: 900, color: "#1a5c2e",
-                fontFamily: "sans-serif",
-              }}>{p.stat}</div>
-              <div style={{
-                fontSize: 20, fontWeight: 700, color: "#1a1a2e",
-                fontFamily: "sans-serif", marginTop: 12, textAlign: "center",
-              }}>{p.title}</div>
-              <div style={{
-                fontSize: 15, color: "#6b7280", marginTop: 8,
-                fontFamily: "sans-serif", textAlign: "center", lineHeight: 1.4,
-              }}>{p.desc}</div>
+              <div style={{ fontSize: 64, fontWeight: 900, color: "#dc2626", fontFamily: "sans-serif" }}>
+                {displayNum}{suffix}
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#1a1a2e", fontFamily: "sans-serif", marginTop: 12 }}>
+                {p.label}
+              </div>
+              <div style={{ fontSize: 14, color: "#9ca3af", fontFamily: "sans-serif", marginTop: 4 }}>
+                {p.sub}
+              </div>
             </div>
           );
         })}
