@@ -1,75 +1,93 @@
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 
-const problems = [
-  { stat: "73%", label: "Urban — No Farming", sub: "experience or access" },
-  { stat: "10.4%", label: "Food Price Increase", sub: "in 2023 alone" },
-  { stat: "17K", label: "Tonnes Wasted Daily", sub: "enough to feed 12M" },
-  { stat: "40%+", label: "Income on Food", sub: "for low-income families" },
+const stats = [
+  { number: "828M", label: "People go hungry daily", emoji: "😢", color: "#ef4444" },
+  { number: "60%", label: "Youth disconnected from farming", emoji: "📱", color: "#f59e0b" },
+  { number: "1/3", label: "Food wasted globally", emoji: "🗑️", color: "#8b5cf6" },
 ];
 
 export const ProblemScene = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const headerX = interpolate(
-    spring({ frame, fps, config: { damping: 20 } }), [0, 1], [-100, 0]
-  );
-
   return (
-    <AbsoluteFill style={{ background: "#fafafa" }}>
-      {/* Red accent stripe */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, width: 8, height: "100%",
-        background: "linear-gradient(180deg, #dc2626, #991b1b)",
+    <AbsoluteFill>
+      <AbsoluteFill style={{
+        background: "linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
       }} />
 
+      {[...Array(8)].map((_, i) => (
+        <div key={i} style={{
+          position: "absolute", left: 0, right: 0,
+          top: i * 135, height: 1,
+          background: "rgba(255,255,255,0.03)",
+        }} />
+      ))}
+
       <div style={{
-        position: "absolute", left: 80, top: 80,
-        transform: `translateX(${headerX}px)`,
+        position: "absolute", left: 100, top: 80,
         opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
+        transform: `translateX(${interpolate(frame, [0, 20], [-50, 0], { extrapolateRight: "clamp" })}px)`,
       }}>
-        <div style={{ fontSize: 18, fontWeight: 700, color: "#dc2626", fontFamily: "sans-serif", letterSpacing: 3, textTransform: "uppercase" }}>
-          The Crisis
+        <div style={{
+          fontSize: 18, fontWeight: 800, color: "#ef4444", fontFamily: "sans-serif",
+          letterSpacing: 6, textTransform: "uppercase",
+        }}>
+          ⚠️ The Problem
         </div>
-        <div style={{ fontSize: 52, fontWeight: 900, color: "#1a1a2e", fontFamily: "sans-serif", marginTop: 8 }}>
-          Malaysia's Food Emergency
+        <div style={{
+          fontSize: 56, fontWeight: 900, color: "white", fontFamily: "sans-serif",
+          marginTop: 8, lineHeight: 1.1,
+        }}>
+          Food Insecurity<br />is Growing
         </div>
       </div>
 
-      {/* Stats grid */}
-      <div style={{ position: "absolute", bottom: 80, left: 80, right: 80, display: "flex", gap: 24 }}>
-        {problems.map((p, i) => {
-          const delay = 30 + i * 20;
-          const s = spring({ frame: frame - delay, fps, config: { damping: 12, stiffness: 100 } });
-          const y = interpolate(s, [0, 1], [80, 0]);
+      <div style={{
+        position: "absolute", left: 100, right: 100, top: 340,
+        display: "flex", gap: 40,
+      }}>
+        {stats.map((s, i) => {
+          const delay = 25 + i * 20;
+          const sp = spring({ frame: frame - delay, fps, config: { damping: 12, stiffness: 100 } });
+          const scale = interpolate(sp, [0, 1], [0.5, 1]);
           const opacity = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateRight: "clamp" });
-
-          // Count up animation
-          const numVal = parseFloat(p.stat.replace(/[^0-9.]/g, ''));
-          const suffix = p.stat.replace(/[0-9.]/g, '');
-          const progress = interpolate(frame, [delay, delay + 40], [0, 1], { extrapolateRight: "clamp" });
-          const displayNum = (numVal * progress).toFixed(p.stat.includes('.') ? 1 : 0);
+          const yOff = interpolate(sp, [0, 1], [30, 0]);
 
           return (
             <div key={i} style={{
-              flex: 1, background: "white", borderRadius: 20, padding: "40px 30px",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
-              transform: `translateY(${y}px)`, opacity,
+              flex: 1, padding: "40px 30px", borderRadius: 24,
+              background: `linear-gradient(135deg, ${s.color}15, ${s.color}08)`,
+              border: `2px solid ${s.color}40`,
+              transform: `scale(${scale}) translateY(${yOff}px)`, opacity,
               textAlign: "center",
-              borderBottom: "4px solid #dc2626",
             }}>
-              <div style={{ fontSize: 64, fontWeight: 900, color: "#dc2626", fontFamily: "sans-serif" }}>
-                {displayNum}{suffix}
+              <div style={{ fontSize: 50, marginBottom: 10 }}>{s.emoji}</div>
+              <div style={{
+                fontSize: 72, fontWeight: 900, color: s.color,
+                fontFamily: "sans-serif",
+              }}>
+                {s.number}
               </div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#1a1a2e", fontFamily: "sans-serif", marginTop: 12 }}>
-                {p.label}
-              </div>
-              <div style={{ fontSize: 14, color: "#9ca3af", fontFamily: "sans-serif", marginTop: 4 }}>
-                {p.sub}
+              <div style={{
+                fontSize: 18, color: "#a0aec0", fontFamily: "sans-serif",
+                marginTop: 8, fontWeight: 500,
+              }}>
+                {s.label}
               </div>
             </div>
           );
         })}
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: 80, left: "50%",
+        transform: "translateX(-50%)",
+        opacity: interpolate(frame, [200, 230], [0, 1], { extrapolateRight: "clamp" }),
+        fontSize: 28, color: "#fbbf24", fontFamily: "sans-serif", fontWeight: 700,
+        textAlign: "center",
+      }}>
+        What if we could make farming... FUN? 🎮
       </div>
     </AbsoluteFill>
   );

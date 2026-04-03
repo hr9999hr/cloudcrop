@@ -1,85 +1,81 @@
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
-
-const stack = [
-  { label: "Frontend", value: "React 18 + TypeScript + Vite + Tailwind + Framer Motion", color: "#3b82f6" },
-  { label: "State", value: "Zustand with cloud persistence", color: "#8b5cf6" },
-  { label: "Backend", value: "Lovable Cloud (PostgreSQL, Auth, Edge Functions)", color: "#4ade80" },
-  { label: "Sync", value: "Auto-save game state to cloud on every change", color: "#06b6d4" },
-  { label: "Weather", value: "Real weather API affecting game mechanics", color: "#f59e0b" },
-  { label: "Auth", value: "Email/password with verification & reset", color: "#ec4899" },
-];
+import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Img, staticFile } from "remotion";
 
 export const TechScene = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   return (
-    <AbsoluteFill style={{ background: "#0f172a" }}>
-      {/* Grid pattern */}
-      <div style={{ position: "absolute", inset: 0, opacity: 0.03, backgroundImage: "repeating-linear-gradient(0deg, white 0px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, white 0px, transparent 1px, transparent 40px)" }} />
+    <AbsoluteFill>
+      <AbsoluteFill style={{
+        background: "linear-gradient(135deg, #fef3c7 0%, #ecfdf5 100%)",
+      }} />
 
       <div style={{
-        position: "absolute", left: 80, top: 70,
-        opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" }),
+        position: "absolute", left: 0, top: 0, bottom: 0, width: "50%",
+        overflow: "hidden",
+        opacity: interpolate(frame, [0, 30], [0, 1], { extrapolateRight: "clamp" }),
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#3b82f6", fontFamily: "sans-serif", letterSpacing: 4, textTransform: "uppercase" }}>
-          Architecture
+        <Img src={staticFile("images/happy-users.jpg")} style={{
+          width: "100%", height: "100%", objectFit: "cover",
+          transform: `scale(${interpolate(frame, [0, 556], [1.1, 1], { extrapolateRight: "clamp" })})`,
+        }} />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(90deg, transparent 60%, #ecfdf5 100%)",
+        }} />
+      </div>
+
+      <div style={{
+        position: "absolute", right: 80, top: 120, width: 700,
+        opacity: interpolate(frame, [10, 30], [0, 1], { extrapolateRight: "clamp" }),
+      }}>
+        <div style={{
+          fontSize: 16, fontWeight: 800, color: "#16a34a", fontFamily: "sans-serif",
+          letterSpacing: 4,
+        }}>
+          🌍 IMPACT
         </div>
-        <div style={{ fontSize: 48, fontWeight: 900, color: "white", fontFamily: "sans-serif", marginTop: 4 }}>
-          Technical Overview
+        <div style={{
+          fontSize: 48, fontWeight: 900, color: "#1a3a2a", fontFamily: "sans-serif",
+          marginTop: 8, lineHeight: 1.2,
+        }}>
+          More Than<br />Just a Game
         </div>
       </div>
 
-      {/* Stack items */}
-      <div style={{ position: "absolute", left: 80, right: 80, top: 200 }}>
-        {stack.map((item, i) => {
-          const delay = 15 + i * 12;
-          const s = spring({ frame: frame - delay, fps, config: { damping: 18 } });
-          const x = interpolate(s, [0, 1], [-60, 0]);
-          const opacity = interpolate(frame, [delay, delay + 10], [0, 1], { extrapolateRight: "clamp" });
-          const barWidth = interpolate(s, [0, 1], [0, 100]);
+      {[
+        { num: "🌱", stat: "Local Farmers", desc: "Supporting small-scale agriculture across Malaysia", color: "#16a34a" },
+        { num: "♻️", stat: "Reduce Waste", desc: "Connecting surplus produce to urban consumers", color: "#0ea5e9" },
+        { num: "🎓", stat: "Education", desc: "Teaching food literacy through gameplay", color: "#f59e0b" },
+        { num: "🤝", stat: "Community", desc: "8 collection hubs building local food networks", color: "#8b5cf6" },
+      ].map((item, i) => {
+        const delay = 30 + i * 18;
+        const sp = spring({ frame: frame - delay, fps, config: { damping: 15 } });
+        const opacity = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateRight: "clamp" });
+        const y = interpolate(sp, [0, 1], [25, 0]);
 
-          return (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 24,
-              transform: `translateX(${x}px)`, opacity,
-              marginBottom: 18, padding: "16px 24px",
-              background: "rgba(255,255,255,0.04)", borderRadius: 12,
-              position: "relative", overflow: "hidden",
-            }}>
-              {/* Progress bar bg */}
-              <div style={{
-                position: "absolute", left: 0, top: 0, bottom: 0,
-                width: `${barWidth}%`, background: `${item.color}08`,
-              }} />
-              <div style={{
-                position: "absolute", left: 0, top: 0, bottom: 0,
-                width: 3, background: item.color,
-              }} />
-              <div style={{
-                fontSize: 14, fontWeight: 700, color: item.color,
-                fontFamily: "monospace", width: 100, flexShrink: 0, position: "relative",
-              }}>{item.label}</div>
-              <div style={{ fontSize: 17, color: "#e2e8f0", fontFamily: "sans-serif", position: "relative" }}>
-                {item.value}
+        return (
+          <div key={i} style={{
+            position: "absolute", right: 80, top: 280 + i * 130, width: 700,
+            display: "flex", alignItems: "center", gap: 20,
+            padding: "20px 24px", borderRadius: 20,
+            background: "rgba(255,255,255,0.8)",
+            transform: `translateY(${y}px)`, opacity,
+            boxShadow: "0 2px 15px rgba(0,0,0,0.05)",
+            borderLeft: `4px solid ${item.color}`,
+          }}>
+            <div style={{ fontSize: 36 }}>{item.num}</div>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#1a3a2a", fontFamily: "sans-serif" }}>
+                {item.stat}
+              </div>
+              <div style={{ fontSize: 15, color: "#6b7280", fontFamily: "sans-serif", marginTop: 2 }}>
+                {item.desc}
               </div>
             </div>
-          );
-        })}
-      </div>
-
-      {/* AI Disclosure */}
-      <div style={{
-        position: "absolute", bottom: 60, left: 80, right: 80,
-        opacity: interpolate(frame, [200, 230], [0, 1], { extrapolateRight: "clamp" }),
-        padding: "16px 24px", borderRadius: 12,
-        background: "rgba(254,249,195,0.08)", borderLeft: "3px solid #f59e0b",
-      }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#fbbf24", fontFamily: "sans-serif" }}>AI Disclosure: </span>
-        <span style={{ fontSize: 13, color: "#d1d5db", fontFamily: "sans-serif" }}>
-          Lovable AI used for code generation & UI prototyping. All logic and design directed by team.
-        </span>
-      </div>
+          </div>
+        );
+      })}
     </AbsoluteFill>
   );
 };
