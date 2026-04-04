@@ -110,7 +110,7 @@ interface GameState {
   setDeliveryAddress: (address: string) => void;
   createDelivery: (items: DeliveryOrder['items']) => void;
   updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
-  topUpRealMoney: (amount: number) => void;
+  topUpRealMoney: (amount: number) => Promise<boolean>;
   addWaterDrops: (amount: number) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   updateCartQty: (id: string, delta: number) => void;
