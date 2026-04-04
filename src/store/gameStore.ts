@@ -110,7 +110,7 @@ interface GameState {
   setDeliveryAddress: (address: string) => void;
   createDelivery: (items: DeliveryOrder['items']) => void;
   updateDeliveryStatus: (id: string, status: DeliveryStatus) => void;
-  topUpRealMoney: (amount: number) => Promise<boolean>;
+  topUpRealMoney: (amount: number) => void;
   addWaterDrops: (amount: number) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   updateCartQty: (id: string, delta: number) => void;
@@ -548,22 +548,13 @@ export const useGameStore = create<GameState>((set, get) => ({
     ),
   })),
 
-  topUpRealMoney: async (amount) => {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data, error } = await supabase.functions.invoke("wallet-topup", {
-      body: { amount },
-    });
-    if (error || !data?.success) {
-      console.error("Top-up failed:", error || data?.error);
-      return false;
-    }
-    // Update local state from server response
-    set((s) => ({
-      realMoney: data.newBalance,
-      transactions: [data.transaction, ...s.transactions],
-    }));
-    return true;
-  },
+  topUpRealMoney: (amount) => set((s) => ({
+    realMoney: s.realMoney + amount,
+    transactions: [
+      { id: Date.now().toString(), type: 'earn', amount, description: `[RM] Top up RM ${amount.toFixed(2)}`, timestamp: Date.now() },
+      ...s.transactions,
+    ],
+  })),
 
   addWaterDrops: (amount) => set((s) => ({
     waterDrops: s.waterDrops + amount,

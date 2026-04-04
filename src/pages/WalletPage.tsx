@@ -43,18 +43,14 @@ export default function WalletPage() {
   const totalCCSpent = ccTransactions.filter((t) => t.type === 'spend').reduce((s, t) => s + t.amount, 0);
   const totalRMSpent = rmTransactions.filter((t) => t.type === 'spend').reduce((s, t) => s + t.amount, 0);
 
-  const handleTopUp = async () => {
+  const handleTopUp = () => {
     const amount = parseFloat(topUpAmount);
     if (isNaN(amount) || amount <= 0 || amount > 10000) {
       toast.error("Enter a valid amount (RM 0.01 - RM 10,000)");
       return;
     }
-    const success = await topUpRealMoney(amount);
-    if (success) {
-      toast.success(`Successfully topped up RM ${amount.toFixed(2)}!`);
-    } else {
-      toast.error("Top-up failed. Please try again.");
-    }
+    topUpRealMoney(amount);
+    toast.success(`Successfully topped up RM ${amount.toFixed(2)}!`);
     setTopUpAmount('');
     setShowTopUp(false);
   };
