@@ -548,13 +548,22 @@ export const useGameStore = create<GameState>((set, get) => ({
     ),
   })),
 
-  topUpRealMoney: (amount) => set((s) => ({
-    realMoney: s.realMoney + amount,
-    transactions: [
-      { id: Date.now().toString(), type: 'earn', amount, description: `[RM] Top up RM ${amount.toFixed(2)}`, timestamp: Date.now() },
-      ...s.transactions,
-    ],
-  })),
+  topUpRealMoney: async (amount) => {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data, error } = await supabase.functions.invoke("wallet-topup", {
+      body: { amount },
+    });
+    if (error || !data?.success) {
+      console.error("Top-up failed:", error || data?.error);
+      return false;
+    }
+    // Update local state from server response
+    set((s) => ({
+      realMoney: data.newBalance,
+      transactions: [data.transaction, ...s.transactions],
+    }));
+    return true;
+  },
 
   addWaterDrops: (amount) => set((s) => ({
     waterDrops: s.waterDrops + amount,
